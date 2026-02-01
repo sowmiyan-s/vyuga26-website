@@ -1,4 +1,4 @@
-// Coordinators configuration for SIRAGU 26
+// Coordinators configuration for VYUGA 26
 
 export interface Coordinator {
   id: string;

@@ -97,9 +97,9 @@ const Navbar = () => {
             ))}
 
             {/* Download Brochure Button */}
-            <a 
-              href="/brochure.pdf" 
-              target="_blank" 
+            <a
+              href="/brochure.pdf"
+              target="_blank"
               rel="noopener noreferrer"
               className="ml-4"
             >
@@ -137,7 +137,7 @@ const Navbar = () => {
           }}
           className="md:hidden border rounded-full px-6 py-3 flex items-center justify-between overflow-hidden"
         >
-          <span className="font-sync text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-uiverse-purple to-uiverse-sky">SIRAGU</span>
+          <span className="font-sync text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-uiverse-purple to-uiverse-sky">VYUGA 26</span>
           <button
             onClick={() => setIsOpen(true)}
             className="p-2 rounded-full hover:bg-white/10 transition-colors text-white relative active:scale-90 duration-200"
@@ -190,8 +190,8 @@ const Navbar = () => {
                       to={link.path}
                       onClick={() => setIsOpen(false)}
                       className={`group flex items-center justify-between p-4 rounded-xl transition-all duration-300 ${location.pathname === link.path
-                          ? "bg-white/10 border border-white/10"
-                          : "hover:bg-white/5 border border-transparent"
+                        ? "bg-white/10 border border-white/10"
+                        : "hover:bg-white/5 border border-transparent"
                         }`}
                     >
                       <span className={`text-lg font-medium ${location.pathname === link.path ? "text-white" : "text-gray-400 group-hover:text-white"
@@ -211,9 +211,9 @@ const Navbar = () => {
                   transition={{ delay: 0.1 + navLinks.length * 0.05 }}
                   className="pt-4"
                 >
-                  <a 
-                    href="/brochure.pdf" 
-                    target="_blank" 
+                  <a
+                    href="/brochure.pdf"
+                    target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setIsOpen(false)}
                   >

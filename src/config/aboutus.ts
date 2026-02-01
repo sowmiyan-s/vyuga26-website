@@ -1,4 +1,4 @@
-// About Us configuration for SIRAGU 26
+// About Us configuration for VYUGA 26
 
 export const aboutUs = {
   // Event About

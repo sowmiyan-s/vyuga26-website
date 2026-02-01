@@ -1,4 +1,4 @@
-// Main configuration file for SIRAGU 26 Symposium
+// Main configuration file for VYUGA 26 Symposium
 
 export const siteConfig = {
   // Event Information
@@ -44,7 +44,7 @@ export const siteConfig = {
 
   // Social Links
   whatsappGroupLink: "https://chat.whatsapp.com/your-group-link",
-  instagramLink: "https://instagram.com/siragu26",
+  instagramLink: "https://instagram.com/vyuga26",
 
   // College Info
   collegeName: "VSB College of Engineering Technical Campus",
