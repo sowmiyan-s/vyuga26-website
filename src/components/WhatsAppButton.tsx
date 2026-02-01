@@ -8,6 +8,7 @@ const WhatsAppButton = () => {
       rel="noopener noreferrer"
       className="fixed bottom-8 right-8 z-50 p-4 rounded-full bg-[#25D366] text-white shadow-[0_0_20px_rgba(37,211,102,0.5)] hover:shadow-[0_0_40px_rgba(37,211,102,0.8)] transition-all duration-300 hover:scale-110 active:scale-95 animate-bounce-slow"
       aria-label="Join WhatsApp Group"
+      title="Join Official WhatsApp Group"
     >
       <div className="absolute inset-0 rounded-full animate-ping opacity-20 bg-[#25D366]" />
       <svg

@@ -69,6 +69,7 @@ const Navbar = () => {
               <Link
                 key={link.path}
                 to={link.path}
+                title={link.name}
                 className="relative px-6 py-2 rounded-full transition-colors group"
               >
                 {location.pathname === link.path && (
@@ -102,6 +103,7 @@ const Navbar = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="ml-4"
+              title="Download Event Brochure"
             >
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -113,7 +115,7 @@ const Navbar = () => {
               </motion.button>
             </a>
 
-            <Link to="/register" className="ml-2">
+            <Link to="/register" className="ml-2" title="Register for VYUGA 26">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

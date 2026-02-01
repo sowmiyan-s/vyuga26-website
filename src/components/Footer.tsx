@@ -35,7 +35,7 @@ const Footer = () => {
                 { name: "Register", path: "/register" }
               ].map((link) => (
                 <li key={link.path}>
-                  <Link to={link.path} className="text-gray-400 hover:text-uiverse-sky transition-colors flex items-center gap-2 group">
+                  <Link to={link.path} title={`Go to ${link.name}`} className="text-gray-400 hover:text-uiverse-sky transition-colors flex items-center gap-2 group">
                     <span className="w-1.5 h-1.5 rounded-full bg-uiverse-sky/50 group-hover:bg-uiverse-sky transition-colors" />
                     {link.name}
                   </Link>
@@ -54,6 +54,7 @@ const Footer = () => {
                   href={siteConfig.instagramLink}
                   target="_blank"
                   rel="noopener noreferrer"
+                  title="Follow us on Instagram"
                   className="text-gray-400 hover:text-uiverse-pink transition-colors flex items-center gap-2"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-uiverse-pink/50" />
@@ -66,6 +67,7 @@ const Footer = () => {
                   href={siteConfig.whatsappGroupLink}
                   target="_blank"
                   rel="noopener noreferrer"
+                  title="Join our WhatsApp Group"
                   className="text-gray-400 hover:text-uiverse-green transition-colors flex items-center gap-2"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-uiverse-green/50" />
@@ -73,7 +75,7 @@ const Footer = () => {
                 </motion.a>
               </li>
               <li>
-                <Link to="/terms" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2">
+                <Link to="/terms" title="Read Terms of Service" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
                   Terms of Service
                 </Link>
