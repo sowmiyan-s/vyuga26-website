@@ -24,7 +24,7 @@ export const coordinators: Coordinator[] = [
   },
   {
     id: "hod-2",
-    name: "DR. G. NITHYA",
+    name: "G. NITHYA",
     role: "hod",
     department: "AI & DS",
     phone: "",
