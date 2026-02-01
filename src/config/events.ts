@@ -13,6 +13,9 @@ export interface Event {
   time: string;
   coordinatorIds: string[];
   isSpotlight?: boolean;
+  hasCashPrize?: boolean;
+  isPreRegistration?: boolean;
+  submissionLink?: string;
 }
 
 export const events: Event[] = [
@@ -37,6 +40,9 @@ export const events: Event[] = [
     time: "10:00 AM – 1:00 PM",
     coordinatorIds: ["mathivadhana-p", "preethika-mh", "dharshini-p", "sanjai-krishnan-s", "barath-r"],
     isSpotlight: true,
+    hasCashPrize: true,
+    isPreRegistration: true,
+    submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLSf...", // Placeholder - User to update
   },
   {
     id: "project-expo",
@@ -55,41 +61,56 @@ export const events: Event[] = [
     ],
     time: "10:00 AM – 1:00 PM",
     coordinatorIds: ["madhu-mitha-r", "pratthima-s", "sandhiya-k", "chenthurr-c-k", "harsith-s-j"],
+    hasCashPrize: true,
   },
   {
     id: "codathon",
     title: "Codathon",
-    description: "To assess participants’ problem-solving ability, coding logic, and efficiency under time constraints.",
-    fullDescription: "Codathon is a competitive programming event where participants solve algorithmic and real-world problems using their preferred programming languages.",
+    description: "Codathon is a competitive programming event designed to evaluate participants’ problem-solving ability, algorithmic thinking, and coding efficiency.",
+    fullDescription: "Codathon is a competitive programming event designed to evaluate participants’ problem-solving ability, algorithmic thinking, and coding efficiency. Participants will solve Data Structures and Algorithms (DSA)–based problems on an online coding platform using their own laptops. The problem set will include Easy, Medium, and Hard difficulty levels, and submissions will be evaluated through an automated judging system that ensures fair and unbiased scoring. Strict monitoring will be enforced, and the use of AI tools or any form of malpractice is not permitted.",
     category: "technical",
     image: "/images/CODATHON.png",
     rules: [
-      "Open to all departments. Team size: 1 to 3 members",
-      "Use of AI tools, plagiarism, or malpractice is prohibited",
-      "Participants must bring their own laptop and mobile device",
-      "Time limit: 2 to 3 hours",
+      "Participants must bring their own laptop to take part in the event",
+      "All problems must be solved on the designated online coding platform",
+      "Use of AI tools, plagiarism, or any external assistance is strictly prohibited",
       "Any programming language is allowed",
       "Late submissions will not be accepted",
-      "Evaluation Criteria: Correctness and efficiency, Logical approach, Code quality"
+      "Participants must follow the instructions provided by the coordinators throughout the event",
+      "Open to all departments. Team size: 1 – 3 members",
+      "Rounds: Single round (Online Coding Challenge)",
+      "Duration: 2 – 3 hours",
+      "Problem levels: Easy / Medium / Hard",
+      "Scoring: Fully automated evaluation",
+      "Evaluation Criteria: Correctness and efficiency of solutions, Logical and algorithmic approach, Code quality and optimization"
     ],
-    time: "10:00 AM – 01:00 PM",
+    time: "Duration: 2 – 3 hours",
     coordinatorIds: ["divya-harini", "kaviya", "subha", "thangam-s-k", "vishal-n", "sowmiyan-s"],
     isSpotlight: true,
+    hasCashPrize: true,
   },
   {
     id: "ui-ux",
     title: "UXplore – UI / UX Design",
-    description: "To evaluate creativity and user-centric design thinking through interface and experience design challenges.",
-    fullDescription: "Participants design intuitive and visually effective user interfaces while maintaining usability and experience standards.",
+    description: "UXplore is an exciting UI/UX design competition that challenges participants to explore, analyze, and design meaningful digital experiences.",
+    fullDescription: "UXplore is an exciting UI/UX design competition that challenges participants to explore, analyze, and design meaningful digital experiences. The event focuses on user-centered design, encouraging students to think beyond visuals and craft interfaces that are intuitive, accessible, and impactful. Participants will be given a real-world problem statement and are expected to design creative and functional solutions within a limited time. UXplore provides a platform for students to showcase their design thinking, creativity, and problem-solving skills using modern UI/UX tools.",
     category: "technical",
     image: "/images/UXPLORE-UIUX.png",
     rules: [
-      "Open to all departments. Team size: 2 to 3 members",
-      "Two offline rounds",
-      "Evaluation Criteria: Innovation and originality, Usability and feasibility, Presentation clarity"
+      "Open to all departments. Team size: 1 – 3 members",
+      "Designs must be original. Plagiarism or copying direct disqualification",
+      "No pre-made templates allowed",
+      "The use of AI tools for creating designs is strictly prohibited",
+      "Participants must design only during the event time. Any prior work is not allowed",
+      "Participants may use only UI/UX design tools (Figma, Adobe XD, Penpot, Canva, etc.). Coding is not required",
+      "Participants should be ready to explain their design decisions if asked by the judges",
+      "Organizers reserve the right to modify rules or disqualify entries if necessary",
+      "Rounds: Preliminary / Final",
+      "Duration: 180 minutes",
+      "Evaluation Criteria: User Experience (UX) & Flow, Creativity & Innovation, Visual Design (UI), Usability & Accessibility, Problem Understanding, Presentation / Explanation"
     ],
-    time: "10:00 AM – 1:00 PM",
-    coordinatorIds: ["shijitha-jenifer", "ramya-s", "oviya-maheswari", "manojkrishna-m", "kabeel-raj-k"],
+    time: "Duration: 180 minutes",
+    coordinatorIds: ["manojkrishna-m", "kabeel-raj-k", "shijitha-jenifer", "ramya-s", "oviya-maheswari"],
   },
   {
     id: "web-development",
@@ -109,6 +130,29 @@ export const events: Event[] = [
     ],
     time: "10:00 AM – 01:00 PM",
     coordinatorIds: ["sathya-k", "anurathi-l", "aiswarya-v", "pooja-m", "jaya-surya"],
+  },
+
+  {
+    id: "tech-architecture",
+    title: "TECH ARCHITECTURE",
+    description: "Tech Architecture is a hands-on technical event where participants are required to analyse, design, and clone the architecture of a given application within a limited time.",
+    fullDescription: "The event focuses on system design thinking, architectural planning, scalability, feasibility, and clarity of presentation rather than just coding. Participants must demonstrate their understanding of how real-world applications are structured and delivered efficiently.",
+    category: "technical",
+    image: "/images/TECH-ARCHITECTURE.png",
+    rules: [
+      "Open to all departments. Team size: 2 – 3 members",
+      "A specific application/problem statement will be provided on the spot",
+      "The architecture design must be original and created during the event",
+      "Any form of plagiarism or copying existing architectures will lead to immediate disqualification",
+      "Participants are allowed to use tools such as VS Code, Figma, Lucid chart, Draw.io, or similar design tools",
+      "The decision of the judges will be final and binding",
+      "Laptop (mandatory)",
+      "Basic knowledge of system design, architecture patterns, and application flow",
+      "Number of Rounds: Single Round",
+      "Evaluation Criteria: Innovation & Creativity, Technical Feasibility, Architecture clarity & structure, Presentation & Communication skills"
+    ],
+    time: "Duration: 3 Hours",
+    coordinatorIds: ["amar-karthik", "aiswarya-r", "kokiladevi-a", "pilo-francy-f", "shivani-t"],
   },
 
   // Non-Technical Events
@@ -164,6 +208,7 @@ export const events: Event[] = [
     time: "As per match schedule",
     coordinatorIds: [], // No coordinators listed in the prompt
     isSpotlight: true,
+    hasCashPrize: true,
   },
   {
     id: "spotlight",
@@ -200,6 +245,8 @@ export const events: Event[] = [
     time: "2:00 PM – 3:30 PM",
     coordinatorIds: ["priyaadharshini-s-k", "sri-dharshini", "mithun-m", "naveen-m", "abinesh-a", "amar-karthik"],
     isSpotlight: true,
+    isPreRegistration: true,
+    submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLSf...", // Placeholder - User to update
   },
 ];
 
@@ -209,6 +256,14 @@ export const getEventsByCategory = (category: EventCategory): Event[] => {
 
 export const getSpotlightEvents = (): Event[] => {
   return events.filter(event => event.isSpotlight);
+};
+
+export const getCashPrizeEvents = (): Event[] => {
+  return events.filter(event => event.hasCashPrize);
+};
+
+export const getPreRegistrationEvents = (): Event[] => {
+  return events.filter(event => event.isPreRegistration);
 };
 
 export const getEventById = (id: string): Event | undefined => {

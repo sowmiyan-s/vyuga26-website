@@ -567,4 +567,22 @@
       opacity: 0;
     }
   }
+
+  @keyframes blink-red-yellow {
+
+    0%,
+    100% {
+      color: #ef4444;
+      text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    }
+
+    50% {
+      color: #facc15;
+      text-shadow: 0 0 10px rgba(234, 179, 8, 0.5);
+    }
+  }
+
+  .animate-blink-text {
+    animation: blink-red-yellow 0.8s infinite;
+  }
 }

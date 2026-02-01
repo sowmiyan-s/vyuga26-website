@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getSpotlightEvents } from "@/config/events";
+import { ChevronLeft, ChevronRight, IndianRupee } from "lucide-react";
+import { getCashPrizeEvents } from "@/config/events";
 import { UiverseButton } from "./ui/UiverseButton";
 import { motion, AnimatePresence } from "framer-motion";
 
 const SpotlightEvents = () => {
-  const events = getSpotlightEvents();
+  const events = getCashPrizeEvents();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     if (isPaused) return;
+    if (events.length === 0) return;
 
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % events.length);
@@ -29,6 +30,21 @@ const SpotlightEvents = () => {
   };
 
   const getVisibleEvents = () => {
+    if (events.length === 0) return [];
+
+    // Handle cases where we have fewer events than the carousel expects
+    if (events.length < 3) {
+      // If we have very few events, just return what we have with offset logic adapted
+      // This is a simple fallback. For full carousel logic with < 3 items, duplications might be needed, 
+      // but for now we assume we have 4 items as per request (ideathon, codathon, expo, esports).
+      const visible = [];
+      for (let i = -1; i <= 1; i++) {
+        let index = (currentIndex + i + events.length) % events.length;
+        visible.push({ event: events[index], offset: i, key: `${events[index].id}-${i}` });
+      }
+      return visible;
+    }
+
     const visible = [];
     for (let i = -1; i <= 1; i++) {
       let index = (currentIndex + i + events.length) % events.length;
@@ -37,26 +53,28 @@ const SpotlightEvents = () => {
     return visible;
   };
 
+  if (events.length === 0) return null;
+
   return (
     <section className="py-24 px-4 overflow-hidden relative">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-uiverse-purple/10 via-transparent to-transparent opacity-30 pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-yellow-500/10 via-transparent to-transparent opacity-30 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-16">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            className="text-uiverse-sky text-sm tracking-[0.3em] uppercase mb-3 font-bold"
+            className="text-yellow-400 text-sm tracking-[0.3em] uppercase mb-3 font-bold"
           >
-            Featured Highlights
+            Win Big
           </motion.p>
           <motion.h2
             initial={{ scale: 0.95, opacity: 0, y: 10 }}
             whileInView={{ scale: 1, opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            className="font-display text-4xl md:text-5xl font-bold text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+            className="font-display text-4xl md:text-5xl font-bold text-white drop-shadow-[0_0_15px_rgba(255,215,0,0.4)]"
           >
-            Spotlight Events
+            Cash Prize Events
           </motion.h2>
         </div>
 
@@ -121,7 +139,7 @@ const SpotlightEvents = () => {
                     <div className={`
                     relative rounded-3xl overflow-hidden backdrop-blur-3xl transition-all duration-500 h-full border
                     ${isActive
-                        ? 'bg-black/40 border-uiverse-sky/50 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_30px_rgba(18,184,255,0.2)]'
+                        ? 'bg-black/40 border-yellow-500/50 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_30px_rgba(234,179,8,0.2)]'
                         : 'bg-black/60 border-white/5 shadow-xl'}
                   `}>
 
@@ -131,24 +149,37 @@ const SpotlightEvents = () => {
                         <motion.img
                           src={event.image}
                           alt={event.title}
-                          className="w-full h-full object-contain bg-black/50" /* Changed from object-cover to object-contain or adjust height */
+                          className="w-full h-full object-contain bg-black/50"
                           animate={{ scale: isActive ? 1.05 : 1 }}
                           transition={{ duration: 5, repeat: Infinity, repeatType: "mirror" }}
                         />
 
                         {/* Floating Badge */}
                         <div className="absolute top-4 left-4 z-20">
-                          <span className="px-3 py-1 bg-black/50 backdrop-blur-md rounded-full border border-white/10 text-[10px] md:text-xs font-bold uppercase tracking-widest text-white shadow-lg">
+                          <span className={`px-3 py-1 bg-black/50 backdrop-blur-md rounded-full border text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-lg ${isActive ? 'text-yellow-400 border-yellow-500/50' : 'text-white border-white/10'
+                            }`}>
                             {event.category}
                           </span>
                         </div>
+
+                        {/* Cash Prize Icon */}
+                        {isActive && (
+                          <motion.div
+                            initial={{ scale: 0, rotate: -180 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            className="absolute top-4 right-4 z-20 bg-yellow-500 text-black p-2 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.8)]"
+                          >
+                            <IndianRupee className="w-5 h-5 font-bold" />
+                          </motion.div>
+                        )}
                       </div>
 
                       {/* Content Section */}
                       <div className="p-6 md:p-8 relative z-20 -mt-10">
                         <motion.h3
                           layout="position"
-                          className="font-display text-2xl md:text-3xl font-bold text-white mb-3 text-shadow-lg leading-tight"
+                          className={`font-display text-2xl md:text-3xl font-bold mb-3 text-shadow-lg leading-tight ${isActive ? 'text-transparent bg-clip-text bg-gradient-to-r from-white to-yellow-200' : 'text-white'
+                            }`}
                         >
                           {event.title}
                         </motion.h3>
@@ -164,7 +195,8 @@ const SpotlightEvents = () => {
                         <div className="flex items-center justify-between mt-auto">
                           <Link to={`/events/${event.id}`}
                             className={`w-full group/btn ${!isActive ? 'pointer-events-none' : ''}`}>
-                            <div className="relative overflow-hidden rounded-xl bg-white text-black font-bold py-3 px-6 text-center text-sm uppercase tracking-wider transition-all hover:bg-uiverse-sky hover:text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(18,184,255,0.5)]">
+                            <div className={`relative overflow-hidden rounded-xl bg-white text-black font-bold py-3 px-6 text-center text-sm uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)] ${isActive ? 'hover:bg-yellow-400 hover:text-black hover:shadow-[0_0_30px_rgba(234,179,8,0.6)]' : ''
+                              }`}>
                               <span className="relative z-10 flex items-center justify-center gap-2">
                                 View Details <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                               </span>
@@ -186,7 +218,7 @@ const SpotlightEvents = () => {
               initial={{ width: "0%" }}
               animate={{ width: "100%" }}
               transition={{ duration: 3, ease: "linear" }}
-              className="h-full bg-uiverse-sky shadow-[0_0_10px_rgba(18,184,255,0.8)]"
+              className="h-full bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.8)]"
             />
           </div>
 

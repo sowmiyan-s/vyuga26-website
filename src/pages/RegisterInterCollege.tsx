@@ -52,6 +52,23 @@ const RegisterInterCollege = () => {
 
   const isInterFull = interCount >= siteConfig.interCollegeLimit;
   const isRegistrationClosed = new Date() > new Date("2026-02-10T23:59:59");
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    if (step === "success") {
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            window.location.href = siteConfig.whatsappGroupLink;
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [step]);
 
   const onSubmitForm = async (data: InterCollegeForm) => {
     if (isInterFull) {
@@ -136,6 +153,39 @@ const RegisterInterCollege = () => {
             <div className="px-4 py-1.5 rounded-full bg-uiverse-purple/20 border border-uiverse-purple/40 text-uiverse-purple text-sm font-bold tracking-wider">
               INTER COLLEGE
             </div>
+          </div>
+
+          {/* Pre-Registration Info (Compact) */}
+          <div className="mb-8 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+            <p className="text-gray-300 text-sm">
+              <span className="text-blue-400 font-bold block mb-1">📢 Ideathon & Startup Arena:</span>
+              Register here <strong>only if shortlisted</strong>. For other events, you can proceed.
+            </p>
+          </div>
+
+          {/* Mandatory Requirements Warning */}
+          <div className="mb-8 bg-red-900/20 border border-red-500/30 rounded-xl p-5 text-center shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+            <h3 className="font-display font-bold text-xl mb-3 animate-blink-text flex items-center justify-center gap-2">
+              ⚠️ MANDATORY REQUIREMENTS ⚠️
+            </h3>
+            <ul className="text-sm md:text-base space-y-2 text-gray-300 font-medium text-left inline-block">
+              <li className="flex items-start gap-2">
+                <span className="text-red-400 mt-1">➜</span>
+                <span>Bring your <strong>College ID Card</strong> (Compulsory for entry).</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-400 mt-1">➜</span>
+                <span>Keep a <strong>Payment Screenshot</strong> safe for verification.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-400 mt-1">➜</span>
+                <span>Bring <strong>Laptop</strong> for Codathon / PPT submission events.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-400 mt-1">➜</span>
+                <span>Carry <strong>Pendrives</strong> if required for your event.</span>
+              </li>
+            </ul>
           </div>
 
           {/* Progress Steps */}
@@ -379,9 +429,23 @@ const RegisterInterCollege = () => {
                   <p className="text-sm text-gray-500 mb-1">Email:</p>
                   <p className="text-white">{formData?.email}</p>
                 </div>
-                <div>
+
+                <div className="mb-8 p-4 bg-uiverse-purple/10 border border-uiverse-purple/20 rounded-xl text-uiverse-purple">
+                  <p className="font-semibold flex items-center justify-center gap-2">
+                    <span className="w-5 h-5 rounded-full border-2 border-current border-t-transparent animate-spin" />
+                    Redirecting to WhatsApp Group in {countdown}s...
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-4">
                   <UiverseButton
                     variant="primary"
+                    onClick={() => window.location.href = siteConfig.whatsappGroupLink}
+                  >
+                    Join Group Now
+                  </UiverseButton>
+                  <UiverseButton
+                    variant="secondary"
                     onClick={() => window.location.href = "/"}
                   >
                     Back to Home

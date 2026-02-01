@@ -56,6 +56,11 @@
     font-family: monospace;
 }
 
+.input-container select option {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
 .input-container input:focus,
 .input-container select:focus {
     border-color: #12B8FF;

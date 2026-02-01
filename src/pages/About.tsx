@@ -163,34 +163,7 @@ const About = () => {
           </div>
         </section>
 
-        {/* HOD's Message - Adding Realism */}
-        <section className="py-20 px-4">
-          <div className="max-w-5xl mx-auto bg-gradient-to-r from-uiverse-purple/10 to-transparent border border-white/10 rounded-3xl p-8 md:p-12 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-32 bg-uiverse-purple/20 blur-[100px] rounded-full -mr-20 -mt-20" />
 
-            <div className="relative z-10 flex flex-col md:flex-row gap-10 items-center">
-              <div className="shrink-0">
-                <div className="w-48 h-48 rounded-full border-4 border-white/10 p-1 relative">
-                  <img
-                    src={IMAGES.hod}
-                    alt="Head of Department"
-                    className="w-full h-full rounded-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
-                  />
-                  <div className="absolute bottom-2 right-2 w-10 h-10 bg-uiverse-purple rounded-full flex items-center justify-center border-4 border-black">
-                    <BookOpen className="w-5 h-5 text-white" />
-                  </div>
-                </div>
-              </div>
-              <div className="text-center md:text-left">
-                <h3 className="text-2xl font-bold text-white mb-1">From the HOD's Desk</h3>
-                <p className="text-uiverse-purple font-bold text-sm uppercase tracking-wider mb-6">Dr. Expert Name, Ph.D.</p>
-                <p className="text-gray-300 italic text-lg leading-relaxed">
-                  "Every year, Siragu is a reminder of what our students can achieve when they work together. It’s not just about winning competitions—it’s about the friendships, the late-night brainstorming, and the pride we feel watching our students grow into confident, creative professionals. We look forward to welcoming you to our campus and sharing this experience with you."
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* College Section - Reverse Zig Zag */}
         <section className="py-20 px-4 mb-20">

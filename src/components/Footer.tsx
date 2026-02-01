@@ -47,7 +47,7 @@ const Footer = () => {
           {/* Connect */}
           <div>
             <h4 className="font-bold mb-6 text-white text-lg">Connect</h4>
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               <li>
                 <motion.a
                   whileHover={{ x: 5 }}
@@ -74,11 +74,21 @@ const Footer = () => {
                   WhatsApp Group
                 </motion.a>
               </li>
-              <li>
-                <Link to="/terms" title="Read Terms of Service" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
-                  Terms of Service
-                </Link>
+
+              <li className="pt-2 border-t border-white/5">
+                <p className="text-xs text-gray-500 uppercase font-bold mb-2">Chief Coordinators</p>
+                <div className="space-y-1">
+                  <a href="tel:9578460005" className="block text-sm text-gray-400 hover:text-white transition-colors">Saihareesh S: 9578460005</a>
+                  <a href="tel:9345585918" className="block text-sm text-gray-400 hover:text-white transition-colors">Jayashree K: 9345585918</a>
+                </div>
+              </li>
+
+              <li className="pt-2 border-t border-white/5">
+                <p className="text-xs text-gray-500 uppercase font-bold mb-2">Staff Coordinators</p>
+                <div className="space-y-1">
+                  <a href="tel:8220221144" className="block text-sm text-gray-400 hover:text-white transition-colors">Prof. B. Jebaranjani</a>
+                  <a href="tel:9042354723" className="block text-sm text-gray-400 hover:text-white transition-colors">Prof. G. Priyadharshini</a>
+                </div>
               </li>
             </ul>
           </div>

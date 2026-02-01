@@ -1,10 +1,11 @@
-import { getHODs, getMainCoordinators } from "@/config/coordinators";
+import { getHODs, getStaffCoordinators, getChiefCoordinators } from "@/config/coordinators";
 import { motion } from "framer-motion";
-import { User, Phone } from "lucide-react";
+import { User, Phone, Award } from "lucide-react";
 
 const CoordinatorPreview = () => {
   const hods = getHODs();
-  const mainCoordinators = getMainCoordinators();
+  const staffCoordinators = getStaffCoordinators();
+  const chiefCoordinators = getChiefCoordinators();
 
   return (
     <section className="py-24 px-4 relative overflow-hidden">
@@ -83,40 +84,75 @@ const CoordinatorPreview = () => {
           ))}
         </div>
 
-        {/* Main Coordinators - Sleek Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {mainCoordinators.map((coordinator, index) => (
-            <motion.div
-              key={coordinator.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 + (index * 0.1) }}
+        {/* Staff Coordinators */}
+        {staffCoordinators.length > 0 && (
+          <div className="mb-16">
+            <motion.h3
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              className="text-center text-2xl font-bold text-white mb-8 border-b border-white/10 pb-4 w-fit mx-auto px-10"
             >
-              <div className="h-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all duration-300 group hover:border-uiverse-sky/30">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-uiverse-sky/20 to-transparent flex items-center justify-center border border-uiverse-sky/20 text-uiverse-sky font-display font-bold text-xl group-hover:scale-110 transition-transform">
-                    {coordinator.name.charAt(0)}
+              Staff Coordinators
+            </motion.h3>
+            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {staffCoordinators.map((coordinator, index) => (
+                <motion.div
+                  key={coordinator.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + (index * 0.1) }}
+                >
+                  <div className="flex items-center gap-4 p-6 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group">
+                    <div className="w-14 h-14 rounded-full bg-uiverse-sky/10 flex items-center justify-center text-uiverse-sky group-hover:scale-110 transition-transform">
+                      <Award className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-white group-hover:text-uiverse-sky transition-colors">{coordinator.name}</h4>
+                      <p className="text-sm text-gray-400">{coordinator.phone}</p>
+                    </div>
                   </div>
-                  <User className="w-4 h-4 text-gray-600 group-hover:text-uiverse-sky transition-colors" />
-                </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
 
-                <h3 className="text-white font-bold text-lg mb-1 group-hover:text-uiverse-sky transition-colors">
-                  {coordinator.name}
-                </h3>
-                <p className="text-xs text-gray-500 uppercase tracking-wider font-bold mb-4">
-                  Main Coordinator
-                </p>
+        {/* Chief Event Coordinators */}
+        {chiefCoordinators.length > 0 && (
+          <div className="mb-16">
+            <motion.h3
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              className="text-center text-2xl font-bold text-white mb-8 border-b border-white/10 pb-4 w-fit mx-auto px-10"
+            >
+              Chief Event Coordinators
+            </motion.h3>
+            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {chiefCoordinators.map((coordinator, index) => (
+                <motion.div
+                  key={coordinator.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + (index * 0.1) }}
+                >
+                  <div className="flex items-center gap-4 p-6 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group">
+                    <div className="w-14 h-14 rounded-full bg-uiverse-green/10 flex items-center justify-center text-uiverse-green group-hover:scale-110 transition-transform">
+                      <User className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-white group-hover:text-uiverse-green transition-colors">{coordinator.name}</h4>
+                      <p className="text-sm text-gray-400">{coordinator.department}</p>
+                      <a href={`tel:${coordinator.phone}`} className="text-sm text-gray-500 hover:text-white flex items-center gap-1 mt-1">
+                        <Phone className="w-3 h-3" /> {coordinator.phone}
+                      </a>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
 
-                <div className="pt-4 border-t border-white/5 flex items-center gap-2 text-sm text-gray-400 group-hover:text-white transition-colors">
-                  <Phone className="w-3 h-3" />
-                  <a href={`tel:${coordinator.phone}`} className="hover:underline opacity-80 hover:opacity-100">
-                    {coordinator.phone}
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
       </div>
     </section>
   );

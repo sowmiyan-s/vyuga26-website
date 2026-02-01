@@ -43,8 +43,8 @@ export const siteConfig = {
   paymentUPI: "symposium@upi",
 
   // Social Links
-  whatsappGroupLink: "https://chat.whatsapp.com/your-group-link",
-  instagramLink: "https://instagram.com/vyuga26",
+  whatsappGroupLink: "https://chat.whatsapp.com/KjaAKqK9NcO1CVl3zrCZA8?mode=gi_t",
+  instagramLink: "https://www.instagram.com/vsbcetc_aids/",
 
   // College Info
   collegeName: "VSB College of Engineering Technical Campus",

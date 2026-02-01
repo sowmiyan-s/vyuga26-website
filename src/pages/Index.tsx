@@ -4,6 +4,7 @@ import PrizePool from "@/components/PrizePool";
 import Countdown from "@/components/Countdown";
 import MarqueeSection from "@/components/Marquee";
 import SpotlightEvents from "@/components/SpotlightEvents";
+import PreRegistrationEvents from "@/components/PreRegistrationEvents";
 import EventCategories from "@/components/EventCategories";
 import PassCard from "@/components/PassCard";
 import CoordinatorPreview from "@/components/CoordinatorPreview";
@@ -20,6 +21,7 @@ const Index = () => {
       <Countdown />
       <MarqueeSection />
       <SpotlightEvents />
+      <PreRegistrationEvents />
       <EventCategories />
       <PassCard />
       <CoordinatorPreview />

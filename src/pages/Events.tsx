@@ -7,6 +7,7 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import { UiverseButton } from "@/components/ui/UiverseButton";
 import { UiverseCard } from "@/components/ui/UiverseCard";
 import { motion, AnimatePresence } from "framer-motion";
+import { IndianRupee } from "lucide-react";
 
 const categories: { id: EventCategory | "all"; label: string }[] = [
   { id: "all", label: "All Events" },
@@ -98,6 +99,11 @@ const Events = () => {
                       alt={event.title}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 brightness-110 contrast-125"
                     />
+                    {event.hasCashPrize && (
+                      <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md border border-yellow-500/50 rounded-full p-2.5 z-10 shadow-[0_0_15px_rgba(234,179,8,0.5)] transition-all duration-500 group-hover:scale-125 group-hover:shadow-[0_0_30px_rgba(255,215,0,0.8)] group-hover:border-yellow-400 group-hover:bg-yellow-500/20" title="Win Cash Prizes!">
+                        <IndianRupee className="w-5 h-5 text-yellow-400 group-hover:text-yellow-200" />
+                      </div>
+                    )}
                   </div>
 
                   <div className="p-6 flex flex-col flex-1">

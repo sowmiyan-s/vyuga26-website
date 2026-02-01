@@ -58,6 +58,23 @@ const Register = () => {
   const isOuterFull = outerCount >= siteConfig.outerCollegeLimit;
   const isInterFull = interCount >= siteConfig.interCollegeLimit;
   const isRegistrationClosed = new Date() > new Date("2026-02-10T23:59:59");
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    if (step === "success") {
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            window.location.href = siteConfig.whatsappGroupLink;
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [step]);
 
   const onSubmitForm = async (data: RegistrationForm) => {
     if (isOuterFull) {
@@ -149,6 +166,44 @@ const Register = () => {
                 <span>⏰</span>
                 Registration closes on <strong className="ml-1">10th February 2026</strong>
               </div>
+
+              {/* Pre-Registration Info Section - High Visibility */}
+              <div className="mt-10 mb-8 relative group overflow-hidden rounded-xl border-2 border-uiverse-sky/50 bg-black/60 shadow-[0_0_30px_rgba(18,184,255,0.2)] animate-in fade-in slide-in-from-bottom-4">
+                {/* Pulsing Background Glow */}
+                <div className="absolute inset-0 bg-uiverse-sky/10 animate-pulse" />
+
+                <div className="relative p-6 text-left z-10">
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3 flex items-center gap-3">
+                    <span className="text-3xl animate-bounce">💡</span>
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-uiverse-sky to-white">
+                      Ideathon & Startup Arena
+                    </span>
+                  </h3>
+
+                  <div className="space-y-4">
+                    <div className="flex flex-col gap-2 text-gray-200 text-lg font-medium">
+                      <p>1. <strong>Submit PPT first</strong> (Free).</p>
+                      <p>2. <strong>Wait</strong> for our selection message.</p>
+                    </div>
+
+                    <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 flex gap-3 items-center">
+                      <span className="text-3xl">🛑</span>
+                      <div>
+                        <p className="text-red-200 font-bold text-xl leading-tight mb-1">
+                          Do NOT Pay Now!
+                        </p>
+                        <p className="text-red-100/90 text-base">
+                          Pay <strong>ONLY IF</strong> you get a <span className="underline font-bold text-white">"Selected"</span> message from us.
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="text-gray-400 text-sm border-t border-white/10 pt-3 mt-2">
+                      For other events, you can register and pay now.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </motion.div>
 
             {isRegistrationClosed && (
@@ -171,21 +226,20 @@ const Register = () => {
                 onClick={() => !isOuterFull && !isRegistrationClosed && setSelectedType("outer")}
                 className={`group ${isOuterFull || isRegistrationClosed ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
               >
-                <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-8 transition-all duration-300 ${
-                  isOuterFull || isRegistrationClosed
-                    ? 'border-gray-600/30'
-                    : 'border-uiverse-green/30 hover:border-uiverse-green/60 hover:shadow-[0_0_40px_rgba(1,220,3,0.2)]'
-                }`}>
+                <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-8 transition-all duration-300 ${isOuterFull || isRegistrationClosed
+                  ? 'border-gray-600/30'
+                  : 'border-uiverse-green/30 hover:border-uiverse-green/60 hover:shadow-[0_0_40px_rgba(1,220,3,0.2)]'
+                  }`}>
                   <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-uiverse-green/20 border border-uiverse-green/40 text-uiverse-green text-xs font-bold">
                     ₹{siteConfig.passPrice}
                   </div>
-                  
+
                   {isOuterFull && (
                     <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-bold">
                       FULL
                     </div>
                   )}
-                  
+
                   <div className="mb-6">
                     <div className="w-16 h-16 rounded-2xl bg-uiverse-green/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                       <span className="text-3xl">🏛️</span>
@@ -213,9 +267,8 @@ const Register = () => {
                     </li>
                   </ul>
 
-                  <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${
-                    isOuterFull || isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-green group-hover:translate-x-2'
-                  }`}>
+                  <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${isOuterFull || isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-green group-hover:translate-x-2'
+                    }`}>
                     <span>{isOuterFull ? 'Registration Full' : 'Continue Registration'}</span>
                     <span>→</span>
                   </div>
@@ -230,21 +283,20 @@ const Register = () => {
                 className={`group ${isInterFull || isRegistrationClosed ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
               >
                 <Link to={isInterFull || isRegistrationClosed ? "#" : "/register-intercollege"} onClick={(e) => (isInterFull || isRegistrationClosed) && e.preventDefault()}>
-                  <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-8 transition-all duration-300 ${
-                    isInterFull || isRegistrationClosed
-                      ? 'border-gray-600/30'
-                      : 'border-uiverse-purple/30 hover:border-uiverse-purple/60 hover:shadow-[0_0_40px_rgba(223,25,251,0.2)]'
-                  }`}>
+                  <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-8 transition-all duration-300 ${isInterFull || isRegistrationClosed
+                    ? 'border-gray-600/30'
+                    : 'border-uiverse-purple/30 hover:border-uiverse-purple/60 hover:shadow-[0_0_40px_rgba(223,25,251,0.2)]'
+                    }`}>
                     <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-uiverse-purple/20 border border-uiverse-purple/40 text-uiverse-purple text-xs font-bold">
                       ₹{siteConfig.interCollegePassPrice}
                     </div>
-                    
+
                     {isInterFull && (
                       <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-bold">
                         FULL
                       </div>
                     )}
-                    
+
                     <div className="mb-6">
                       <div className="w-16 h-16 rounded-2xl bg-uiverse-purple/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                         <span className="text-3xl">🎓</span>
@@ -272,9 +324,8 @@ const Register = () => {
                       </li>
                     </ul>
 
-                    <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${
-                      isInterFull || isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-purple group-hover:translate-x-2'
-                    }`}>
+                    <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${isInterFull || isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-purple group-hover:translate-x-2'
+                      }`}>
                       <span>{isInterFull ? 'Registration Full' : 'Continue Registration'}</span>
                       <span>→</span>
                     </div>
@@ -305,7 +356,7 @@ const Register = () => {
         <div className="max-w-2xl mx-auto">
           {/* Back Button & Badge */}
           <div className="flex items-center justify-between mb-6">
-            <button 
+            <button
               onClick={() => setSelectedType("select")}
               className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"
             >
@@ -314,6 +365,39 @@ const Register = () => {
             <div className="px-4 py-1.5 rounded-full bg-uiverse-green/20 border border-uiverse-green/40 text-uiverse-green text-sm font-bold tracking-wider">
               OUTER COLLEGE
             </div>
+          </div>
+
+          {/* Pre-Registration Info (Compact) */}
+          <div className="mb-8 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+            <p className="text-gray-300 text-sm">
+              <span className="text-blue-400 font-bold block mb-1">📢 Ideathon & Startup Arena:</span>
+              Register here <strong>only if shortlisted</strong>. For other events, you can proceed.
+            </p>
+          </div>
+
+          {/* Mandatory Requirements Warning */}
+          <div className="mb-8 bg-red-900/20 border border-red-500/30 rounded-xl p-5 text-center shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+            <h3 className="font-display font-bold text-xl mb-3 animate-blink-text flex items-center justify-center gap-2">
+              ⚠️ MANDATORY REQUIREMENTS ⚠️
+            </h3>
+            <ul className="text-sm md:text-base space-y-2 text-gray-300 font-medium text-left inline-block">
+              <li className="flex items-start gap-2">
+                <span className="text-red-400 mt-1">➜</span>
+                <span>Bring your <strong>College ID Card</strong> (Compulsory for entry).</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-400 mt-1">➜</span>
+                <span>Keep a <strong>Payment Screenshot</strong> safe for verification.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-400 mt-1">➜</span>
+                <span>Bring <strong>Laptop</strong> for Codathon / PPT submission events.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-400 mt-1">➜</span>
+                <span>Carry <strong>Pendrives</strong> if required for your event.</span>
+              </li>
+            </ul>
           </div>
 
           {/* Progress Steps */}
@@ -546,9 +630,23 @@ const Register = () => {
                   <p className="text-sm text-gray-500 mb-1">Email:</p>
                   <p className="text-white">{formData?.email}</p>
                 </div>
-                <div>
+
+                <div className="mb-8 p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400">
+                  <p className="font-semibold flex items-center justify-center gap-2">
+                    <span className="w-5 h-5 rounded-full border-2 border-current border-t-transparent animate-spin" />
+                    Redirecting to WhatsApp Group in {countdown}s...
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-4">
                   <UiverseButton
                     variant="primary"
+                    onClick={() => window.location.href = siteConfig.whatsappGroupLink}
+                  >
+                    Join Group Now
+                  </UiverseButton>
+                  <UiverseButton
+                    variant="secondary"
                     onClick={() => window.location.href = "/"}
                   >
                     Back to Home

@@ -12,7 +12,7 @@ interface SinglePassCardProps {
 
 const SinglePassCard = ({ type, price, label, linkTo }: SinglePassCardProps) => {
   const isInter = type === "inter";
-  
+
   return (
     <Link to={linkTo}>
       <div className="pass-card-container noselect">
@@ -27,12 +27,12 @@ const SinglePassCard = ({ type, price, label, linkTo }: SinglePassCardProps) => 
               <div className="cyber-lines">
                 <span /><span /><span /><span />
               </div>
-              
+
               {/* College Type Badge */}
               <div className={`college-type-badge ${isInter ? 'inter' : 'outer'}`}>
                 {label}
               </div>
-              
+
               <div className="price-top">₹{price}</div>
               <p id="prompt">CLICK TO REGISTER</p>
               <div className={`title font-sync ${isInter ? 'inter-title' : ''}`}>
@@ -111,7 +111,7 @@ const PassCard = () => {
             <span className="text-white/40 text-sm font-medium">OR</span>
             <div className="w-px h-20 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
           </div>
-          
+
           {/* Mobile Divider */}
           <div className="flex lg:hidden items-center gap-4 w-full max-w-xs">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -135,8 +135,33 @@ const PassCard = () => {
           </motion.div>
         </div>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="text-center mt-12 bg-black/30 backdrop-blur-sm border border-white/5 rounded-xl p-6 max-w-3xl mx-auto"
+      >
+        <p className="text-xl md:text-2xl text-white font-bold mb-4 flex items-center justify-center gap-2">
+          <span>⏰</span> Registration closes on <span className="text-uiverse-pink">10th February 2026</span>
+        </p>
+
+        <div className="bg-uiverse-sky/10 border border-uiverse-sky/20 rounded-lg p-4 text-left">
+          <p className="text-gray-300 text-sm md:text-base leading-relaxed">
+            <strong className="text-uiverse-sky block mb-1">📢 Important for Ideathon & Startup Arena Participants:</strong>
+            If you wish to participate <em>only</em> in <strong>Ideathon</strong> or <strong>Startup Arena</strong>, you must first submit your abstract/PPT.
+            You can register and complete the payment <strong>only after being shortlisted</strong>.
+            Shortlisted teams will receive a separate confirmation.
+            <br /><br />
+            <span className="text-white/60 text-xs text-center block w-full">
+              (For all other events, you can register and pay immediately using the passes above.)
+            </span>
+          </p>
+        </div>
+      </motion.div>
     </section>
   );
 };
+
 
 export default PassCard;

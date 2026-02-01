@@ -1,15 +1,17 @@
-import { getEventCoordinators, getHODs, getMainCoordinators } from "@/config/coordinators";
+import { getEventCoordinators, getHODs, getStaffCoordinators, getChiefCoordinators, getAssociateCoordinators } from "@/config/coordinators";
 import { events } from "@/config/events";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { UiverseCard } from "@/components/ui/UiverseCard";
 import { motion } from "framer-motion";
-import { Phone, Award, Users, GraduationCap } from "lucide-react";
+import { Phone, Award, Users, GraduationCap, CheckCircle2 } from "lucide-react";
 
 const Coordinators = () => {
   const hods = getHODs();
-  const mainCoordinators = getMainCoordinators();
+  const staffCoordinators = getStaffCoordinators();
+  const chiefCoordinators = getChiefCoordinators();
+  const associateCoordinators = getAssociateCoordinators();
   const eventCoordinators = getEventCoordinators();
 
   const getEventNames = (eventIds: string[]): string => {
@@ -86,8 +88,6 @@ const Coordinators = () => {
                       <p className="text-gray-400 mb-6 text-sm leading-relaxed">
                         {hod.department}
                       </p>
-
-
                     </UiverseCard>
                   </motion.div>
                 ))}
@@ -95,17 +95,17 @@ const Coordinators = () => {
             </section>
           )}
 
-          {/* Main Coordinators */}
-          {mainCoordinators.length > 0 && (
+          {/* Staff Coordinators */}
+          {staffCoordinators.length > 0 && (
             <section className="mb-20">
               <div className="flex items-center gap-4 mb-10 justify-center">
                 <span className="h-px w-12 bg-gradient-to-r from-transparent to-uiverse-sky/50" />
-                <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Main Coordinators</h2>
+                <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Staff Coordinators</h2>
                 <span className="h-px w-12 bg-gradient-to-l from-transparent to-uiverse-sky/50" />
               </div>
 
               <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                {mainCoordinators.map((coordinator, index) => (
+                {staffCoordinators.map((coordinator, index) => (
                   <UiverseCard
                     key={coordinator.id}
                     delay={index * 0.1}
@@ -113,7 +113,7 @@ const Coordinators = () => {
                   >
                     <div className="flex items-center gap-6">
                       <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-uiverse-sky/10 to-blue-500/10 flex items-center justify-center border border-uiverse-sky/20 group-hover:border-uiverse-sky/50 transition-colors">
-                        <Users className="w-7 h-7 text-uiverse-sky group-hover:scale-110 transition-transform duration-300" />
+                        <Award className="w-7 h-7 text-uiverse-sky group-hover:scale-110 transition-transform duration-300" />
                       </div>
                       <div className="flex-1 text-left">
                         <h3 className="font-display text-xl font-bold text-white mb-1 group-hover:text-uiverse-sky transition-colors">
@@ -129,6 +129,83 @@ const Coordinators = () => {
                           <Phone className="w-3 h-3" />
                           {coordinator.phone}
                         </a>
+                      </div>
+                    </div>
+                  </UiverseCard>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Chief Coordinators */}
+          {chiefCoordinators.length > 0 && (
+            <section className="mb-20">
+              <div className="flex items-center gap-4 mb-10 justify-center">
+                <span className="h-px w-12 bg-gradient-to-r from-transparent to-uiverse-green/50" />
+                <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Chief Event Coordinators</h2>
+                <span className="h-px w-12 bg-gradient-to-l from-transparent to-uiverse-green/50" />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                {chiefCoordinators.map((coordinator, index) => (
+                  <UiverseCard
+                    key={coordinator.id}
+                    delay={index * 0.1}
+                    className="p-6 border-white/5 hover:border-uiverse-green/30 group"
+                  >
+                    <div className="flex items-center gap-6">
+                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-uiverse-green/10 to-emerald-500/10 flex items-center justify-center border border-uiverse-green/20 group-hover:border-uiverse-green/50 transition-colors">
+                        <Users className="w-7 h-7 text-uiverse-green group-hover:scale-110 transition-transform duration-300" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <h3 className="font-display text-xl font-bold text-white mb-1 group-hover:text-uiverse-green transition-colors">
+                          {coordinator.name}
+                        </h3>
+                        <p className="text-sm text-gray-400 mb-3 font-medium">
+                          {coordinator.department}
+                        </p>
+                        <a
+                          href={`tel:${coordinator.phone}`}
+                          className="text-xs inline-flex items-center gap-1.5 text-gray-500 hover:text-white transition-colors"
+                        >
+                          <Phone className="w-3 h-3" />
+                          {coordinator.phone}
+                        </a>
+                      </div>
+                    </div>
+                  </UiverseCard>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Associate Coordinators */}
+          {associateCoordinators.length > 0 && (
+            <section className="mb-20">
+              <div className="flex items-center gap-4 mb-10 justify-center">
+                <span className="h-px w-12 bg-gradient-to-r from-transparent to-white/50" />
+                <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Associate Event Coordinators</h2>
+                <span className="h-px w-12 bg-gradient-to-l from-transparent to-white/50" />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                {associateCoordinators.map((coordinator, index) => (
+                  <UiverseCard
+                    key={coordinator.id}
+                    delay={index * 0.1}
+                    className="p-6 border-white/5 hover:border-white/30 group"
+                  >
+                    <div className="flex items-center gap-6">
+                      <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-white/50 transition-colors">
+                        <CheckCircle2 className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <h3 className="font-display text-xl font-bold text-white mb-1 group-hover:text-gray-300 transition-colors">
+                          {coordinator.name}
+                        </h3>
+                        <p className="text-sm text-gray-400 mb-1 font-medium">
+                          {coordinator.department}
+                        </p>
                       </div>
                     </div>
                   </UiverseCard>

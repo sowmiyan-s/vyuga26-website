@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { UiverseButton } from "@/components/ui/UiverseButton";
 import { UiverseCard } from "@/components/ui/UiverseCard";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, IndianRupee } from "lucide-react";
 import { motion } from "framer-motion";
 
 const EventDetail = () => {
@@ -81,6 +81,32 @@ const EventDetail = () => {
             </div>
           </motion.div>
 
+          {/* Pre-Registration Flow - Only for Ideathon & Startup Arena */}
+          {event.isPreRegistration && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="mb-12"
+            >
+              <h2 className="font-display text-3xl font-bold mb-6 text-center text-white">Participation Process</h2>
+              <div className="grid md:grid-cols-3 gap-6">
+                {[
+                  { title: "Step 1: Free Submission", desc: "Submit your abstract/PPT and team details via Google Form for free." },
+                  { title: "Step 2: Evaluation", desc: "Our expert panel will review all submissions based on innovation and feasibility." },
+                  { title: "Step 3: Shortlisting", desc: "Only shortlisted teams will be contacted via email/WhatsApp to proceed with payment." }
+                ].map((step, idx) => (
+                  <div key={idx} className="bg-white/5 border border-white/10 p-6 rounded-2xl relative overflow-hidden group hover:bg-white/10 transition-colors">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 font-display text-6xl font-bold">{idx + 1}</div>
+                    <div className="relative z-10">
+                      <h3 className="font-bold text-xl text-uiverse-sky mb-2">{step.title}</h3>
+                      <p className="text-gray-400 text-sm leading-relaxed">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
           <div className="grid md:grid-cols-2 gap-8">
             {/* Rules */}
             <UiverseCard className="p-8 h-full border-white/10">
@@ -105,6 +131,23 @@ const EventDetail = () => {
 
             {/* Event Info */}
             <div className="space-y-8">
+              {/* Prize Pool */}
+              {event.hasCashPrize && (
+                <UiverseCard className="p-8 border-white/10 relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-yellow-500/10 blur-[50px] pointer-events-none group-hover:bg-yellow-500/20 transition-colors" />
+                  <div className="relative z-10">
+                    <h2 className="font-display text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-amber-600 flex items-center gap-3">
+                      <IndianRupee className="w-8 h-8 text-yellow-500" />
+                      Prize Pool
+                    </h2>
+                    <p className="text-xl text-gray-300">
+                      Exciting cash prizes await the winners!
+                      <span className="block text-sm text-yellow-500/80 mt-2 font-mono">🏆 Win Big with {event.title}</span>
+                    </p>
+                  </div>
+                </UiverseCard>
+              )}
+
               {/* Time */}
               <UiverseCard className="p-8 border-white/10">
                 <h2 className="font-display text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-uiverse-green to-emerald-300">
@@ -137,11 +180,9 @@ const EventDetail = () => {
                       </div>
                       <div className="flex-1">
                         <p className="font-bold text-white mb-1">{coordinator.name}</p>
-                        {(coordinator.year || coordinator.section) && (
-                          <p className="text-xs text-gray-300 mb-1">
-                            {coordinator.year ? `III` : ""} AIDS{coordinator.section ? ` - ${coordinator.section}` : ""}
-                          </p>
-                        )}
+                        <p className="text-xs text-gray-300 mb-1">
+                          {coordinator.department}
+                        </p>
                         {coordinator.phone && (
                           <a
                             href={`https://wa.me/91${coordinator.phone}`}
@@ -167,14 +208,41 @@ const EventDetail = () => {
             whileInView={{ opacity: 1, y: 0 }}
             className="mt-16 text-center"
           >
-            <Link to="/register">
-              <UiverseButton
-                variant="primary"
-                className="text-xl px-12 py-6 shadow-[0_0_30px_rgba(223,25,251,0.3)] hover:shadow-[0_0_50px_rgba(223,25,251,0.6)]"
-              >
-                Register for this Event
-              </UiverseButton>
-            </Link>
+            {event.isPreRegistration ? (
+              <div className="flex flex-col items-center gap-6">
+                <a
+                  href={event.submissionLink || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block"
+                >
+                  <UiverseButton
+                    variant="primary"
+                    className="text-xl px-12 py-6 shadow-[0_0_30px_rgba(18,184,255,0.3)] hover:shadow-[0_0_50px_rgba(18,184,255,0.6)] !bg-gradient-to-r !from-uiverse-sky !to-blue-600"
+                  >
+                    Submit PPT (Free) 🚀
+                  </UiverseButton>
+                </a>
+
+                <div className="max-w-2xl mx-auto p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+                  <p className="text-yellow-200 text-sm font-medium">
+                    ⚠️ <span className="underline">IMPORTANT:</span> Payment details and event passes will be shared <strong className="text-white">only with shortlisted teams</strong> via email/WhatsApp.
+                  </p>
+                  <p className="text-yellow-200/70 text-xs mt-1">
+                    Direct payments made without selection confirmation are invalid and will not be refunded.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <Link to="/register">
+                <UiverseButton
+                  variant="primary"
+                  className="text-xl px-12 py-6 shadow-[0_0_30px_rgba(223,25,251,0.3)] hover:shadow-[0_0_50px_rgba(223,25,251,0.6)]"
+                >
+                  Register for this Event
+                </UiverseButton>
+              </Link>
+            )}
           </motion.div>
         </div>
       </main>
