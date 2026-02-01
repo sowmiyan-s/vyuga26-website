@@ -22,6 +22,15 @@ export const coordinators: Coordinator[] = [
     eventIds: [],
     image: "/images/hod1.jpeg",
   },
+  {
+    id: "hod-2",
+    name: "DR. G. NITHYA",
+    role: "hod",
+    department: "AI & DS",
+    phone: "",
+    eventIds: [],
+    image: "/images/hod2.png",
+  },
   // Ideathon Coordinators
   { id: "mathivadhana-p", name: "Mathivadhana P", role: "coordinator", department: "AI & DS", phone: "", eventIds: ["ideathon"] },
   { id: "preethika-mh", name: "Preethika M H", role: "coordinator", department: "AI & DS", phone: "", eventIds: ["ideathon"] },
