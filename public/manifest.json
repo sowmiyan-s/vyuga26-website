@@ -1,0 +1,22 @@
+{
+    "name": "Vyuga 26 - Technical Symposium",
+    "short_name": "Vyuga 26",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#7c3aed",
+    "icons": [
+        {
+            "src": "/vyuga-favicon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/vyuga-favicon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "orientation": "portrait",
+    "description": "National Level Technical Symposium by Dept of AI & DS, VSB College of Engineering Technical Campus"
+}

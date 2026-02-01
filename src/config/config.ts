@@ -22,7 +22,7 @@ export const siteConfig = {
   deletePassword: "del@it",
 
   // Prize Pool
-  prizePool: 20000, // in INR
+  prizePool: 10000, // in INR
 
   // Pass Details
   passPrice: 300, // Outer college price in INR
@@ -52,7 +52,8 @@ export const siteConfig = {
   collegeAddress: "VSB College of Engineering Technical Campus, Kinathukadavu, Coimbatore - 642109, Tamil Nadu",
 
   // Google Maps Embed - Accurate location
-  googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.8544799253516!2d77.0361!3d10.8847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba85a4c73c41c15%3A0x8e13c6c41c15c5c!2sVSB%20College%20of%20Engineering%20Technical%20Campus!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
+  // Google Maps Embed - Accurate location
+  googleMapsEmbed: "https://maps.google.com/maps?q=10.843058,77.017975+(VSB%20College%20of%20Engineering%20Technical%20Campus)&t=&z=14&ie=UTF8&iwloc=B&output=embed",
 
   // Terms of Service
   tosLink: "/terms",
