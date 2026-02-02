@@ -4,9 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { siteConfig } from "@/config/config";
+import { useSettings } from "@/hooks/useSettings";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import RegistrationClosed from "@/components/RegistrationClosed";
 import { UiverseButton } from "@/components/ui/UiverseButton";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -31,6 +33,7 @@ const Register = () => {
   const [formData, setFormData] = useState<RegistrationForm | null>(null);
   const [outerCount, setOuterCount] = useState(0);
   const [interCount, setInterCount] = useState(0);
+  const { settings, loading: settingsLoading } = useSettings();
 
   const {
     register,
@@ -55,9 +58,9 @@ const Register = () => {
     fetchCounts();
   }, []);
 
-  const isOuterFull = outerCount >= siteConfig.outerCollegeLimit;
-  const isInterFull = interCount >= siteConfig.interCollegeLimit;
-  const isRegistrationClosed = new Date() > siteConfig.registrationCloseDateFull;
+  const isOuterFull = outerCount >= settings.outer_college_limit;
+  const isInterFull = interCount >= settings.inter_college_limit;
+  const isRegistrationClosed = !settings.registration_open || new Date() > siteConfig.registrationCloseDateFull;
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
@@ -137,8 +140,42 @@ const Register = () => {
     }
   };
 
+  // Determine why registration is closed
+  const getClosedReason = () => {
+    if (!settings.registration_open) return "closed";
+    if (new Date() > siteConfig.registrationCloseDateFull) return "deadline";
+    return "closed";
+  };
+
   // Type Selection Screen
   if (selectedType === "select") {
+    // Show loading while settings are being fetched
+    if (settingsLoading) {
+      return (
+        <div className="min-h-screen bg-transparent text-white flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      );
+    }
+
+    // Show closed screen if registration is fully closed
+    if (isRegistrationClosed && isOuterFull && isInterFull) {
+      return (
+        <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+            <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-uiverse-purple/20 blur-[120px] rounded-full" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-uiverse-sky/20 blur-[120px] rounded-full" />
+          </div>
+          <Navbar />
+          <main className="pt-32 pb-20 px-4 relative z-10">
+            <RegistrationClosed reason={getClosedReason()} />
+          </main>
+          <Footer />
+          <WhatsAppButton />
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
@@ -162,48 +199,52 @@ const Register = () => {
                 Choose your registration type to continue
               </p>
               {/* Registration Info Banner */}
-              <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm">
-                <span>⏰</span>
-                Registration closes on <strong className="ml-1">{siteConfig.registrationCloseDate}</strong>
-              </div>
+              {!isRegistrationClosed && (
+                <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm">
+                  <span>⏰</span>
+                  Registration closes on <strong className="ml-1">{siteConfig.registrationCloseDate}</strong>
+                </div>
+              )}
 
               {/* Pre-Registration Info Section - High Visibility */}
-              <div className="mt-10 mb-8 relative group overflow-hidden rounded-xl border-2 border-uiverse-sky/50 bg-black/60 shadow-[0_0_30px_rgba(18,184,255,0.2)] animate-in fade-in slide-in-from-bottom-4">
-                {/* Pulsing Background Glow */}
-                <div className="absolute inset-0 bg-uiverse-sky/10 animate-pulse" />
+              {!isRegistrationClosed && (
+                <div className="mt-10 mb-8 relative group overflow-hidden rounded-xl border-2 border-uiverse-sky/50 bg-black/60 shadow-[0_0_30px_rgba(18,184,255,0.2)] animate-in fade-in slide-in-from-bottom-4">
+                  {/* Pulsing Background Glow */}
+                  <div className="absolute inset-0 bg-uiverse-sky/10 animate-pulse" />
 
-                <div className="relative p-6 text-left z-10">
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3 flex items-center gap-3">
-                    <span className="text-3xl animate-bounce">💡</span>
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-uiverse-sky to-white">
-                      Ideathon & Startup Arena
-                    </span>
-                  </h3>
+                  <div className="relative p-6 text-left z-10">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-3 flex items-center gap-3">
+                      <span className="text-3xl animate-bounce">💡</span>
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-uiverse-sky to-white">
+                        Ideathon & Startup Arena
+                      </span>
+                    </h3>
 
-                  <div className="space-y-4">
-                    <div className="flex flex-col gap-2 text-gray-200 text-lg font-medium">
-                      <p>1. <strong>Submit PPT first</strong> (Free).</p>
-                      <p>2. <strong>Wait</strong> for our selection message.</p>
-                    </div>
-
-                    <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 flex gap-3 items-center">
-                      <span className="text-3xl">🛑</span>
-                      <div>
-                        <p className="text-red-200 font-bold text-xl leading-tight mb-1">
-                          Do NOT Pay Now!
-                        </p>
-                        <p className="text-red-100/90 text-base">
-                          Pay <strong>ONLY IF</strong> you get a <span className="underline font-bold text-white">"Selected"</span> message from us.
-                        </p>
+                    <div className="space-y-4">
+                      <div className="flex flex-col gap-2 text-gray-200 text-lg font-medium">
+                        <p>1. <strong>Submit PPT first</strong> (Free).</p>
+                        <p>2. <strong>Wait</strong> for our selection message.</p>
                       </div>
-                    </div>
 
-                    <p className="text-gray-400 text-sm border-t border-white/10 pt-3 mt-2">
-                      For other events, you can register and pay now.
-                    </p>
+                      <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 flex gap-3 items-center">
+                        <span className="text-3xl">🛑</span>
+                        <div>
+                          <p className="text-red-200 font-bold text-xl leading-tight mb-1">
+                            Do NOT Pay Now!
+                          </p>
+                          <p className="text-red-100/90 text-base">
+                            Pay <strong>ONLY IF</strong> you get a <span className="underline font-bold text-white">"Selected"</span> message from us.
+                          </p>
+                        </div>
+                      </div>
+
+                      <p className="text-gray-400 text-sm border-t border-white/10 pt-3 mt-2">
+                        For other events, you can register and pay now.
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </motion.div>
 
             {isRegistrationClosed && (
@@ -251,7 +292,7 @@ const Register = () => {
                       For students from other colleges and institutions
                     </p>
                     <p className="text-uiverse-green text-xs mt-2 font-medium">
-                      {outerCount}/{siteConfig.outerCollegeLimit} spots filled
+                      {outerCount}/{settings.outer_college_limit} spots filled
                     </p>
                   </div>
 
@@ -308,7 +349,7 @@ const Register = () => {
                         For students of VSB College of Engineering
                       </p>
                       <p className="text-uiverse-purple text-xs mt-2 font-medium">
-                        {interCount}/{siteConfig.interCollegeLimit} spots filled
+                        {interCount}/{settings.inter_college_limit} spots filled
                       </p>
                     </div>
 
@@ -336,6 +377,24 @@ const Register = () => {
           </div>
         </main>
 
+        <Footer />
+        <WhatsAppButton />
+      </div>
+    );
+  }
+
+  // Show closed screen if outer college registration is closed or full
+  if (isRegistrationClosed || isOuterFull) {
+    return (
+      <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-uiverse-purple/20 blur-[120px] rounded-full" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-uiverse-sky/20 blur-[120px] rounded-full" />
+        </div>
+        <Navbar />
+        <main className="pt-32 pb-20 px-4 relative z-10">
+          <RegistrationClosed reason={isOuterFull ? "full" : getClosedReason()} type="outer" />
+        </main>
         <Footer />
         <WhatsAppButton />
       </div>

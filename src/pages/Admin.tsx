@@ -244,7 +244,9 @@ const Admin = () => {
               <Settings className="w-5 h-5" />
               Site Settings
             </h2>
-            <div className="grid md:grid-cols-2 gap-6">
+            
+            {/* Toggle Controls */}
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div className="flex items-center justify-between p-4 bg-muted/30 rounded-xl">
                 <div>
                   <p className="font-medium text-foreground">Maintenance Mode</p>
@@ -268,14 +270,84 @@ const Admin = () => {
                 />
               </div>
             </div>
-            <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl flex items-start gap-3">
+
+            {/* Registration Limits */}
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div className="p-4 bg-uiverse-green/10 border border-uiverse-green/30 rounded-xl">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <p className="font-medium text-foreground">Outer College Limit</p>
+                    <p className="text-sm text-muted-foreground">
+                      Current: {stats.outer.total}/{settings.outer_college_limit}
+                    </p>
+                  </div>
+                  <Building2 className="w-5 h-5 text-uiverse-green" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    min={stats.outer.total}
+                    value={settings.outer_college_limit}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val) && val >= stats.outer.total) {
+                        updateSetting("outer_college_limit", val);
+                      }
+                    }}
+                    className="w-24 text-center"
+                  />
+                  <span className="text-sm text-muted-foreground">max registrations</span>
+                </div>
+                {stats.outer.total >= settings.outer_college_limit && (
+                  <p className="text-xs text-red-400 mt-2 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
+                    Limit reached - registration closed automatically
+                  </p>
+                )}
+              </div>
+              <div className="p-4 bg-uiverse-purple/10 border border-uiverse-purple/30 rounded-xl">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <p className="font-medium text-foreground">Inter College Limit</p>
+                    <p className="text-sm text-muted-foreground">
+                      Current: {stats.inter.total}/{settings.inter_college_limit}
+                    </p>
+                  </div>
+                  <Users className="w-5 h-5 text-uiverse-purple" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    min={stats.inter.total}
+                    value={settings.inter_college_limit}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val) && val >= stats.inter.total) {
+                        updateSetting("inter_college_limit", val);
+                      }
+                    }}
+                    className="w-24 text-center"
+                  />
+                  <span className="text-sm text-muted-foreground">max registrations</span>
+                </div>
+                {stats.inter.total >= settings.inter_college_limit && (
+                  <p className="text-xs text-red-400 mt-2 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
+                    Limit reached - registration closed automatically
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Info Banner */}
+            <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm text-yellow-200">
                   Registration closes on <strong>{siteConfig.registrationCloseDate}</strong>
                 </p>
                 <p className="text-xs text-yellow-200/70 mt-1">
-                  Limits: Outer College - {stats.outer.total}/{siteConfig.outerCollegeLimit} | Inter College - {stats.inter.total}/{siteConfig.interCollegeLimit}
+                  Registration will auto-close when limits are reached or deadline passes.
                 </p>
               </div>
             </div>
@@ -326,7 +398,7 @@ const Admin = () => {
               }`}
           >
             <Building2 className="w-5 h-5" />
-            Outer College ({stats.outer.total}/{siteConfig.outerCollegeLimit})
+            Outer College ({stats.outer.total}/{settings.outer_college_limit})
           </button>
           <button
             onClick={() => setCollegeType("inter")}
@@ -336,7 +408,7 @@ const Admin = () => {
               }`}
           >
             <Users className="w-5 h-5" />
-            Inter College ({stats.inter.total}/{siteConfig.interCollegeLimit})
+            Inter College ({stats.inter.total}/{settings.inter_college_limit})
           </button>
         </div>
 

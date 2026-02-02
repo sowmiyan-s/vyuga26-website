@@ -5,12 +5,19 @@ import { toast } from "sonner";
 export interface SystemSettings {
     maintenance_mode: boolean;
     registration_open: boolean;
+    outer_college_limit: number;
+    inter_college_limit: number;
 }
+
+const DEFAULT_OUTER_LIMIT = 300;
+const DEFAULT_INTER_LIMIT = 100;
 
 export const useSettings = () => {
     const [settings, setSettings] = useState<SystemSettings>({
         maintenance_mode: false,
         registration_open: true,
+        outer_college_limit: DEFAULT_OUTER_LIMIT,
+        inter_college_limit: DEFAULT_INTER_LIMIT,
     });
     const [loading, setLoading] = useState(true);
 
@@ -29,6 +36,8 @@ export const useSettings = () => {
                 const newSettings: SystemSettings = {
                     maintenance_mode: false,
                     registration_open: true,
+                    outer_college_limit: DEFAULT_OUTER_LIMIT,
+                    inter_college_limit: DEFAULT_INTER_LIMIT,
                 };
                 
                 data.forEach((item) => {
@@ -37,6 +46,12 @@ export const useSettings = () => {
                     }
                     if (item.key === "registration_open") {
                         newSettings.registration_open = item.value === true || item.value === "true";
+                    }
+                    if (item.key === "outer_college_limit") {
+                        newSettings.outer_college_limit = typeof item.value === "number" ? item.value : parseInt(String(item.value)) || DEFAULT_OUTER_LIMIT;
+                    }
+                    if (item.key === "inter_college_limit") {
+                        newSettings.inter_college_limit = typeof item.value === "number" ? item.value : parseInt(String(item.value)) || DEFAULT_INTER_LIMIT;
                     }
                 });
                 setSettings(newSettings);
@@ -48,26 +63,53 @@ export const useSettings = () => {
         }
     }, []);
 
-    const updateSetting = async (key: keyof SystemSettings, value: boolean) => {
+    const updateSetting = async (key: keyof SystemSettings, value: boolean | number) => {
         try {
             // Optimistic update
             setSettings((prev) => ({ ...prev, [key]: value }));
 
-            // Use update instead of upsert since the records already exist
-            const { error } = await supabase
+            // Check if setting exists first
+            const { data: existingData } = await supabase
                 .from("site_settings")
-                .update({ 
-                    value: value,
-                    updated_at: new Date().toISOString()
-                })
-                .eq("key", key);
+                .select("key")
+                .eq("key", key)
+                .maybeSingle();
+
+            let error;
+            if (existingData) {
+                // Update existing record
+                const result = await supabase
+                    .from("site_settings")
+                    .update({ 
+                        value: value,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq("key", key);
+                error = result.error;
+            } else {
+                // Insert new record
+                const result = await supabase
+                    .from("site_settings")
+                    .insert({ 
+                        key: key,
+                        value: value,
+                        updated_at: new Date().toISOString()
+                    });
+                error = result.error;
+            }
 
             if (error) {
                 console.error("Update error:", error);
                 throw error;
             }
 
-            toast.success(`${key === 'maintenance_mode' ? 'Maintenance mode' : 'Registration status'} updated!`);
+            const labels: Record<string, string> = {
+                maintenance_mode: "Maintenance mode",
+                registration_open: "Registration status",
+                outer_college_limit: "Outer college limit",
+                inter_college_limit: "Inter college limit",
+            };
+            toast.success(`${labels[key] || key} updated!`);
         } catch (err) {
             console.error("Failed to update setting:", err);
             toast.error("Failed to update setting");
