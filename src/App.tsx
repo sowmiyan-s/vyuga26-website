@@ -12,6 +12,7 @@ import About from "./pages/About";
 import Register from "./pages/Register";
 import RegisterInterCollege from "./pages/RegisterInterCollege";
 import Admin from "./pages/Admin";
+import FAQ from "./pages/FAQ";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import Maintenance from "./pages/Maintenance";
@@ -46,6 +47,7 @@ const AppContent = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/register-intercollege" element={<RegisterInterCollege />} />
       <Route path="/admin" element={<Admin />} />
+      <Route path="/faq" element={<FAQ />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

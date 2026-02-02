@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import * as XLSX from "xlsx";
 import { useSettings } from "@/hooks/useSettings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Search, Check, Eye, X, Users, Building2, BarChart3, Trash2, Settings, AlertTriangle } from "lucide-react";
+import { Search, Check, Eye, X, Users, Building2, BarChart3, Trash2, Settings, AlertTriangle, FileDown } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { siteConfig } from "@/config/config";
 
@@ -178,6 +179,52 @@ const Admin = () => {
     }
   };
 
+  const handleExport = () => {
+    try {
+      const wb = XLSX.utils.book_new();
+
+      const processData = (data: Registration[], type: "inter" | "outer") => {
+        return data.map((r) => ({
+          Name: r.name,
+          Email: r.email,
+          Phone: r.phone,
+          ...(type === "outer" ? { College: r.college_name } : { "Register No": r.register_number }),
+          Year: r.year,
+          Department: r.department,
+          "Payment Status": r.payment_verified ? "Verified" : "Pending",
+          "Entry Status": r.entry_confirmed ? "Confirmed" : "Pending",
+          "Registration Date": new Date(r.created_at).toLocaleDateString(),
+        }));
+      };
+
+      // Inter College
+      const interPending = interRegistrations.filter((r) => !r.payment_verified);
+      const interVerified = interRegistrations.filter((r) => r.payment_verified && !r.entry_confirmed);
+      const interConfirmed = interRegistrations.filter((r) => r.entry_confirmed);
+
+      if (interPending.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(interPending, "inter")), "Inter - New Reg");
+      if (interVerified.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(interVerified, "inter")), "Inter - Verified");
+      if (interConfirmed.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(interConfirmed, "inter")), "Inter - Confirmed");
+
+      // Outer College
+      const outerPending = registrations.filter((r) => !r.payment_verified);
+      const outerVerified = registrations.filter((r) => r.payment_verified && !r.entry_confirmed);
+      const outerConfirmed = registrations.filter((r) => r.entry_confirmed);
+
+      if (outerPending.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(outerPending, "outer")), "Outer - New Reg");
+      if (outerVerified.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(outerVerified, "outer")), "Outer - Verified");
+      if (outerConfirmed.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(outerConfirmed, "outer")), "Outer - Confirmed");
+
+      // Save file
+      const date = new Date().toISOString().split('T')[0];
+      XLSX.writeFile(wb, `Symposium_Registrations_${date}.xlsx`);
+      toast.success("Export successful!");
+    } catch (error) {
+      console.error("Export failed:", error);
+      toast.error("Failed to export data");
+    }
+  };
+
   const currentData = collegeType === "outer" ? registrations : interRegistrations;
   const isInter = collegeType === "inter";
 
@@ -227,6 +274,10 @@ const Admin = () => {
             Admin Dashboard
           </h1>
           <div className="flex gap-2">
+            <Button variant="outline" onClick={handleExport} className="gap-2">
+              <FileDown className="w-4 h-4" />
+              Export Excel
+            </Button>
             <Button variant="outline" onClick={() => setShowSettings(!showSettings)}>
               <Settings className="w-4 h-4 mr-2" />
               Settings
@@ -244,7 +295,7 @@ const Admin = () => {
               <Settings className="w-5 h-5" />
               Site Settings
             </h2>
-            
+
             {/* Toggle Controls */}
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div className="flex items-center justify-between p-4 bg-muted/30 rounded-xl">

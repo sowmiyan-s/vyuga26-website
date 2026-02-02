@@ -111,7 +111,7 @@ const HeroSection = () => {
         >
           {/* Main Title with Letter Reveal */}
           <h1
-            className="font-display text-7xl sm:text-8xl md:text-[10rem] font-black tracking-tighter text-white mix-blend-screen glitch-text"
+            className="font-display text-5xl sm:text-7xl md:text-[8rem] lg:text-[10rem] font-black tracking-tighter text-white mix-blend-screen glitch-text"
             data-text={siteConfig.eventName}
           >
             <TextReveal
@@ -154,7 +154,7 @@ const HeroSection = () => {
               transition={{ delay: 1.2, duration: 0.6 }}
               className="h-[2px] bg-gradient-to-r from-transparent to-primary hidden md:block"
             />
-            <p className="text-4xl md:text-6xl font-bold text-white font-display tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+            <p className="text-2xl sm:text-4xl md:text-6xl font-bold text-white font-display tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
               {siteConfig.eventDate}
             </p>
             <motion.div

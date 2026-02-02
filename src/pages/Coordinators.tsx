@@ -42,7 +42,7 @@ const Coordinators = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="font-display text-3xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-uiverse-purple via-white to-uiverse-sky drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+              className="font-display text-3xl sm:text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-uiverse-purple via-white to-uiverse-sky drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
             >
               Coordinators
             </motion.h1>

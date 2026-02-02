@@ -192,7 +192,7 @@ const Register = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-12"
             >
-              <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+              <h1 className="font-display text-3xl md:text-5xl font-bold text-white mb-4">
                 Register for {siteConfig.eventName}
               </h1>
               <p className="text-gray-400 text-lg">
