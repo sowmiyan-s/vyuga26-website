@@ -1,4 +1,4 @@
-// Events configuration for SIRAGU 26
+// Events configuration for VYUGA 26
 
 import { siteConfig } from "./config";
 

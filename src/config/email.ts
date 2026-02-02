@@ -1,4 +1,4 @@
-// Email configuration for SIRAGU 26
+// Email configuration for VYUGA 26
 // Configure your Gmail SMTP settings here
 
 export const emailConfig = {

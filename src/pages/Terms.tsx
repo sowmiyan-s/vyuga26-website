@@ -27,7 +27,7 @@ const Terms = () => {
           <UiverseCard className="p-8 md:p-12 prose prose-invert max-w-none border-white/10">
             <h2 className="text-xl font-bold mb-4 text-uiverse-sky">1. Acceptance of Terms</h2>
             <p className="text-gray-400 mb-6">
-              By registering for SIRAGU 26, you agree to abide by the rules and regulations
+              By registering for VYUGA 26, you agree to abide by the rules and regulations
               set forth by the organizing committee.
             </p>
 
