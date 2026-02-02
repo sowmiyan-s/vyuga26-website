@@ -1,4 +1,4 @@
-import { Construction, Calendar, MapPin, Clock, Sparkles } from "lucide-react";
+import { Construction } from "lucide-react";
 import { siteConfig } from "@/config/config";
 
 const Maintenance = () => {
@@ -33,25 +33,28 @@ const Maintenance = () => {
                         We'll be back online shortly!
                     </p>
 
-                    {/* Event Info */}
+                    {/* Social Links for Updates */}
                     <div className="bg-muted/30 rounded-2xl p-6 mb-8 border border-white/5">
-                        <div className="flex items-center justify-center gap-2 mb-4">
-                            <Sparkles className="w-5 h-5 text-primary" />
-                            <span className="text-primary font-semibold">{siteConfig.eventName}</span>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                            <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                                <Calendar className="w-4 h-4 text-neon-cyan" />
-                                <span>{siteConfig.eventDate}</span>
-                            </div>
-                            <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                                <MapPin className="w-4 h-4 text-uiverse-green" />
-                                <span>{siteConfig.collegeLocation}</span>
-                            </div>
-                            <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                                <Clock className="w-4 h-4 text-uiverse-purple" />
-                                <span>Opening Soon</span>
-                            </div>
+                        <p className="text-muted-foreground mb-4">Stay updated on our progress:</p>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <a 
+                                href={siteConfig.whatsappGroupLink} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 px-5 py-3 bg-uiverse-green/20 hover:bg-uiverse-green/30 border border-uiverse-green/40 rounded-xl text-uiverse-green font-medium transition-all hover:scale-105"
+                            >
+                                <span className="w-2 h-2 bg-uiverse-green rounded-full" />
+                                Join WhatsApp Group
+                            </a>
+                            <a 
+                                href={siteConfig.instagramLink} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 px-5 py-3 bg-uiverse-purple/20 hover:bg-uiverse-purple/30 border border-uiverse-purple/40 rounded-xl text-uiverse-purple font-medium transition-all hover:scale-105"
+                            >
+                                <span className="w-2 h-2 bg-uiverse-purple rounded-full" />
+                                Follow on Instagram
+                            </a>
                         </div>
                     </div>
 
