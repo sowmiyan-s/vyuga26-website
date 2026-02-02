@@ -41,10 +41,10 @@ const About = () => {
               Discover Excellence
             </span>
             <h1 className="font-display text-4xl md:text-7xl font-bold text-white mb-6 drop-shadow-2xl">
-              About <span className="text-transparent bg-clip-text bg-gradient-to-r from-uiverse-purple to-uiverse-sky">Siragu 26</span>
+              About <span className="text-transparent bg-clip-text bg-gradient-to-r from-uiverse-purple to-uiverse-sky">Vyuga 26</span>
             </h1>
             <p className="text-gray-300 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto font-light">
-              Siragu 26 isn’t just another symposium—it’s a celebration of our students’ drive, curiosity, and the friendships that make our department unique. Every year, our campus comes alive with the energy of new ideas, late-night project sessions, and the laughter of friends working together. This is where future engineers, data scientists, and innovators find their voice and build memories that last a lifetime.
+              Vyuga 26 isn’t just another symposium—it’s a celebration of our students’ drive, curiosity, and the friendships that make our department unique. Every year, our campus comes alive with the energy of new ideas, late-night project sessions, and the laughter of friends working together. This is where future engineers, data scientists, and innovators find their voice and build memories that last a lifetime.
             </p>
           </motion.div>
         </div>

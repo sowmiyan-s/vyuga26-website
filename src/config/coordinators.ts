@@ -149,6 +149,13 @@ export const coordinators: Coordinator[] = [
   { id: "kokiladevi-a", name: "Kokiladevi A", role: "coordinator", department: "III AI & DS - A", phone: "", eventIds: ["tech-architecture"] },
   { id: "pilo-francy-f", name: "Pilo Francy F", role: "coordinator", department: "III AI & DS - B", phone: "", eventIds: ["tech-architecture"] },
   { id: "shivani-t", name: "Shivani T", role: "coordinator", department: "III AI & DS - B", phone: "", eventIds: ["tech-architecture"] },
+
+  // Esports Coordinators
+  { id: "prasanth", name: "Prasanth", role: "coordinator", department: "III AI & DS - B", phone: "", eventIds: ["e-sports"] },
+  { id: "sebin", name: "Sebin", role: "coordinator", department: "III AI & DS - B", phone: "", eventIds: ["e-sports"] },
+  { id: "harshit", name: "Harshit", role: "coordinator", department: "III AI & DS - A", phone: "", eventIds: ["e-sports"] },
+  { id: "rishvan", name: "Rishvan", role: "coordinator", department: "III AI & DS - B", phone: "", eventIds: ["e-sports"] },
+  { id: "nandha-kumar", name: "Nandha Kumar", role: "coordinator", department: "III AI & DS - B", phone: "", eventIds: ["e-sports"] },
 ];
 
 export const getHODs = (): Coordinator[] => {
