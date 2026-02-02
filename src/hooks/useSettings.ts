@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -14,22 +14,30 @@ export const useSettings = () => {
     });
     const [loading, setLoading] = useState(true);
 
-    const fetchSettings = async () => {
+    const fetchSettings = useCallback(async () => {
         try {
             const { data, error } = await supabase
-                .from("site_settings" as any) // Type assertion until schema is updated
-                .select("*");
+                .from("site_settings")
+                .select("key, value");
 
             if (error) {
                 console.error("Error fetching settings:", error);
                 return;
             }
 
-            if (data) {
-                const newSettings = { ...settings };
-                data.forEach((item: any) => {
-                    if (item.key === "maintenance_mode") newSettings.maintenance_mode = item.value;
-                    if (item.key === "registration_open") newSettings.registration_open = item.value;
+            if (data && data.length > 0) {
+                const newSettings: SystemSettings = {
+                    maintenance_mode: false,
+                    registration_open: true,
+                };
+                
+                data.forEach((item) => {
+                    if (item.key === "maintenance_mode") {
+                        newSettings.maintenance_mode = item.value === true || item.value === "true";
+                    }
+                    if (item.key === "registration_open") {
+                        newSettings.registration_open = item.value === true || item.value === "true";
+                    }
                 });
                 setSettings(newSettings);
             }
@@ -38,23 +46,31 @@ export const useSettings = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     const updateSetting = async (key: keyof SystemSettings, value: boolean) => {
         try {
             // Optimistic update
             setSettings((prev) => ({ ...prev, [key]: value }));
 
+            // Use update instead of upsert since the records already exist
             const { error } = await supabase
-                .from("site_settings" as any)
-                .upsert({ key, value });
+                .from("site_settings")
+                .update({ 
+                    value: value,
+                    updated_at: new Date().toISOString()
+                })
+                .eq("key", key);
 
-            if (error) throw error;
+            if (error) {
+                console.error("Update error:", error);
+                throw error;
+            }
 
-            toast.success(`Setting updated: ${key.replace('_', ' ')}`);
+            toast.success(`${key === 'maintenance_mode' ? 'Maintenance mode' : 'Registration status'} updated!`);
         } catch (err) {
+            console.error("Failed to update setting:", err);
             toast.error("Failed to update setting");
-            console.error(err);
             // Revert on error
             fetchSettings();
         }
@@ -62,7 +78,7 @@ export const useSettings = () => {
 
     useEffect(() => {
         fetchSettings();
-    }, []);
+    }, [fetchSettings]);
 
-    return { settings, updateSetting, loading };
+    return { settings, updateSetting, loading, refetch: fetchSettings };
 };
