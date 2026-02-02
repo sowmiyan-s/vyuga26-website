@@ -4,9 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { siteConfig } from "@/config/config";
+import { useSettings } from "@/hooks/useSettings";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import RegistrationClosed from "@/components/RegistrationClosed";
 import { UiverseButton } from "@/components/ui/UiverseButton";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,6 +32,7 @@ const RegisterInterCollege = () => {
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState<InterCollegeForm | null>(null);
   const [interCount, setInterCount] = useState(0);
+  const { settings, loading: settingsLoading } = useSettings();
 
   const {
     register,
@@ -50,8 +53,8 @@ const RegisterInterCollege = () => {
     fetchCount();
   }, []);
 
-  const isInterFull = interCount >= siteConfig.interCollegeLimit;
-  const isRegistrationClosed = new Date() > siteConfig.registrationCloseDateFull;
+  const isInterFull = interCount >= settings.inter_college_limit;
+  const isRegistrationClosed = !settings.registration_open || new Date() > siteConfig.registrationCloseDateFull;
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
@@ -135,6 +138,41 @@ const RegisterInterCollege = () => {
       setUploading(false);
     }
   };
+
+  // Determine why registration is closed
+  const getClosedReason = (): "closed" | "full" | "deadline" => {
+    if (isInterFull) return "full";
+    if (!settings.registration_open) return "closed";
+    if (new Date() > siteConfig.registrationCloseDateFull) return "deadline";
+    return "closed";
+  };
+
+  // Show loading while settings are being fetched
+  if (settingsLoading) {
+    return (
+      <div className="min-h-screen bg-transparent text-white flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Show closed screen if registration is closed
+  if (isRegistrationClosed || isInterFull) {
+    return (
+      <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-uiverse-purple/30 blur-[120px] rounded-full" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full" />
+        </div>
+        <Navbar />
+        <main className="pt-32 pb-20 px-4 relative z-10">
+          <RegistrationClosed reason={getClosedReason()} type="inter" />
+        </main>
+        <Footer />
+        <WhatsAppButton />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
