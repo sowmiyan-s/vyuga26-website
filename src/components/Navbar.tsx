@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { siteConfig } from "@/config/config";
 import { Menu, X, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 
@@ -100,7 +101,7 @@ const Navbar = () => {
 
             {/* Download Brochure Button */}
             <a
-              href="/brochure.pdf"
+              href={siteConfig.brochureLink}
               target="_blank"
               rel="noopener noreferrer"
               className="ml-4"
@@ -215,7 +216,7 @@ const Navbar = () => {
                   className="pt-4"
                 >
                   <a
-                    href="/brochure.pdf"
+                    href={siteConfig.brochureLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setIsOpen(false)}

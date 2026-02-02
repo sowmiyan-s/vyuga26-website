@@ -59,6 +59,9 @@ export const siteConfig = {
   // Terms of Service
   tosLink: "/terms",
 
+  // Brochure
+  brochureLink: "https://drive.google.com/file/d/1og_dpeSQAThRQj7RUUaLTYHGQ9IjdHFI/view?usp=sharing",
+
   // Event Categories
   eventCategories: [
     {

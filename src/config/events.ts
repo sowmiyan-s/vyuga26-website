@@ -44,7 +44,7 @@ export const events: Event[] = [
     isSpotlight: true,
     hasCashPrize: true,
     isPreRegistration: true,
-    submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLSf...", // Placeholder - User to update
+    submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLSeO7HIiZ-oI2spHVyGf7oS2Dt55A0UgFHcicYbnH883yiYUhg/viewform",
   },
   {
     id: "project-expo",
