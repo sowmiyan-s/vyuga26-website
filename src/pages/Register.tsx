@@ -57,7 +57,7 @@ const Register = () => {
 
   const isOuterFull = outerCount >= siteConfig.outerCollegeLimit;
   const isInterFull = interCount >= siteConfig.interCollegeLimit;
-  const isRegistrationClosed = new Date() > new Date("2026-02-10T23:59:59");
+  const isRegistrationClosed = new Date() > siteConfig.registrationCloseDateFull;
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
@@ -164,7 +164,7 @@ const Register = () => {
               {/* Registration Info Banner */}
               <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm">
                 <span>⏰</span>
-                Registration closes on <strong className="ml-1">10th February 2026</strong>
+                Registration closes on <strong className="ml-1">{siteConfig.registrationCloseDate}</strong>
               </div>
 
               {/* Pre-Registration Info Section - High Visibility */}

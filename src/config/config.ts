@@ -5,11 +5,12 @@ export const siteConfig = {
   eventName: "Vyuga 26",
   departmentName: "Department of Artificial Intelligence and Data Science",
   tagline: "presents",
-  eventDate: "14/02/2026",
-  eventDateFull: new Date("2026-02-14T09:00:00"),
+  eventDate: "17/02/2026",
+  eventDateFull: new Date("2026-02-17T09:00:00"),
 
   // Registration Limits
-  registrationCloseDate: "10/02/2026",
+  registrationCloseDate: "12/02/2026",
+  registrationCloseDateFull: new Date("2026-02-12T23:59:59"),
   outerCollegeLimit: 300,
   interCollegeLimit: 100,
 
@@ -22,7 +23,7 @@ export const siteConfig = {
   deletePassword: "del@it",
 
   // Prize Pool
-  prizePool: 10000, // in INR
+  prizePool: 100000, // in INR
 
   // Pass Details
   passPrice: 300, // Outer college price in INR

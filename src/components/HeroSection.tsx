@@ -27,16 +27,16 @@ const HeroBackground = () => {
       <motion.div
         animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
         transition={{ duration: 8, repeat: Infinity }}
-        className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-uiverse-purple/20 rounded-full blur-[100px]"
+        className="hidden md:block absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-uiverse-purple/20 rounded-full blur-[100px]"
       />
       <motion.div
         animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
         transition={{ duration: 10, repeat: Infinity, delay: 1 }}
-        className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-uiverse-sky/20 rounded-full blur-[100px]"
+        className="hidden md:block absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-uiverse-sky/20 rounded-full blur-[100px]"
       />
 
       {/* Kinetic Data Rings */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-10 md:opacity-20">
+      <div className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] opacity-10 md:opacity-20">
         <motion.div
           style={{ rotate: rotate1 }}
           animate={{ rotate: 360 }}
@@ -59,7 +59,7 @@ const HeroBackground = () => {
       {icons.map(({ Icon, x, y, size, delay }, index) => (
         <motion.div
           key={index}
-          className="absolute text-white/10"
+          className="hidden md:block absolute text-white/10"
           style={{ left: x, top: y }}
           initial={{ opacity: 0, scale: 0 }}
           animate={{

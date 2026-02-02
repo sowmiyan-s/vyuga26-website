@@ -42,9 +42,13 @@ const PreRegistrationEvents = () => {
                             key={event.id}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.2 }}
+                            viewport={{ once: true, margin: "-50px" }}
+                            transition={{ delay: index * 0.1, duration: 0.4 }}
                         >
-                            <Link to={`/events/${event.id}`} className="group block h-full">
+                            <Link to={`/events/${event.id}`}
+                                className="group block h-full"
+                                title={`View details for ${event.title} - Click to register`}
+                                aria-label={`View details for ${event.title}`}>
                                 <UiverseCard className="h-full border-white/10 group-hover:border-uiverse-sky/50 transition-all duration-300 relative overflow-hidden">
 
                                     {/* Floating Badge */}
@@ -54,13 +58,13 @@ const PreRegistrationEvents = () => {
                                         </span>
                                     </div>
 
-                                    <div className="flex flex-col h-full">
+                                    <div className="flex flex-col h-full p-6">
                                         {/* Image Header */}
                                         <div className="relative aspect-video overflow-hidden rounded-xl mb-6 border border-white/5 bg-black/50">
                                             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10" />
                                             <img
                                                 src={event.image}
-                                                alt={event.title}
+                                                alt={`${event.title} event poster`}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                                             />
                                         </div>
@@ -76,7 +80,7 @@ const PreRegistrationEvents = () => {
                                                 </h3>
                                             </div>
 
-                                            <p className="text-gray-400 text-sm mb-6 line-clamp-2">
+                                            <p className="text-gray-400 text-sm mb-6 line-clamp-3">
                                                 {event.description}
                                             </p>
 

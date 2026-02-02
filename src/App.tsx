@@ -1,4 +1,5 @@
 import { Toaster } from "@/components/ui/toaster";
+import { MotionConfig } from "framer-motion";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -52,7 +53,12 @@ const AppContent = () => {
 };
 
 const App = () => {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
   useEffect(() => {
+    // Disable smooth scrolling on mobile to reduce lag
+    if (isMobile) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -69,22 +75,23 @@ const App = () => {
     return () => {
       lenis.destroy();
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <CustomCursor />
-          <BackgroundWrapper>
-            <AppContent />
-          </BackgroundWrapper>
-        </BrowserRouter>
-      </TooltipProvider>
+      <MotionConfig transition={isMobile ? { duration: 0 } : undefined} reducedMotion={isMobile ? "always" : "user"}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            {!isMobile && <CustomCursor />}
+            <BackgroundWrapper>
+              <AppContent />
+            </BackgroundWrapper>
+          </BrowserRouter>
+        </TooltipProvider>
+      </MotionConfig>
     </QueryClientProvider>
   );
 };
-
 export default App;

@@ -51,7 +51,7 @@ const RegisterInterCollege = () => {
   }, []);
 
   const isInterFull = interCount >= siteConfig.interCollegeLimit;
-  const isRegistrationClosed = new Date() > new Date("2026-02-10T23:59:59");
+  const isRegistrationClosed = new Date() > siteConfig.registrationCloseDateFull;
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {

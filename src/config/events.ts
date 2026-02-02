@@ -1,5 +1,7 @@
 // Events configuration for SIRAGU 26
 
+import { siteConfig } from "./config";
+
 export type EventCategory = "technical" | "non-technical";
 
 export interface Event {
@@ -56,7 +58,7 @@ export const events: Event[] = [
       "Project domains: IoT or Software-based solutions",
       "Offline presentation must be in English",
       "Equal contribution from all team members is mandatory",
-      "Preliminary demo (photo/video) submission deadline: 7th February",
+      `Preliminary demo (photo/video) submission deadline: ${siteConfig.registrationCloseDate}`,
       "Evaluation Criteria: Innovation and originality, Technical feasibility, Presentation clarity"
     ],
     time: "10:00 AM – 1:00 PM",

@@ -21,7 +21,7 @@ const About = () => {
       <Navbar />
 
       {/* Hero Section with Parallax Feel */}
-      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden py-20">
         <div className="absolute inset-0 z-0">
           <img
             src={IMAGES.campus}
@@ -40,7 +40,7 @@ const About = () => {
             <span className="px-4 py-1.5 rounded-full border border-uiverse-sky/30 bg-uiverse-sky/10 text-uiverse-sky text-sm font-bold uppercase tracking-[0.2em] mb-6 inline-block backdrop-blur-md">
               Discover Excellence
             </span>
-            <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-2xl">
+            <h1 className="font-display text-4xl md:text-7xl font-bold text-white mb-6 drop-shadow-2xl">
               About <span className="text-transparent bg-clip-text bg-gradient-to-r from-uiverse-purple to-uiverse-sky">Siragu 26</span>
             </h1>
             <p className="text-gray-300 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto font-light">
@@ -53,7 +53,7 @@ const About = () => {
       <main className="relative z-10">
 
         {/* Stats Grid */}
-        <section className="py-12 -mt-20 relative z-20 px-4">
+        <section className="py-12 relative z-20 px-4">
           <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: "Established", value: aboutUs.department.established, icon: University, color: "text-uiverse-purple" },
@@ -79,57 +79,42 @@ const About = () => {
         {/* Department Section - Zig Zag Layout */}
         <section className="py-20 px-4">
           <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="flex flex-col items-center w-full">
               <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                className="relative"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="space-y-6 max-w-4xl mx-auto text-center w-full"
               >
-                <div className="absolute -inset-4 bg-gradient-to-r from-uiverse-purple to-uiverse-sky opacity-20 blur-2xl rounded-3xl" />
-                <img
-                  src={IMAGES.lab}
-                  alt="AI Laboratory"
-                  className="relative rounded-3xl border border-white/10 shadow-2xl w-full h-[400px] object-cover"
-                />
-                <div className="absolute -bottom-6 -right-6 bg-black border border-white/10 p-4 rounded-xl shadow-xl max-w-xs backdrop-blur-md">
-                  <p className="text-uiverse-sky font-bold text-sm mb-1">State-of-the-Art Labs</p>
-                  <p className="text-gray-400 text-xs">Equipped with high-performance computing clusters for Deep Learning research.</p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                className="space-y-6"
-              >
-                <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center justify-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
                     <Rocket className="w-5 h-5 text-orange-500" />
                   </div>
                   <span className="text-orange-500 font-bold uppercase tracking-widest text-sm">Our Department</span>
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold font-display text-white">
+                <h2 className="text-2xl md:text-5xl font-bold font-display text-white break-words">
                   Department of <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">AI & Data Science</span>
                 </h2>
-                <p className="text-gray-300 leading-relaxed text-lg">
+                <p className="text-gray-300 leading-relaxed text-lg break-words">
                   Our department is a close-knit community where students and faculty work side by side—whether it’s for a challenging hackathon, a research paper, or a spontaneous cricket match after class. Since 2022, we’ve grown not just in numbers, but in spirit. Our labs are always buzzing, and our students are known for their hands-on approach, tackling real-world problems and collaborating on projects that matter. We believe in learning by doing, and our alumni often return to share their journeys, inspiring the next batch to aim higher.
                 </p>
-                <ul className="space-y-4 pt-4">
-                  {[
-                    "Industry-aligned curriculum",
-                    "Hands-on project experience",
-                    "Research and Innovation focus",
-                    "Expert faculty mentorship"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-gray-300">
-                      <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
-                        <span className="text-green-500 text-xs">✓</span>
-                      </div>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+                <div className="flex justify-center w-full">
+                  <ul className="space-y-4 pt-4 text-left max-w-lg w-full">
+                    {[
+                      "Industry-aligned curriculum",
+                      "Hands-on project experience",
+                      "Research and Innovation focus",
+                      "Expert faculty mentorship"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-gray-300">
+                        <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+                          <span className="text-green-500 text-xs">✓</span>
+                        </div>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </motion.div>
             </div>
           </div>
@@ -168,36 +153,36 @@ const About = () => {
         {/* College Section - Reverse Zig Zag */}
         <section className="py-20 px-4 mb-20">
           <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="flex flex-col items-center w-full">
               <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                className="space-y-6 order-2 lg:order-1"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="space-y-6 max-w-4xl mx-auto text-center w-full"
               >
-                <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center justify-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
                     <University className="w-5 h-5 text-green-500" />
                   </div>
                   <span className="text-green-500 font-bold uppercase tracking-widest text-sm">Our Campus</span>
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold font-display text-white">
+                <h2 className="text-2xl md:text-5xl font-bold font-display text-white break-words">
                   VSB College of <br />Engineering
                 </h2>
-                <div className="flex gap-4 mb-4">
-                  <div className="px-4 py-2 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-red-400" />
-                    <span className="text-sm text-gray-300">{aboutUs.college.location}</span>
+                <div className="flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4">
+                  <div className="px-4 py-2 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center gap-2 w-full md:w-auto">
+                    <MapPin className="w-4 h-4 text-red-400 shrink-0" />
+                    <span className="text-sm text-gray-300 truncate">{aboutUs.college.location}</span>
                   </div>
-                  <div className="px-4 py-2 bg-white/5 rounded-lg border border-white/10 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-yellow-400" />
-                    <span className="text-sm text-gray-300">Est. {aboutUs.college.established}</span>
+                  <div className="px-4 py-2 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center gap-2 w-full md:w-auto">
+                    <Calendar className="w-4 h-4 text-yellow-400 shrink-0" />
+                    <span className="text-sm text-gray-300 shrink-0">Est. {aboutUs.college.established}</span>
                   </div>
                 </div>
                 <p className="text-gray-300 leading-relaxed text-lg mb-6">
                   VSB College of Engineering Technical Campus is more than a collection of buildings—it’s a place where students from all backgrounds come together to learn, grow, and make lifelong friends. Our campus is always alive with activity, from technical fests to cultural nights, and our faculty are mentors who genuinely care about each student’s journey. We’re proud of our legacy, but even prouder of the community we’ve built together.
                 </p>
 
-                <div className="space-y-4 mb-6">
+                <div className="space-y-4 mb-6 grid md:grid-cols-2 gap-6 text-left">
                   <div>
                     <h4 className="text-uiverse-sky font-bold uppercase text-xs tracking-wider mb-2">College Vision</h4>
                     <p className="text-gray-400 text-sm leading-relaxed border-l-2 border-uiverse-sky/30 pl-3">
@@ -219,23 +204,6 @@ const About = () => {
                   <a href="https://vsbcetc.edu.in" target="_blank" rel="noreferrer" className="text-white border-b border-white pb-1 hover:text-uiverse-sky hover:border-uiverse-sky transition-colors">
                     Visit Official Website &rarr;
                   </a>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                className="relative order-1 lg:order-2"
-              >
-                <div className="absolute -inset-4 bg-gradient-to-l from-green-500 to-blue-500 opacity-20 blur-2xl rounded-3xl" />
-                <img
-                  src={IMAGES.library}
-                  alt="College Library"
-                  className="relative rounded-3xl border border-white/10 shadow-2xl w-full h-[400px] object-cover"
-                />
-                <div className="absolute -bottom-6 -left-6 bg-black border border-white/10 p-4 rounded-xl shadow-xl max-w-xs backdrop-blur-md z-20">
-                  <p className="text-green-400 font-bold text-sm mb-1">World-Class Infrastructure</p>
-                  <p className="text-gray-400 text-xs">Library, Hostels, Sports Complex and more.</p>
                 </div>
               </motion.div>
             </div>

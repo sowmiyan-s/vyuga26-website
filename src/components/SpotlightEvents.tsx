@@ -34,9 +34,6 @@ const SpotlightEvents = () => {
 
     // Handle cases where we have fewer events than the carousel expects
     if (events.length < 3) {
-      // If we have very few events, just return what we have with offset logic adapted
-      // This is a simple fallback. For full carousel logic with < 3 items, duplications might be needed, 
-      // but for now we assume we have 4 items as per request (ideathon, codathon, expo, esports).
       const visible = [];
       for (let i = -1; i <= 1; i++) {
         let index = (currentIndex + i + events.length) % events.length;
@@ -48,7 +45,8 @@ const SpotlightEvents = () => {
     const visible = [];
     for (let i = -1; i <= 1; i++) {
       let index = (currentIndex + i + events.length) % events.length;
-      visible.push({ event: events[index], offset: i, key: `${events[index].id}-${i}` });
+      // Use event.id as key to allow Framer Motion to animate position changes for the same card
+      visible.push({ event: events[index], offset: i, key: events[index].id });
     }
     return visible;
   };
@@ -194,7 +192,9 @@ const SpotlightEvents = () => {
 
                         <div className="flex items-center justify-between mt-auto">
                           <Link to={`/events/${event.id}`}
-                            className={`w-full group/btn ${!isActive ? 'pointer-events-none' : ''}`}>
+                            className={`w-full group/btn ${!isActive ? 'pointer-events-none' : ''}`}
+                            title={`View details for ${event.title} - Cash Prize Event`}
+                            aria-label={`View details for ${event.title}`}>
                             <div className={`relative overflow-hidden rounded-xl bg-white text-black font-bold py-3 px-6 text-center text-sm uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)] ${isActive ? 'hover:bg-yellow-400 hover:text-black hover:shadow-[0_0_30px_rgba(234,179,8,0.6)]' : ''
                               }`}>
                               <span className="relative z-10 flex items-center justify-center gap-2">

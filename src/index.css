@@ -582,7 +582,58 @@
     }
   }
 
+
   .animate-blink-text {
     animation: blink-red-yellow 0.8s infinite;
+  }
+}
+
+@media (max-width: 768px) {
+  * {
+    /* Improve scrolling performance */
+    -webkit-overflow-scrolling: touch;
+    /* Aggressively disable animations on mobile to reduce lag */
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Exception: Enable marquee animation */
+  .marquee-text {
+    animation: marquee 20s linear infinite !important;
+  }
+
+  /* Reduce heavy blur effects on mobile */
+  .backdrop-blur-md,
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  /* Disable or simplify heavy animations */
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+  }
+
+  /* Simplify box shadows */
+  .shadow-2xl,
+  .drop-shadow-2xl {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    filter: none !important;
+  }
+
+  /* Disable some background blending modes if they cause lag */
+  .mix-blend-overlay,
+  .mix-blend-multiply {
+    mix-blend-mode: normal !important;
+  }
+
+  /* Hide heavy decorative elements on mobile */
+  .neon-blob,
+  .spotlight,
+  .festival-particle {
+    display: none !important;
   }
 }

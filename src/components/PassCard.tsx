@@ -143,7 +143,7 @@ const PassCard = () => {
         className="text-center mt-12 bg-black/30 backdrop-blur-sm border border-white/5 rounded-xl p-6 max-w-3xl mx-auto"
       >
         <p className="text-xl md:text-2xl text-white font-bold mb-4 flex items-center justify-center gap-2">
-          <span>⏰</span> Registration closes on <span className="text-uiverse-pink">10th February 2026</span>
+          <span>⏰</span> Registration closes on <span className="text-uiverse-pink">{siteConfig.registrationCloseDate}</span>
         </p>
 
         <div className="bg-uiverse-sky/10 border border-uiverse-sky/20 rounded-lg p-4 text-left">

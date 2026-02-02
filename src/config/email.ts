@@ -8,24 +8,24 @@ export const emailConfig = {
     port: 587,
     secure: false,
     auth: {
-      user: "your-email@gmail.com", // Replace with your Gmail
-      pass: "your-app-password", // Replace with Gmail App Password
+      user: "vyuga2026@gmail.com",
+      pass: "vyuga@mds143",
     },
   },
-  
+
   // Email Templates
   templates: {
     registration: {
-      subject: "Welcome to SIRAGU 26 - Registration Successful",
-      from: "SIRAGU 26 <noreply@siragu26.com>",
+      subject: "Welcome to Vyuga 26 - Registration Successful",
+      from: "Vyuga 26 <vyuga2026@gmail.com>",
     },
     paymentVerified: {
-      subject: "SIRAGU 26 - Payment Verified Successfully",
-      from: "SIRAGU 26 <noreply@siragu26.com>",
+      subject: "Vyuga 26 - Payment Verified Successfully",
+      from: "Vyuga 26 <vyuga2026@gmail.com>",
     },
     entryConfirmed: {
-      subject: "SIRAGU 26 - Entry Confirmed",
-      from: "SIRAGU 26 <noreply@siragu26.com>",
+      subject: "Vyuga 26 - Entry Confirmed",
+      from: "Vyuga 26 <vyuga2026@gmail.com>",
     },
   },
 };

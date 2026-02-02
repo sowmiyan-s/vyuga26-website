@@ -42,7 +42,7 @@ const Coordinators = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="font-display text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-uiverse-purple via-white to-uiverse-sky drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+              className="font-display text-3xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-uiverse-purple via-white to-uiverse-sky drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
             >
               Coordinators
             </motion.h1>
@@ -51,10 +51,10 @@ const Coordinators = () => {
           {/* HOD Section */}
           {hods.length > 0 && (
             <section className="mb-20">
-              <div className="flex items-center gap-4 mb-10 justify-center">
-                <span className="h-px w-12 bg-gradient-to-r from-transparent to-uiverse-purple/50" />
-                <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Head of Departments</h2>
-                <span className="h-px w-12 bg-gradient-to-l from-transparent to-uiverse-purple/50" />
+              <div className="flex items-center gap-4 mb-6 md:mb-10 justify-center">
+                <span className="h-px w-8 md:w-12 bg-gradient-to-r from-transparent to-uiverse-purple/50" />
+                <h2 className="text-lg md:text-2xl font-bold text-white uppercase tracking-wider whitespace-nowrap">Head of Departments</h2>
+                <span className="h-px w-8 md:w-12 bg-gradient-to-l from-transparent to-uiverse-purple/50" />
               </div>
 
               <div className="flex flex-wrap gap-8 justify-center max-w-5xl mx-auto">
@@ -66,8 +66,8 @@ const Coordinators = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <UiverseCard className="p-8 text-center border-uiverse-purple/30 relative overflow-hidden group h-full">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-uiverse-purple to-transparent opacity-50" />
+                    <UiverseCard className="p-4 md:p-8 text-center border-uiverse-purple/30 relative overflow-hidden group h-full">
+                      <div className="hidden md:block absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-uiverse-purple to-transparent opacity-50" />
 
                       <div className="w-24 h-24 mx-auto rounded-full overflow-hidden border-4 border-uiverse-purple/30 mb-6 bg-white/10">
                         <img
@@ -77,7 +77,7 @@ const Coordinators = () => {
                         />
                       </div>
 
-                      <h3 className="font-display text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/70 mb-2">
+                      <h3 className="font-display text-lg md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/70 mb-1 md:mb-2 truncate whitespace-nowrap">
                         {hod.name}
                       </h3>
                       <div className="flex items-center justify-center gap-2 text-uiverse-purple mb-4 font-medium tracking-wide text-sm">
@@ -85,7 +85,7 @@ const Coordinators = () => {
                         <span>HOD</span>
                       </div>
 
-                      <p className="text-gray-400 mb-6 text-sm leading-relaxed">
+                      <p className="text-gray-400 mb-4 md:mb-6 text-xs md:text-sm leading-relaxed truncate">
                         {hod.department}
                       </p>
                     </UiverseCard>
@@ -98,10 +98,10 @@ const Coordinators = () => {
           {/* Staff Coordinators */}
           {staffCoordinators.length > 0 && (
             <section className="mb-20">
-              <div className="flex items-center gap-4 mb-10 justify-center">
-                <span className="h-px w-12 bg-gradient-to-r from-transparent to-uiverse-sky/50" />
-                <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Staff Coordinators</h2>
-                <span className="h-px w-12 bg-gradient-to-l from-transparent to-uiverse-sky/50" />
+              <div className="flex items-center gap-4 mb-6 md:mb-10 justify-center">
+                <span className="h-px w-8 md:w-12 bg-gradient-to-r from-transparent to-uiverse-sky/50" />
+                <h2 className="text-lg md:text-2xl font-bold text-white uppercase tracking-wider whitespace-nowrap">Staff Coordinators</h2>
+                <span className="h-px w-8 md:w-12 bg-gradient-to-l from-transparent to-uiverse-sky/50" />
               </div>
 
               <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -109,24 +109,24 @@ const Coordinators = () => {
                   <UiverseCard
                     key={coordinator.id}
                     delay={index * 0.1}
-                    className="p-6 border-white/5 hover:border-uiverse-sky/30 group"
+                    className="p-4 md:p-6 border-white/5 hover:border-uiverse-sky/30 group"
                   >
-                    <div className="flex items-center gap-6">
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-uiverse-sky/10 to-blue-500/10 flex items-center justify-center border border-uiverse-sky/20 group-hover:border-uiverse-sky/50 transition-colors">
-                        <Award className="w-7 h-7 text-uiverse-sky group-hover:scale-110 transition-transform duration-300" />
+                    <div className="flex items-center gap-4 md:gap-6">
+                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-uiverse-sky/10 to-blue-500/10 flex items-center justify-center border border-uiverse-sky/20 group-hover:border-uiverse-sky/50 transition-colors flex-shrink-0">
+                        <Award className="w-5 h-5 md:w-7 md:h-7 text-uiverse-sky group-hover:scale-110 transition-transform duration-300" />
                       </div>
-                      <div className="flex-1 text-left">
-                        <h3 className="font-display text-xl font-bold text-white mb-1 group-hover:text-uiverse-sky transition-colors">
+                      <div className="flex-1 text-left min-w-0">
+                        <h3 className="font-display text-base md:text-xl font-bold text-white mb-0.5 md:mb-1 group-hover:text-uiverse-sky transition-colors truncate whitespace-nowrap">
                           {coordinator.name}
                         </h3>
-                        <p className="text-sm text-gray-400 mb-3 font-medium">
+                        <p className="text-xs md:text-sm text-gray-400 mb-1 md:mb-3 font-medium truncate">
                           {coordinator.department}
                         </p>
                         <a
                           href={`tel:${coordinator.phone}`}
-                          className="text-xs inline-flex items-center gap-1.5 text-gray-500 hover:text-white transition-colors"
+                          className="text-[10px] md:text-xs inline-flex items-center gap-1.5 text-gray-500 hover:text-white transition-colors"
                         >
-                          <Phone className="w-3 h-3" />
+                          <Phone className="w-2.5 h-2.5 md:w-3 md:h-3" />
                           {coordinator.phone}
                         </a>
                       </div>
@@ -140,10 +140,10 @@ const Coordinators = () => {
           {/* Chief Coordinators */}
           {chiefCoordinators.length > 0 && (
             <section className="mb-20">
-              <div className="flex items-center gap-4 mb-10 justify-center">
-                <span className="h-px w-12 bg-gradient-to-r from-transparent to-uiverse-green/50" />
-                <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Chief Event Coordinators</h2>
-                <span className="h-px w-12 bg-gradient-to-l from-transparent to-uiverse-green/50" />
+              <div className="flex items-center gap-4 mb-6 md:mb-10 justify-center">
+                <span className="h-px w-8 md:w-12 bg-gradient-to-r from-transparent to-uiverse-green/50" />
+                <h2 className="text-lg md:text-2xl font-bold text-white uppercase tracking-wider whitespace-nowrap">Chief Event Coordinators</h2>
+                <span className="h-px w-8 md:w-12 bg-gradient-to-l from-transparent to-uiverse-green/50" />
               </div>
 
               <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -151,24 +151,24 @@ const Coordinators = () => {
                   <UiverseCard
                     key={coordinator.id}
                     delay={index * 0.1}
-                    className="p-6 border-white/5 hover:border-uiverse-green/30 group"
+                    className="p-4 md:p-6 border-white/5 hover:border-uiverse-green/30 group"
                   >
-                    <div className="flex items-center gap-6">
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-uiverse-green/10 to-emerald-500/10 flex items-center justify-center border border-uiverse-green/20 group-hover:border-uiverse-green/50 transition-colors">
-                        <Users className="w-7 h-7 text-uiverse-green group-hover:scale-110 transition-transform duration-300" />
+                    <div className="flex items-center gap-4 md:gap-6">
+                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-uiverse-green/10 to-emerald-500/10 flex items-center justify-center border border-uiverse-green/20 group-hover:border-uiverse-green/50 transition-colors flex-shrink-0">
+                        <Users className="w-5 h-5 md:w-7 md:h-7 text-uiverse-green group-hover:scale-110 transition-transform duration-300" />
                       </div>
-                      <div className="flex-1 text-left">
-                        <h3 className="font-display text-xl font-bold text-white mb-1 group-hover:text-uiverse-green transition-colors">
+                      <div className="flex-1 text-left min-w-0">
+                        <h3 className="font-display text-base md:text-xl font-bold text-white mb-0.5 md:mb-1 group-hover:text-uiverse-green transition-colors truncate whitespace-nowrap">
                           {coordinator.name}
                         </h3>
-                        <p className="text-sm text-gray-400 mb-3 font-medium">
+                        <p className="text-xs md:text-sm text-gray-400 mb-1 md:mb-3 font-medium truncate">
                           {coordinator.department}
                         </p>
                         <a
                           href={`tel:${coordinator.phone}`}
-                          className="text-xs inline-flex items-center gap-1.5 text-gray-500 hover:text-white transition-colors"
+                          className="text-[10px] md:text-xs inline-flex items-center gap-1.5 text-gray-500 hover:text-white transition-colors"
                         >
-                          <Phone className="w-3 h-3" />
+                          <Phone className="w-2.5 h-2.5 md:w-3 md:h-3" />
                           {coordinator.phone}
                         </a>
                       </div>
@@ -182,10 +182,10 @@ const Coordinators = () => {
           {/* Associate Coordinators */}
           {associateCoordinators.length > 0 && (
             <section className="mb-20">
-              <div className="flex items-center gap-4 mb-10 justify-center">
-                <span className="h-px w-12 bg-gradient-to-r from-transparent to-white/50" />
-                <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Associate Event Coordinators</h2>
-                <span className="h-px w-12 bg-gradient-to-l from-transparent to-white/50" />
+              <div className="flex items-center gap-4 mb-6 md:mb-10 justify-center">
+                <span className="h-px w-8 md:w-12 bg-gradient-to-r from-transparent to-white/50" />
+                <h2 className="text-lg md:text-2xl font-bold text-white uppercase tracking-wider whitespace-nowrap">Associate Event Coordinators</h2>
+                <span className="h-px w-8 md:w-12 bg-gradient-to-l from-transparent to-white/50" />
               </div>
 
               <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -193,17 +193,17 @@ const Coordinators = () => {
                   <UiverseCard
                     key={coordinator.id}
                     delay={index * 0.1}
-                    className="p-6 border-white/5 hover:border-white/30 group"
+                    className="p-4 md:p-6 border-white/5 hover:border-white/30 group"
                   >
-                    <div className="flex items-center gap-6">
-                      <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-white/50 transition-colors">
-                        <CheckCircle2 className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300" />
+                    <div className="flex items-center gap-4 md:gap-6">
+                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-white/50 transition-colors flex-shrink-0">
+                        <CheckCircle2 className="w-5 h-5 md:w-7 md:h-7 text-white group-hover:scale-110 transition-transform duration-300" />
                       </div>
-                      <div className="flex-1 text-left">
-                        <h3 className="font-display text-xl font-bold text-white mb-1 group-hover:text-gray-300 transition-colors">
+                      <div className="flex-1 text-left min-w-0">
+                        <h3 className="font-display text-base md:text-xl font-bold text-white mb-0.5 md:mb-1 group-hover:text-gray-300 transition-colors truncate whitespace-nowrap">
                           {coordinator.name}
                         </h3>
-                        <p className="text-sm text-gray-400 mb-1 font-medium">
+                        <p className="text-xs md:text-sm text-gray-400 mb-1 font-medium truncate">
                           {coordinator.department}
                         </p>
                       </div>
@@ -216,10 +216,10 @@ const Coordinators = () => {
 
           {/* Event Coordinators */}
           <section>
-            <div className="flex items-center gap-4 mb-10 justify-center">
-              <span className="h-px w-12 bg-gradient-to-r from-transparent to-uiverse-green/50" />
-              <h2 className="text-2xl font-bold text-white uppercase tracking-wider">Event Coordinators</h2>
-              <span className="h-px w-12 bg-gradient-to-l from-transparent to-uiverse-green/50" />
+            <div className="flex items-center gap-4 mb-6 md:mb-10 justify-center">
+              <span className="h-px w-8 md:w-12 bg-gradient-to-r from-transparent to-uiverse-green/50" />
+              <h2 className="text-lg md:text-2xl font-bold text-white uppercase tracking-wider whitespace-nowrap">Event Coordinators</h2>
+              <span className="h-px w-8 md:w-12 bg-gradient-to-l from-transparent to-uiverse-green/50" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -227,9 +227,9 @@ const Coordinators = () => {
                 <UiverseCard
                   key={coordinator.id}
                   delay={index * 0.05}
-                  className="p-6 border-white/5 hover:border-uiverse-green/30 group bg-black/20 text-center"
+                  className="p-3 md:p-6 border-white/5 hover:border-uiverse-green/30 group bg-black/20 text-center"
                 >
-                  <div className="flex justify-center mb-4">
+                  <div className="flex justify-center mb-2 md:mb-4">
                     {coordinator.year && (
                       <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 text-gray-400 border border-white/5">
                         {coordinator.year} Year
@@ -237,18 +237,18 @@ const Coordinators = () => {
                     )}
                   </div>
 
-                  <h3 className="font-bold text-xl text-white mb-2">{coordinator.name}</h3>
-                  <div className="text-sm text-gray-500 mb-6 flex items-center justify-center gap-2">
-                    <span>{coordinator.department}</span>
+                  <h3 className="font-bold text-base md:text-xl text-white mb-1 md:mb-2 truncate whitespace-nowrap">{coordinator.name}</h3>
+                  <div className="text-xs md:text-sm text-gray-500 mb-2 md:mb-6 flex items-center justify-center gap-2">
+                    <span className="truncate">{coordinator.department}</span>
                     {coordinator.section && (
                       <>
-                        <span className="w-1 h-1 rounded-full bg-gray-600" />
-                        <span>Sec {coordinator.section}</span>
+                        <span className="w-1 h-1 rounded-full bg-gray-600 flex-shrink-0" />
+                        <span className="flex-shrink-0">Sec {coordinator.section}</span>
                       </>
                     )}
                   </div>
 
-                  <div className="pt-4 border-t border-white/5">
+                  <div className="pt-2 md:pt-4 border-t border-white/5">
                     {coordinator.eventIds.length > 0 && (
                       <div className="mb-4">
                         <span className="text-uiverse-green text-xs font-bold block mb-1 uppercase tracking-wide">Event In-Charge</span>

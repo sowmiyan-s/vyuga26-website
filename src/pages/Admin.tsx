@@ -272,7 +272,7 @@ const Admin = () => {
               <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm text-yellow-200">
-                  Registration closes on <strong>10th February 2026</strong>
+                  Registration closes on <strong>{siteConfig.registrationCloseDate}</strong>
                 </p>
                 <p className="text-xs text-yellow-200/70 mt-1">
                   Limits: Outer College - {stats.outer.total}/{siteConfig.outerCollegeLimit} | Inter College - {stats.inter.total}/{siteConfig.interCollegeLimit}
@@ -321,8 +321,8 @@ const Admin = () => {
           <button
             onClick={() => setCollegeType("outer")}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${collegeType === "outer"
-                ? "bg-uiverse-green/20 text-uiverse-green border-2 border-uiverse-green/50"
-                : "bg-muted text-muted-foreground hover:bg-muted/80 border-2 border-transparent"
+              ? "bg-uiverse-green/20 text-uiverse-green border-2 border-uiverse-green/50"
+              : "bg-muted text-muted-foreground hover:bg-muted/80 border-2 border-transparent"
               }`}
           >
             <Building2 className="w-5 h-5" />
@@ -331,8 +331,8 @@ const Admin = () => {
           <button
             onClick={() => setCollegeType("inter")}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${collegeType === "inter"
-                ? "bg-uiverse-purple/20 text-uiverse-purple border-2 border-uiverse-purple/50"
-                : "bg-muted text-muted-foreground hover:bg-muted/80 border-2 border-transparent"
+              ? "bg-uiverse-purple/20 text-uiverse-purple border-2 border-uiverse-purple/50"
+              : "bg-muted text-muted-foreground hover:bg-muted/80 border-2 border-transparent"
               }`}
           >
             <Users className="w-5 h-5" />
