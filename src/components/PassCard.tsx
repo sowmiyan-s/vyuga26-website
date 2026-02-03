@@ -4,14 +4,15 @@ import { motion } from "framer-motion";
 import "./PassCard.css";
 
 interface SinglePassCardProps {
-  type: "outer" | "inter";
-  price: number;
+  type: "outer" | "inter" | "dept";
+  price: number | string;
   label: string;
   linkTo: string;
 }
 
 const SinglePassCard = ({ type, price, label, linkTo }: SinglePassCardProps) => {
   const isInter = type === "inter";
+  const isDept = type === "dept";
 
   return (
     <Link to={linkTo}>
@@ -21,7 +22,7 @@ const SinglePassCard = ({ type, price, label, linkTo }: SinglePassCardProps) => 
             <div key={i} className={`tracker tr-${i + 1}`} />
           ))}
 
-          <div id="card" className={isInter ? "inter-college-card" : ""}>
+          <div id="card" className={isInter ? "inter-college-card" : isDept ? "dept-college-card" : ""}>
             <div className="card-content">
               <div className="card-glare" />
               <div className="cyber-lines">
@@ -29,24 +30,24 @@ const SinglePassCard = ({ type, price, label, linkTo }: SinglePassCardProps) => 
               </div>
 
               {/* College Type Badge */}
-              <div className={`college-type-badge ${isInter ? 'inter' : 'outer'}`}>
+              <div className={`college-type-badge ${isInter ? 'inter' : isDept ? 'dept' : 'outer'}`}>
                 {label}
               </div>
 
-              <div className="price-top">₹{price}</div>
+              <div className="price-top">{typeof price === 'number' ? `₹${price}` : price}</div>
               <p id="prompt">CLICK TO REGISTER</p>
-              <div className={`title font-sync ${isInter ? 'inter-title' : ''}`}>
+              <div className={`title font-sync ${isInter ? 'inter-title' : isDept ? 'dept-title' : ''}`}>
                 ONE DAY<br />PASS
               </div>
               <div className="glowing-elements">
-                <div className={`glow-1 ${isInter ? 'glow-inter' : ''}`} />
-                <div className={`glow-2 ${isInter ? 'glow-inter' : ''}`} />
-                <div className={`glow-3 ${isInter ? 'glow-inter' : ''}`} />
+                <div className={`glow-1 ${isInter ? 'glow-inter' : isDept ? 'glow-dept' : ''}`} />
+                <div className={`glow-2 ${isInter ? 'glow-inter' : isDept ? 'glow-dept' : ''}`} />
+                <div className={`glow-3 ${isInter ? 'glow-inter' : isDept ? 'glow-dept' : ''}`} />
               </div>
               <div className="subtitle">
                 <span className="font-bold text-white tracking-widest uppercase mb-1">Includes</span>
                 <span className="text-gray-300">Food & Refreshments</span>
-                <span className="text-gray-300">Access to All Events</span>
+                <span className="text-gray-300">{isDept ? "No Payment Required" : "Access to All Events"}</span>
                 <span className="text-[10px] text-white/50 mt-1">*One Pass Per Person</span>
               </div>
               <div className="card-particles">
@@ -70,7 +71,7 @@ const PassCard = () => {
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-uiverse-purple/20 to-uiverse-sky/20 blur-[100px] rounded-full z-0" />
 
-      <div className="relative z-10 max-w-6xl mx-auto">
+      <div className="relative z-10 max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <motion.p
             initial={{ opacity: 0 }}
@@ -88,8 +89,8 @@ const PassCard = () => {
           </motion.h2>
         </div>
 
-        {/* Dual Cards Container */}
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12">
+        {/* Triple Cards Container */}
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-8 flex-wrap">
           {/* Outer College Card */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -105,24 +106,17 @@ const PassCard = () => {
             />
           </motion.div>
 
-          {/* Divider */}
+          {/* Divider 1 */}
           <div className="hidden lg:flex flex-col items-center gap-4">
             <div className="w-px h-20 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
             <span className="text-white/40 text-sm font-medium">OR</span>
             <div className="w-px h-20 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
           </div>
 
-          {/* Mobile Divider */}
-          <div className="flex lg:hidden items-center gap-4 w-full max-w-xs">
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            <span className="text-white/40 text-sm font-medium">OR</span>
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-          </div>
-
           {/* Inter College Card */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="flex flex-col items-center"
           >
@@ -131,6 +125,28 @@ const PassCard = () => {
               price={siteConfig.interCollegePassPrice}
               label="INTER COLLEGE"
               linkTo="/register-intercollege"
+            />
+          </motion.div>
+
+          {/* Divider 2 */}
+          <div className="hidden lg:flex flex-col items-center gap-4">
+            <div className="w-px h-20 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+            <span className="text-white/40 text-sm font-medium">OR</span>
+            <div className="w-px h-20 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+          </div>
+
+          {/* Dept Card */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-col items-center"
+          >
+            <SinglePassCard
+              type="dept"
+              price="FREE"
+              label="AI&DS DEPT (Inter College)"
+              linkTo="/register-department"
             />
           </motion.div>
         </div>

@@ -322,11 +322,11 @@ const RegisterInterCollege = () => {
                           className={errors.year ? "border-red-500" : ""}
                           defaultValue=""
                         >
-                          <option value="" disabled>Select Year</option>
-                          <option value="1">1st Year</option>
-                          <option value="2">2nd Year</option>
-                          <option value="3">3rd Year</option>
-                          <option value="4">4th Year</option>
+                          <option value="" disabled className="bg-black text-white">Select Year</option>
+                          <option value="1" className="bg-black text-white">1st Year</option>
+                          <option value="2" className="bg-black text-white">2nd Year</option>
+                          <option value="3" className="bg-black text-white">3rd Year</option>
+                          <option value="4" className="bg-black text-white">4th Year</option>
                         </select>
                         {errors.year && <span className="text-red-400 text-xs block mt-1">{errors.year.message}</span>}
                       </div>
@@ -337,9 +337,9 @@ const RegisterInterCollege = () => {
                           className={errors.department ? "border-red-500" : ""}
                           defaultValue=""
                         >
-                          <option value="" disabled>Select Department</option>
+                          <option value="" disabled className="bg-black text-white">Select Department</option>
                           {departments.map((dept) => (
-                            <option key={dept} value={dept}>{dept}</option>
+                            <option key={dept} value={dept} className="bg-black text-white">{dept}</option>
                           ))}
                         </select>
                         {errors.department && <span className="text-red-400 text-xs block mt-1">{errors.department.message}</span>}

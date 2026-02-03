@@ -1,0 +1,78 @@
+  // Enhanced Export with filters
+  const handleAdvancedExportLogic = () => {
+    try {
+      const wb = XLSX.utils.book_new();
+      const { sources, status, fields } = exportConfig;
+
+      const shouldInclude = (r: Registration, type: CollegeType) => {
+        const isVerified = r.payment_verified;
+        const isEntered = r.entry_confirmed;
+        
+        // For dept, 'verified' effectively means registered as they are free
+        // 'pending' for dept might mean nothing or just 'not entered'
+        if (type === 'dept') {
+           if (status.entered && isEntered) return true;
+           if (status.pending && !isEntered) return true;
+           // If verified is checked, we include all dept students as they are technically 'verified'/accepted
+           if (status.verified) return true;
+           return false;
+        }
+
+        // Logic for paid categories (Outer/Inter)
+        // If a record matches ANY of the checked boxes, it is included.
+        // e.g. checked Pending & Verified -> All records.
+        // checked Only Verified -> Only verified (and entered, as entered impies verified).
+        
+        if (status.pending && !isVerified) return true;
+        if (status.verified && isVerified) return true;
+        if (status.entered && isEntered) return true;
+        
+        return false;
+      };
+
+      const processData = (data: Registration[], type: CollegeType) => {
+        return data.filter(r => shouldInclude(r, type)).map(r => {
+          const row: any = {};
+          if (fields.name) row["Name"] = r.name;
+          if (fields.email) row["Email"] = r.email;
+          if (fields.phone) row["Phone"] = r.phone;
+          if (fields.college) row["College"] = r.college_name || (type === 'outer' ? 'Other' : 'VSB');
+          if (fields.registerNumber) row["Register No"] = r.register_number || "N/A";
+          if (fields.year) row["Year"] = r.year;
+          if (fields.dept) row["Department"] = r.department || "N/A";
+          if (fields.section) row["Section"] = r.section || "N/A";
+          if (fields.paymentStatus) row["Payment Status"] = r.payment_verified ? "Verified" : "Pending";
+          if (fields.entryStatus) row["Entry Status"] = r.entry_confirmed ? "Confirmed" : "Pending";
+          if (fields.date) row["Registration Date"] = new Date(r.created_at).toLocaleDateString();
+          return row;
+        });
+      };
+
+      if (sources.outer) {
+        const data = processData(registrations, 'outer');
+        if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Outer College");
+      }
+      if (sources.inter) {
+        const data = processData(interRegistrations, 'inter');
+        if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Inter College");
+      }
+      if (sources.dept) {
+        const data = processData(deptRegistrations, 'dept');
+        if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Department");
+      }
+
+      if (wb.SheetNames.length === 0) {
+        toast.error("No data matches your selection");
+        return;
+      }
+
+      const date = new Date().toISOString().split('T')[0];
+      XLSX.writeFile(wb, `Vyuga_Advanced_Export_${date}.xlsx`);
+      toast.success("Export successful!");
+      setShowAdvancedExport(false);
+    } catch (error) {
+       console.error(error);
+       toast.error("Export failed");
+    }
+  };
+

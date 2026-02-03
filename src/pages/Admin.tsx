@@ -5,13 +5,24 @@ import { useSettings } from "@/hooks/useSettings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { 
-  Search, Check, Eye, X, Users, Building2, BarChart3, Trash2, Settings, 
-  AlertTriangle, FileDown, GraduationCap, TrendingUp, Calendar, 
-  PieChart, ChevronDown 
+import {
+  Search, Check, Eye, X, Users, Building2, BarChart3, Trash2, Settings,
+  AlertTriangle, FileDown, GraduationCap, TrendingUp, Calendar,
+  PieChart, ChevronDown
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { siteConfig } from "@/config/config";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 interface Registration {
   id: string;
@@ -54,6 +65,24 @@ const Admin = () => {
 
   // Export options
   const [showExportOptions, setShowExportOptions] = useState(false);
+  const [showAdvancedExport, setShowAdvancedExport] = useState(false);
+  const [exportConfig, setExportConfig] = useState({
+    sources: { outer: true, inter: true, dept: true },
+    status: { pending: true, verified: true, entered: true },
+    fields: {
+      name: true,
+      email: true,
+      phone: true,
+      college: true,
+      registerNumber: true,
+      year: true,
+      dept: true,
+      section: true,
+      paymentStatus: true,
+      entryStatus: true,
+      date: true
+    }
+  });
 
   // Stats
   const [stats, setStats] = useState({
@@ -205,6 +234,80 @@ const Admin = () => {
       fetchRegistrations();
     } catch (error: any) {
       toast.error("Failed to delete registration");
+    }
+  };
+
+  // Advanced Export Logic
+  const handleAdvancedExportLogic = () => {
+    try {
+      const wb = XLSX.utils.book_new();
+      const { sources, status, fields } = exportConfig;
+
+      const shouldInclude = (r: Registration, type: CollegeType) => {
+        const isVerified = r.payment_verified;
+        const isEntered = r.entry_confirmed;
+
+        // For dept, 'verified' effectively means registered as they are free
+        // 'pending' for dept might mean nothing or just 'not entered'
+        if (type === 'dept') {
+          if (status.entered && isEntered) return true;
+          if (status.pending && !isEntered) return true;
+          // If verified is checked, we include all dept students as they are technically 'verified'/accepted
+          if (status.verified) return true;
+          return false;
+        }
+
+        // Logic for paid categories (Outer/Inter)
+        if (status.pending && !isVerified) return true;
+        if (status.verified && isVerified) return true;
+        if (status.entered && isEntered) return true;
+
+        return false;
+      };
+
+      const processData = (data: Registration[], type: CollegeType) => {
+        return data.filter(r => shouldInclude(r, type)).map(r => {
+          const row: any = {};
+          if (fields.name) row["Name"] = r.name;
+          if (fields.email) row["Email"] = r.email;
+          if (fields.phone) row["Phone"] = r.phone;
+          if (fields.college) row["College"] = r.college_name || (type === 'outer' ? 'Other' : 'VSB');
+          if (fields.registerNumber) row["Register No"] = r.register_number || "N/A";
+          if (fields.year) row["Year"] = r.year;
+          if (fields.dept) row["Department"] = r.department || "N/A";
+          if (fields.section) row["Section"] = r.section || "N/A";
+          if (fields.paymentStatus) row["Payment Status"] = r.payment_verified ? "Verified" : "Pending";
+          if (fields.entryStatus) row["Entry Status"] = r.entry_confirmed ? "Confirmed" : "Pending";
+          if (fields.date) row["Registration Date"] = new Date(r.created_at).toLocaleDateString();
+          return row;
+        });
+      };
+
+      if (sources.outer) {
+        const data = processData(registrations, 'outer');
+        if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Outer College");
+      }
+      if (sources.inter) {
+        const data = processData(interRegistrations, 'inter');
+        if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Inter College");
+      }
+      if (sources.dept) {
+        const data = processData(deptRegistrations, 'dept');
+        if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Department");
+      }
+
+      if (wb.SheetNames.length === 0) {
+        toast.error("No data matches your selection");
+        return;
+      }
+
+      const date = new Date().toISOString().split('T')[0];
+      XLSX.writeFile(wb, `Vyuga_Advanced_Export_${date}.xlsx`);
+      toast.success("Export successful!");
+      setShowAdvancedExport(false);
+    } catch (error) {
+      console.error(error);
+      toast.error("Export failed");
     }
   };
 
@@ -383,40 +486,131 @@ const Admin = () => {
             Admin Dashboard
           </h1>
           <div className="flex flex-wrap gap-2">
-            {/* Export Dropdown */}
+            {/* Advanced Export Dialog */}
             <div className="relative">
-              <Button 
-                variant="outline" 
-                onClick={() => setShowExportOptions(!showExportOptions)} 
-                className="gap-2"
-              >
-                <FileDown className="w-4 h-4" />
-                Export Excel
-                <ChevronDown className="w-4 h-4" />
-              </Button>
-              {showExportOptions && (
-                <div className="absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden">
-                  <button onClick={() => handleExport("all")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm font-medium">
-                    📊 All Registrations
-                  </button>
-                  <button onClick={() => handleExport("outer")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm">
-                    🏛️ Outer College Only
-                  </button>
-                  <button onClick={() => handleExport("inter")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm">
-                    🎓 Inter College Only
-                  </button>
-                  <button onClick={() => handleExport("dept")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm">
-                    🔬 Department Only
-                  </button>
-                  <div className="border-t border-border" />
-                  <button onClick={() => handleExport("verified")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm text-green-400">
-                    ✅ Verified Payments Only
-                  </button>
-                  <button onClick={() => handleExport("entered")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm text-neon-cyan">
-                    🚪 Entry Confirmed Only
-                  </button>
-                </div>
-              )}
+              <Dialog open={showAdvancedExport} onOpenChange={setShowAdvancedExport}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="gap-2 bg-gradient-to-r from-uiverse-purple/10 to-uiverse-sky/10 border-uiverse-purple/30 hover:bg-uiverse-purple/20 text-white hover:text-white">
+                    <FileDown className="w-4 h-4" />
+                    Advanced Export
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl bg-black/95 border border-white/10 backdrop-blur-xl text-white shadow-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-uiverse-purple to-uiverse-sky">
+                      Advanced Data Export
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      Customize your data export by selecting sources, filters, and columns.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="grid md:grid-cols-3 gap-8 py-6">
+                    {/* Source Selection */}
+                    <div className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                      <h3 className="font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
+                        <Building2 className="w-4 h-4 text-uiverse-purple" /> Data Sources
+                      </h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="src-outer"
+                            checked={exportConfig.sources.outer}
+                            onCheckedChange={(c) => setExportConfig(prev => ({ ...prev, sources: { ...prev.sources, outer: !!c } }))}
+                            className="border-white/20 data-[state=checked]:bg-uiverse-purple data-[state=checked]:border-uiverse-purple"
+                          />
+                          <Label htmlFor="src-outer" className="text-gray-300 font-medium cursor-pointer">Outer College</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="src-inter"
+                            checked={exportConfig.sources.inter}
+                            onCheckedChange={(c) => setExportConfig(prev => ({ ...prev, sources: { ...prev.sources, inter: !!c } }))}
+                            className="border-white/20 data-[state=checked]:bg-uiverse-purple data-[state=checked]:border-uiverse-purple"
+                          />
+                          <Label htmlFor="src-inter" className="text-gray-300 font-medium cursor-pointer">Inter College</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="src-dept"
+                            checked={exportConfig.sources.dept}
+                            onCheckedChange={(c) => setExportConfig(prev => ({ ...prev, sources: { ...prev.sources, dept: !!c } }))}
+                            className="border-white/20 data-[state=checked]:bg-uiverse-purple data-[state=checked]:border-uiverse-purple"
+                          />
+                          <Label htmlFor="src-dept" className="text-gray-300 font-medium cursor-pointer">AI&DS Dept</Label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Status Selection */}
+                    <div className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                      <h3 className="font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
+                        <Check className="w-4 h-4 text-green-400" /> Filter Status
+                      </h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="sts-pending"
+                            checked={exportConfig.status.pending}
+                            onCheckedChange={(c) => setExportConfig(prev => ({ ...prev, status: { ...prev.status, pending: !!c } }))}
+                            className="border-white/20 data-[state=checked]:bg-yellow-500 data-[state=checked]:border-yellow-500"
+                          />
+                          <Label htmlFor="sts-pending" className="text-gray-300 font-medium cursor-pointer">Pending</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="sts-verified"
+                            checked={exportConfig.status.verified}
+                            onCheckedChange={(c) => setExportConfig(prev => ({ ...prev, status: { ...prev.status, verified: !!c } }))}
+                            className="border-white/20 data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                          />
+                          <Label htmlFor="sts-verified" className="text-gray-300 font-medium cursor-pointer">Verified</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="sts-entered"
+                            checked={exportConfig.status.entered}
+                            onCheckedChange={(c) => setExportConfig(prev => ({ ...prev, status: { ...prev.status, entered: !!c } }))}
+                            className="border-white/20 data-[state=checked]:bg-neon-cyan data-[state=checked]:border-neon-cyan"
+                          />
+                          <Label htmlFor="sts-entered" className="text-gray-300 font-medium cursor-pointer">Entry Confirmed</Label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Column Selection */}
+                    <div className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                      <h3 className="font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
+                        <BarChart3 className="w-4 h-4 text-uiverse-sky" /> Include Columns
+                      </h3>
+                      <div className="grid grid-cols-1 gap-2 text-sm overflow-y-auto max-h-[200px] pr-2 custom-scrollbar">
+                        {Object.entries(exportConfig.fields).map(([key, value]) => (
+                          <div key={key} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`fld-${key}`}
+                              checked={value}
+                              onCheckedChange={(c) => setExportConfig(prev => ({ ...prev, fields: { ...prev.fields, [key]: !!c } }))}
+                              className="w-4 h-4 border-white/20 data-[state=checked]:bg-uiverse-sky data-[state=checked]:border-uiverse-sky"
+                            />
+                            <Label htmlFor={`fld-${key}`} className="text-gray-300 capitalize cursor-pointer hover:text-white transition-colors">
+                              {key.replace(/([A-Z])/g, ' $1').trim()}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <DialogFooter className="sm:justify-between gap-4 border-t border-white/10 pt-6">
+                    <div className="text-xs text-gray-500 flex items-center">
+                      * Filter logic selects records matching ANY checked status.
+                    </div>
+                    <Button onClick={handleAdvancedExportLogic} className="bg-gradient-to-r from-uiverse-purple to-uiverse-sky text-white border-0 hover:opacity-90 transition-opacity px-8">
+                      Download Report
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
             <Button variant="outline" onClick={() => setShowSettings(!showSettings)}>
               <Settings className="w-4 h-4 mr-2" />
@@ -775,41 +969,36 @@ const Admin = () => {
 
         {/* Section Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${
-            collegeType === "inter" ? 'border-uiverse-purple/30' : 
+          <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
             collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
-          }`}>
+            }`}>
             <p className="text-3xl font-display font-bold text-foreground">
               {collegeType === "inter" ? stats.inter.total : collegeType === "dept" ? stats.dept.total : stats.outer.total}
             </p>
             <p className="text-sm text-muted-foreground mt-1">Total Registrations</p>
           </div>
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${
-            collegeType === "inter" ? 'border-uiverse-purple/30' : 
+          <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
             collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
-          }`}>
+            }`}>
             <p className="text-3xl font-display font-bold text-green-400">
               {collegeType === "inter" ? stats.inter.verified : collegeType === "dept" ? stats.dept.total : stats.outer.verified}
             </p>
             <p className="text-sm text-muted-foreground mt-1">{isDept ? "Confirmed" : "Verified Payments"}</p>
           </div>
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${
-            collegeType === "inter" ? 'border-uiverse-purple/30' : 
+          <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
             collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
-          }`}>
+            }`}>
             <p className="text-3xl font-display font-bold text-neon-cyan">
               {collegeType === "inter" ? stats.inter.entered : collegeType === "dept" ? stats.dept.entered : stats.outer.entered}
             </p>
             <p className="text-sm text-muted-foreground mt-1">Entry Confirmed</p>
           </div>
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${
-            collegeType === "inter" ? 'border-uiverse-purple/30' : 
+          <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
             collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
-          }`}>
-            <p className={`text-3xl font-display font-bold ${
-              collegeType === "inter" ? 'text-uiverse-purple' : 
-              collegeType === "dept" ? 'text-uiverse-sky' : 'text-uiverse-green'
             }`}>
+            <p className={`text-3xl font-display font-bold ${collegeType === "inter" ? 'text-uiverse-purple' :
+              collegeType === "dept" ? 'text-uiverse-sky' : 'text-uiverse-green'
+              }`}>
               {isDept ? "Free" : `₹${(collegeType === "inter" ? stats.inter.revenue : stats.outer.revenue).toLocaleString("en-IN")}`}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
@@ -866,7 +1055,7 @@ const Admin = () => {
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
-            placeholder={isDept ? "Search by name, email, phone, or register number..." : 
+            placeholder={isDept ? "Search by name, email, phone, or register number..." :
               collegeType === "inter" ? "Search by email, phone, name, or register number..." : "Search by email, phone, or name..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -924,9 +1113,8 @@ const Admin = () => {
                           {reg.payment_screenshot_url ? (
                             <button
                               onClick={() => setSelectedScreenshot(reg.payment_screenshot_url!)}
-                              className={`hover:underline flex items-center gap-1 ${
-                                collegeType === "inter" ? 'text-uiverse-purple' : 'text-primary'
-                              }`}
+                              className={`hover:underline flex items-center gap-1 ${collegeType === "inter" ? 'text-uiverse-purple' : 'text-primary'
+                                }`}
                             >
                               <Eye className="w-4 h-4" />
                               View
@@ -1117,9 +1305,9 @@ const Admin = () => {
 
       {/* Click outside to close export dropdown */}
       {showExportOptions && (
-        <div 
-          className="fixed inset-0 z-40" 
-          onClick={() => setShowExportOptions(false)} 
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setShowExportOptions(false)}
         />
       )}
     </div>

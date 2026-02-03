@@ -219,7 +219,7 @@ const RegisterDepartment = () => {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-uiverse-sky/20 border border-uiverse-sky/40 text-uiverse-sky text-sm font-bold mb-4">
               <GraduationCap className="w-4 h-4" />
-              AI&DS Department Only
+              Inter College / AI&DS Dept Only
             </div>
             <h1 className="font-display text-3xl md:text-4xl font-bold text-white mb-2">
               Department Registration
@@ -276,11 +276,11 @@ const RegisterDepartment = () => {
                     {...register("year")}
                     className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white focus:border-uiverse-sky/50 focus:outline-none transition-colors"
                   >
-                    <option value="">Select Year</option>
-                    <option value="1">1st Year</option>
-                    <option value="2">2nd Year</option>
-                    <option value="3">3rd Year</option>
-                    <option value="4">4th Year</option>
+                    <option value="" className="bg-black text-white">Select Year</option>
+                    <option value="1" className="bg-black text-white">1st Year</option>
+                    <option value="2" className="bg-black text-white">2nd Year</option>
+                    <option value="3" className="bg-black text-white">3rd Year</option>
+                    <option value="4" className="bg-black text-white">4th Year</option>
                   </select>
                   {errors.year && (
                     <p className="text-red-400 text-sm mt-1">{errors.year.message}</p>
@@ -295,12 +295,12 @@ const RegisterDepartment = () => {
                     {...register("section")}
                     className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white focus:border-uiverse-sky/50 focus:outline-none transition-colors"
                   >
-                    <option value="">Select</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
-                    <option value="E">E</option>
+                    <option value="" className="bg-black text-white">Select</option>
+                    <option value="A" className="bg-black text-white">A</option>
+                    <option value="B" className="bg-black text-white">B</option>
+                    <option value="C" className="bg-black text-white">C</option>
+                    <option value="D" className="bg-black text-white">D</option>
+                    <option value="E" className="bg-black text-white">E</option>
                   </select>
                   {errors.section && (
                     <p className="text-red-400 text-sm mt-1">{errors.section.message}</p>

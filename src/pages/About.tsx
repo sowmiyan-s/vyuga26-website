@@ -95,7 +95,7 @@ const About = () => {
                   Department of <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">AI & Data Science</span>
                 </h2>
-                <p className="text-gray-300 leading-relaxed text-lg break-words">
+                <p className="text-gray-300 leading-relaxed text-lg break-words text-left md:text-center">
                   Our department is a close-knit community where students and faculty work side by side—whether it’s for a challenging hackathon, a research paper, or a spontaneous cricket match after class. Since 2022, we’ve grown not just in numbers, but in spirit. Our labs are always buzzing, and our students are known for their hands-on approach, tackling real-world problems and collaborating on projects that matter. We believe in learning by doing, and our alumni often return to share their journeys, inspiring the next batch to aim higher.
                 </p>
                 <div className="flex justify-center w-full">
@@ -178,7 +178,7 @@ const About = () => {
                     <span className="text-sm text-gray-300 shrink-0">Est. {aboutUs.college.established}</span>
                   </div>
                 </div>
-                <p className="text-gray-300 leading-relaxed text-lg mb-6">
+                <p className="text-gray-300 leading-relaxed text-lg mb-6 text-left md:text-center">
                   VSB College of Engineering Technical Campus is more than a collection of buildings—it’s a place where students from all backgrounds come together to learn, grow, and make lifelong friends. Our campus is always alive with activity, from technical fests to cultural nights, and our faculty are mentors who genuinely care about each student’s journey. We’re proud of our legacy, but even prouder of the community we’ve built together.
                 </p>
 

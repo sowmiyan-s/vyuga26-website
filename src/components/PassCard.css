@@ -9,7 +9,7 @@
 
 @media (min-width: 768px) {
     .pass-card-container {
-        width: 380px;
+        width: 340px;
         height: 300px;
     }
 }
@@ -49,6 +49,12 @@
     border: 2px solid rgba(223, 25, 251, 0.2);
 }
 
+/* Dept college card styling */
+#card.dept-college-card {
+    background: linear-gradient(45deg, #0a1a1a, #1a2a2a);
+    border: 2px solid rgba(18, 184, 255, 0.2);
+}
+
 /* College type badge */
 .college-type-badge {
     position: absolute;
@@ -76,6 +82,12 @@
     color: #DF19FB;
 }
 
+.college-type-badge.dept {
+    background: linear-gradient(90deg, rgba(18, 184, 255, 0.2), rgba(255, 255, 255, 0.2));
+    border: 1px solid rgba(18, 184, 255, 0.4);
+    color: #12B8FF;
+}
+
 /* Inter college title color */
 .title.inter-title {
     background: linear-gradient(45deg, #DF19FB, #12B8FF) !important;
@@ -84,11 +96,26 @@
     filter: drop-shadow(0 0 15px rgba(223, 25, 251, 0.3)) !important;
 }
 
+/* Dept college title color */
+.title.dept-title {
+    background: linear-gradient(45deg, #12B8FF, #FFFFFF) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    filter: drop-shadow(0 0 15px rgba(18, 184, 255, 0.3)) !important;
+}
+
 /* Inter college glow colors */
 .glow-inter {
     background: radial-gradient(circle at center,
             rgba(223, 25, 251, 0.3) 0%,
             rgba(223, 25, 251, 0) 70%) !important;
+}
+
+/* Dept college glow colors */
+.glow-dept {
+    background: radial-gradient(circle at center,
+            rgba(18, 184, 255, 0.3) 0%,
+            rgba(18, 184, 255, 0) 70%) !important;
 }
 
 .card-content {

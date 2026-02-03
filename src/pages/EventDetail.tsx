@@ -63,7 +63,7 @@ const EventDetail = () => {
               {/* Removed fade overlay for full image visibility */}
             </div>
 
-            <div className="p-8 md:p-12 relative bg-black/40 backdrop-blur-xl">
+            <div className="p-8 md:p-12 relative bg-black/40 backdrop-blur-xl flex flex-col items-center text-center">
               <span
                 className={`inline-block px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider mb-6 border ${event.category === "technical"
                   ? "bg-uiverse-purple/10 text-uiverse-purple border-uiverse-purple/20"

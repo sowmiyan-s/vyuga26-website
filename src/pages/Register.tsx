@@ -407,10 +407,10 @@ const Register = () => {
                         <span className="text-2xl">🔬</span>
                       </div>
                       <h3 className="font-display text-xl font-bold text-white mb-2">
-                        AI&DS Dept
+                        AI&DS INTER COLLEGE
                       </h3>
                       <p className="text-gray-400 text-sm">
-                        For AI&DS students only
+                        ONLY FROM VSBCETC
                       </p>
                       <p className="text-uiverse-sky text-xs mt-2 font-medium">
                         {deptCount}/{settings.department_limit} spots filled
@@ -618,11 +618,11 @@ const Register = () => {
                           className={errors.year ? "border-red-500" : ""}
                           defaultValue=""
                         >
-                          <option value="" disabled>Select Year</option>
-                          <option value="1">1st Year</option>
-                          <option value="2">2nd Year</option>
-                          <option value="3">3rd Year</option>
-                          <option value="4">4th Year</option>
+                          <option value="" disabled className="bg-black text-white">Select Year</option>
+                          <option value="1" className="bg-black text-white">1st Year</option>
+                          <option value="2" className="bg-black text-white">2nd Year</option>
+                          <option value="3" className="bg-black text-white">3rd Year</option>
+                          <option value="4" className="bg-black text-white">4th Year</option>
                         </select>
                         {errors.year && <span className="text-red-400 text-xs block mt-1">{errors.year.message}</span>}
                       </div>
