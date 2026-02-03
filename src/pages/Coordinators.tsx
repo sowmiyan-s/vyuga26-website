@@ -1,4 +1,4 @@
-import { getEventCoordinators, getHODs, getStaffCoordinators, getChiefCoordinators, getAssociateCoordinators } from "@/config/coordinators";
+import { getHODs, getStaffCoordinators, getChiefCoordinators, getAssociateCoordinators, getCoordinatorsByEventId } from "@/config/coordinators";
 import { events } from "@/config/events";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,14 +12,7 @@ const Coordinators = () => {
   const staffCoordinators = getStaffCoordinators();
   const chiefCoordinators = getChiefCoordinators();
   const associateCoordinators = getAssociateCoordinators();
-  const eventCoordinators = getEventCoordinators();
 
-  const getEventNames = (eventIds: string[]): string => {
-    return eventIds
-      .map((id) => events.find((e) => e.id === id)?.title)
-      .filter(Boolean)
-      .join(", ");
-  };
 
   return (
     <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
@@ -109,7 +102,7 @@ const Coordinators = () => {
                   <UiverseCard
                     key={coordinator.id}
                     delay={index * 0.1}
-                    className="p-4 md:p-6 border-white/5 hover:border-uiverse-sky/30 group"
+                    className="p-4 md:p-4 border-white/5 hover:border-uiverse-sky/30 group"
                   >
                     <div className="flex items-center gap-4 md:gap-6">
                       <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-uiverse-sky/10 to-blue-500/10 flex items-center justify-center border border-uiverse-sky/20 group-hover:border-uiverse-sky/50 transition-colors flex-shrink-0">
@@ -151,7 +144,7 @@ const Coordinators = () => {
                   <UiverseCard
                     key={coordinator.id}
                     delay={index * 0.1}
-                    className="p-4 md:p-6 border-white/5 hover:border-uiverse-green/30 group"
+                    className="p-4 md:p-4 border-white/5 hover:border-uiverse-green/30 group"
                   >
                     <div className="flex items-center gap-4 md:gap-6">
                       <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-uiverse-green/10 to-emerald-500/10 flex items-center justify-center border border-uiverse-green/20 group-hover:border-uiverse-green/50 transition-colors flex-shrink-0">
@@ -193,7 +186,7 @@ const Coordinators = () => {
                   <UiverseCard
                     key={coordinator.id}
                     delay={index * 0.1}
-                    className="p-4 md:p-6 border-white/5 hover:border-white/30 group"
+                    className="p-4 md:p-4 border-white/5 hover:border-white/30 group"
                   >
                     <div className="flex items-center gap-4 md:gap-6">
                       <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-white/50 transition-colors flex-shrink-0">
@@ -215,51 +208,56 @@ const Coordinators = () => {
           )}
 
           {/* Event Coordinators */}
-          <section>
+          <section className="space-y-16">
             <div className="flex items-center gap-4 mb-6 md:mb-10 justify-center">
               <span className="h-px w-8 md:w-12 bg-gradient-to-r from-transparent to-uiverse-green/50" />
               <h2 className="text-lg md:text-2xl font-bold text-white uppercase tracking-wider whitespace-nowrap">Event Coordinators</h2>
               <span className="h-px w-8 md:w-12 bg-gradient-to-l from-transparent to-uiverse-green/50" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {eventCoordinators.map((coordinator, index) => (
-                <UiverseCard
-                  key={coordinator.id}
-                  delay={index * 0.05}
-                  className="p-3 md:p-6 border-white/5 hover:border-uiverse-green/30 group bg-black/20 text-center"
-                >
-                  <div className="flex justify-center mb-2 md:mb-4">
-                    {coordinator.year && (
-                      <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 text-gray-400 border border-white/5">
-                        {coordinator.year} Year
-                      </span>
-                    )}
-                  </div>
+            {events.map((event) => {
+              const coordinators = getCoordinatorsByEventId(event.id);
+              if (coordinators.length === 0) return null;
 
-                  <h3 className="font-bold text-base md:text-xl text-white mb-1 md:mb-2 truncate whitespace-nowrap">{coordinator.name}</h3>
-                  <div className="text-xs md:text-sm text-gray-500 mb-2 md:mb-6 flex items-center justify-center gap-2">
-                    <span className="truncate">{coordinator.department}</span>
-                    {coordinator.section && (
-                      <>
-                        <span className="w-1 h-1 rounded-full bg-gray-600 flex-shrink-0" />
-                        <span className="flex-shrink-0">Sec {coordinator.section}</span>
-                      </>
-                    )}
-                  </div>
+              return (
+                <div key={event.id} className="relative">
+                  <h3 className="text-xl md:text-2xl font-bold text-uiverse-sky mb-8 text-center uppercase tracking-wide border-b border-white/10 pb-2 w-fit mx-auto px-8">
+                    {event.title}
+                  </h3>
 
-                  <div className="pt-2 md:pt-4 border-t border-white/5">
-                    {coordinator.eventIds.length > 0 && (
-                      <div className="mb-4">
-                        <span className="text-uiverse-green text-xs font-bold block mb-1 uppercase tracking-wide">Event In-Charge</span>
-                        <p className="text-sm text-gray-300">{getEventNames(coordinator.eventIds)}</p>
-                      </div>
-                    )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {coordinators.map((coordinator, index) => (
+                      <UiverseCard
+                        key={`${event.id}-${coordinator.id}`}
+                        delay={index * 0.05}
+                        className="p-3 border-white/5 hover:border-uiverse-green/30 group bg-black/20 text-center"
+                      >
+                        <div className="flex justify-center mb-2 md:mb-4">
+                          {coordinator.year && (
+                            <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/5 text-gray-400 border border-white/5">
+                              {coordinator.year} Year
+                            </span>
+                          )}
+                        </div>
 
+                        <h3 className="font-bold text-sm md:text-base text-white mb-1 md:mb-2 truncate whitespace-nowrap">{coordinator.name}</h3>
+                        <div className="text-xs text-gray-500 mb-2 md:mb-4 flex items-center justify-center gap-2">
+                          <span className="truncate">{coordinator.department}</span>
+                          {coordinator.section && (
+                            <>
+                              <span className="w-1 h-1 rounded-full bg-gray-600 flex-shrink-0" />
+                              <span className="flex-shrink-0">Sec {coordinator.section}</span>
+                            </>
+                          )}
+                        </div>
+
+
+                      </UiverseCard>
+                    ))}
                   </div>
-                </UiverseCard>
-              ))}
-            </div>
+                </div>
+              );
+            })}
           </section>
         </div>
       </main>

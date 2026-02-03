@@ -13,6 +13,7 @@ import Register from "./pages/Register";
 import RegisterInterCollege from "./pages/RegisterInterCollege";
 import Admin from "./pages/Admin";
 import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import Maintenance from "./pages/Maintenance";
@@ -48,6 +49,7 @@ const AppContent = () => {
       <Route path="/register-intercollege" element={<RegisterInterCollege />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
