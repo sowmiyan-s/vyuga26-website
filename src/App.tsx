@@ -17,6 +17,7 @@ import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import Maintenance from "./pages/Maintenance";
+import RegisterDepartment from "./pages/RegisterDepartment";
 import { useEffect } from "react";
 import Lenis from "lenis";
 import { useSettings } from "./hooks/useSettings";
@@ -47,6 +48,7 @@ const AppContent = () => {
       <Route path="/about" element={<About />} />
       <Route path="/register" element={<Register />} />
       <Route path="/register-intercollege" element={<RegisterInterCollege />} />
+      <Route path="/register-department" element={<RegisterDepartment />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/contact" element={<Contact />} />

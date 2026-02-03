@@ -5,7 +5,11 @@ import { useSettings } from "@/hooks/useSettings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Search, Check, Eye, X, Users, Building2, BarChart3, Trash2, Settings, AlertTriangle, FileDown } from "lucide-react";
+import { 
+  Search, Check, Eye, X, Users, Building2, BarChart3, Trash2, Settings, 
+  AlertTriangle, FileDown, GraduationCap, TrendingUp, Calendar, 
+  PieChart, ChevronDown 
+} from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { siteConfig } from "@/config/config";
 
@@ -17,15 +21,16 @@ interface Registration {
   college_name?: string;
   register_number?: string;
   year: number;
-  department: string;
-  payment_screenshot_url: string | null;
-  payment_verified: boolean;
+  department?: string;
+  section?: string;
+  payment_screenshot_url?: string | null;
+  payment_verified?: boolean;
   entry_confirmed: boolean;
   created_at: string;
 }
 
-type CollegeType = "outer" | "inter";
-type TabType = "pending" | "verified" | "entered";
+type CollegeType = "outer" | "inter" | "dept";
+type TabType = "pending" | "verified" | "entered" | "all";
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -34,6 +39,7 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState<TabType>("pending");
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [interRegistrations, setInterRegistrations] = useState<Registration[]>([]);
+  const [deptRegistrations, setDeptRegistrations] = useState<Registration[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
@@ -43,13 +49,17 @@ const Admin = () => {
   const { settings, updateSetting } = useSettings();
 
   // Delete confirmation
-  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; isInter: boolean } | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; type: CollegeType } | null>(null);
   const [deletePassword, setDeletePassword] = useState("");
+
+  // Export options
+  const [showExportOptions, setShowExportOptions] = useState(false);
 
   // Stats
   const [stats, setStats] = useState({
     outer: { total: 0, verified: 0, entered: 0, revenue: 0 },
     inter: { total: 0, verified: 0, entered: 0, revenue: 0 },
+    dept: { total: 0, verified: 0, entered: 0, revenue: 0 },
     combined: { total: 0, verified: 0, entered: 0, revenue: 0 },
   });
 
@@ -83,11 +93,21 @@ const Admin = () => {
       if (interError) throw interError;
       setInterRegistrations(interData || []);
 
+      // Fetch department registrations
+      const { data: deptData, error: deptError } = await supabase
+        .from("department_registrations")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (deptError) throw deptError;
+      setDeptRegistrations(deptData || []);
+
       // Calculate stats
       const outerVerified = outerData?.filter((r) => r.payment_verified).length || 0;
       const outerEntered = outerData?.filter((r) => r.entry_confirmed).length || 0;
       const interVerified = interData?.filter((r) => r.payment_verified).length || 0;
       const interEntered = interData?.filter((r) => r.entry_confirmed).length || 0;
+      const deptEntered = deptData?.filter((r) => r.entry_confirmed).length || 0;
 
       setStats({
         outer: {
@@ -102,10 +122,16 @@ const Admin = () => {
           entered: interEntered,
           revenue: interVerified * 100,
         },
+        dept: {
+          total: deptData?.length || 0,
+          verified: deptData?.length || 0, // All dept registrations are "verified" (no payment)
+          entered: deptEntered,
+          revenue: 0,
+        },
         combined: {
-          total: (outerData?.length || 0) + (interData?.length || 0),
-          verified: outerVerified + interVerified,
-          entered: outerEntered + interEntered,
+          total: (outerData?.length || 0) + (interData?.length || 0) + (deptData?.length || 0),
+          verified: outerVerified + interVerified + (deptData?.length || 0),
+          entered: outerEntered + interEntered + deptEntered,
           revenue: (outerVerified * 300) + (interVerified * 100),
         },
       });
@@ -122,11 +148,16 @@ const Admin = () => {
     }
   }, [isAuthenticated]);
 
-  const handleVerifyPayment = async (id: string, verified: boolean, isInter: boolean) => {
+  const getTableName = (type: CollegeType) => {
+    if (type === "inter") return "intercollege_registrations";
+    if (type === "dept") return "department_registrations";
+    return "registrations";
+  };
+
+  const handleVerifyPayment = async (id: string, verified: boolean, type: CollegeType) => {
     try {
-      const table = isInter ? "intercollege_registrations" : "registrations";
       const { error } = await supabase
-        .from(table)
+        .from(getTableName(type))
         .update({ payment_verified: verified })
         .eq("id", id);
 
@@ -138,11 +169,10 @@ const Admin = () => {
     }
   };
 
-  const handleConfirmEntry = async (id: string, confirmed: boolean, isInter: boolean) => {
+  const handleConfirmEntry = async (id: string, confirmed: boolean, type: CollegeType) => {
     try {
-      const table = isInter ? "intercollege_registrations" : "registrations";
       const { error } = await supabase
-        .from(table)
+        .from(getTableName(type))
         .update({ entry_confirmed: confirmed })
         .eq("id", id);
 
@@ -163,9 +193,8 @@ const Admin = () => {
     }
 
     try {
-      const table = deleteConfirm.isInter ? "intercollege_registrations" : "registrations";
       const { error } = await supabase
-        .from(table)
+        .from(getTableName(deleteConfirm.type))
         .delete()
         .eq("id", deleteConfirm.id);
 
@@ -179,16 +208,17 @@ const Admin = () => {
     }
   };
 
-  const handleExport = () => {
+  // Enhanced Export with filters
+  const handleExport = (exportType: string) => {
     try {
       const wb = XLSX.utils.book_new();
 
-      const processData = (data: Registration[], type: "inter" | "outer") => {
+      const processOuterData = (data: Registration[]) => {
         return data.map((r) => ({
           Name: r.name,
           Email: r.email,
           Phone: r.phone,
-          ...(type === "outer" ? { College: r.college_name } : { "Register No": r.register_number }),
+          College: r.college_name,
           Year: r.year,
           Department: r.department,
           "Payment Status": r.payment_verified ? "Verified" : "Pending",
@@ -197,36 +227,107 @@ const Admin = () => {
         }));
       };
 
-      // Inter College
-      const interPending = interRegistrations.filter((r) => !r.payment_verified);
-      const interVerified = interRegistrations.filter((r) => r.payment_verified && !r.entry_confirmed);
-      const interConfirmed = interRegistrations.filter((r) => r.entry_confirmed);
+      const processInterData = (data: Registration[]) => {
+        return data.map((r) => ({
+          Name: r.name,
+          Email: r.email,
+          Phone: r.phone,
+          "Register No": r.register_number,
+          Year: r.year,
+          Department: r.department,
+          "Payment Status": r.payment_verified ? "Verified" : "Pending",
+          "Entry Status": r.entry_confirmed ? "Confirmed" : "Pending",
+          "Registration Date": new Date(r.created_at).toLocaleDateString(),
+        }));
+      };
 
-      if (interPending.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(interPending, "inter")), "Inter - New Reg");
-      if (interVerified.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(interVerified, "inter")), "Inter - Verified");
-      if (interConfirmed.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(interConfirmed, "inter")), "Inter - Confirmed");
+      const processDeptData = (data: Registration[]) => {
+        return data.map((r) => ({
+          Name: r.name,
+          Email: r.email,
+          Phone: r.phone,
+          "Register No": r.register_number,
+          Year: r.year,
+          Section: r.section,
+          "Entry Status": r.entry_confirmed ? "Confirmed" : "Pending",
+          "Registration Date": new Date(r.created_at).toLocaleDateString(),
+        }));
+      };
 
-      // Outer College
-      const outerPending = registrations.filter((r) => !r.payment_verified);
-      const outerVerified = registrations.filter((r) => r.payment_verified && !r.entry_confirmed);
-      const outerConfirmed = registrations.filter((r) => r.entry_confirmed);
+      const addSheetIfData = (data: any[], sheetName: string) => {
+        if (data.length > 0) {
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), sheetName);
+        }
+      };
 
-      if (outerPending.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(outerPending, "outer")), "Outer - New Reg");
-      if (outerVerified.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(outerVerified, "outer")), "Outer - Verified");
-      if (outerConfirmed.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(processData(outerConfirmed, "outer")), "Outer - Confirmed");
+      switch (exportType) {
+        case "all":
+          // All registrations
+          addSheetIfData(processOuterData(registrations), "Outer College - All");
+          addSheetIfData(processInterData(interRegistrations), "Inter College - All");
+          addSheetIfData(processDeptData(deptRegistrations), "Department - All");
+          break;
 
-      // Save file
+        case "outer":
+          addSheetIfData(processOuterData(registrations.filter(r => !r.payment_verified)), "Outer - Pending");
+          addSheetIfData(processOuterData(registrations.filter(r => r.payment_verified && !r.entry_confirmed)), "Outer - Verified");
+          addSheetIfData(processOuterData(registrations.filter(r => r.entry_confirmed)), "Outer - Entered");
+          break;
+
+        case "inter":
+          addSheetIfData(processInterData(interRegistrations.filter(r => !r.payment_verified)), "Inter - Pending");
+          addSheetIfData(processInterData(interRegistrations.filter(r => r.payment_verified && !r.entry_confirmed)), "Inter - Verified");
+          addSheetIfData(processInterData(interRegistrations.filter(r => r.entry_confirmed)), "Inter - Entered");
+          break;
+
+        case "dept":
+          addSheetIfData(processDeptData(deptRegistrations.filter(r => !r.entry_confirmed)), "Dept - Pending Entry");
+          addSheetIfData(processDeptData(deptRegistrations.filter(r => r.entry_confirmed)), "Dept - Entered");
+          break;
+
+        case "verified":
+          addSheetIfData(processOuterData(registrations.filter(r => r.payment_verified)), "Outer - Verified");
+          addSheetIfData(processInterData(interRegistrations.filter(r => r.payment_verified)), "Inter - Verified");
+          addSheetIfData(processDeptData(deptRegistrations), "Dept - All (No Payment)");
+          break;
+
+        case "entered":
+          addSheetIfData(processOuterData(registrations.filter(r => r.entry_confirmed)), "Outer - Entered");
+          addSheetIfData(processInterData(interRegistrations.filter(r => r.entry_confirmed)), "Inter - Entered");
+          addSheetIfData(processDeptData(deptRegistrations.filter(r => r.entry_confirmed)), "Dept - Entered");
+          break;
+
+        default:
+          // Default: all with status sheets
+          addSheetIfData(processOuterData(registrations), "Outer College");
+          addSheetIfData(processInterData(interRegistrations), "Inter College");
+          addSheetIfData(processDeptData(deptRegistrations), "Department");
+      }
+
+      // Check if any sheets were added
+      if (wb.SheetNames.length === 0) {
+        toast.error("No data to export");
+        return;
+      }
+
       const date = new Date().toISOString().split('T')[0];
-      XLSX.writeFile(wb, `Symposium_Registrations_${date}.xlsx`);
+      XLSX.writeFile(wb, `Vyuga_Registrations_${exportType}_${date}.xlsx`);
       toast.success("Export successful!");
+      setShowExportOptions(false);
     } catch (error) {
       console.error("Export failed:", error);
       toast.error("Failed to export data");
     }
   };
 
-  const currentData = collegeType === "outer" ? registrations : interRegistrations;
-  const isInter = collegeType === "inter";
+  const getCurrentData = () => {
+    if (collegeType === "inter") return interRegistrations;
+    if (collegeType === "dept") return deptRegistrations;
+    return registrations;
+  };
+
+  const currentData = getCurrentData();
+  const isDept = collegeType === "dept";
 
   const filteredRegistrations = currentData.filter((r) => {
     const matchesSearch =
@@ -235,9 +336,17 @@ const Admin = () => {
       r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (r.register_number && r.register_number.toLowerCase().includes(searchQuery.toLowerCase()));
 
+    if (isDept) {
+      if (activeTab === "pending") return !r.entry_confirmed && matchesSearch;
+      if (activeTab === "entered") return r.entry_confirmed && matchesSearch;
+      if (activeTab === "all") return matchesSearch;
+      return !r.entry_confirmed && matchesSearch; // Default to pending for dept
+    }
+
     if (activeTab === "pending") return !r.payment_verified && matchesSearch;
     if (activeTab === "verified") return r.payment_verified && !r.entry_confirmed && matchesSearch;
     if (activeTab === "entered") return r.entry_confirmed && matchesSearch;
+    if (activeTab === "all") return matchesSearch;
     return matchesSearch;
   });
 
@@ -269,15 +378,46 @@ const Admin = () => {
     <div className="min-h-screen bg-transparent p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
           <h1 className="font-display text-3xl font-bold text-gradient">
             Admin Dashboard
           </h1>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleExport} className="gap-2">
-              <FileDown className="w-4 h-4" />
-              Export Excel
-            </Button>
+          <div className="flex flex-wrap gap-2">
+            {/* Export Dropdown */}
+            <div className="relative">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowExportOptions(!showExportOptions)} 
+                className="gap-2"
+              >
+                <FileDown className="w-4 h-4" />
+                Export Excel
+                <ChevronDown className="w-4 h-4" />
+              </Button>
+              {showExportOptions && (
+                <div className="absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden">
+                  <button onClick={() => handleExport("all")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm font-medium">
+                    📊 All Registrations
+                  </button>
+                  <button onClick={() => handleExport("outer")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm">
+                    🏛️ Outer College Only
+                  </button>
+                  <button onClick={() => handleExport("inter")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm">
+                    🎓 Inter College Only
+                  </button>
+                  <button onClick={() => handleExport("dept")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm">
+                    🔬 Department Only
+                  </button>
+                  <div className="border-t border-border" />
+                  <button onClick={() => handleExport("verified")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm text-green-400">
+                    ✅ Verified Payments Only
+                  </button>
+                  <button onClick={() => handleExport("entered")} className="w-full px-4 py-3 text-left hover:bg-muted/50 text-sm text-neon-cyan">
+                    🚪 Entry Confirmed Only
+                  </button>
+                </div>
+              )}
+            </div>
             <Button variant="outline" onClick={() => setShowSettings(!showSettings)}>
               <Settings className="w-4 h-4 mr-2" />
               Settings
@@ -323,7 +463,7 @@ const Admin = () => {
             </div>
 
             {/* Registration Limits */}
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <div className="grid md:grid-cols-3 gap-6 mb-6">
               <div className="p-4 bg-uiverse-green/10 border border-uiverse-green/30 rounded-xl">
                 <div className="flex items-center justify-between mb-3">
                   <div>
@@ -347,12 +487,12 @@ const Admin = () => {
                     }}
                     className="w-24 text-center"
                   />
-                  <span className="text-sm text-muted-foreground">max registrations</span>
+                  <span className="text-sm text-muted-foreground">max</span>
                 </div>
                 {stats.outer.total >= settings.outer_college_limit && (
                   <p className="text-xs text-red-400 mt-2 flex items-center gap-1">
                     <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
-                    Limit reached - registration closed automatically
+                    Limit reached
                   </p>
                 )}
               </div>
@@ -379,12 +519,44 @@ const Admin = () => {
                     }}
                     className="w-24 text-center"
                   />
-                  <span className="text-sm text-muted-foreground">max registrations</span>
+                  <span className="text-sm text-muted-foreground">max</span>
                 </div>
                 {stats.inter.total >= settings.inter_college_limit && (
                   <p className="text-xs text-red-400 mt-2 flex items-center gap-1">
                     <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
-                    Limit reached - registration closed automatically
+                    Limit reached
+                  </p>
+                )}
+              </div>
+              <div className="p-4 bg-uiverse-sky/10 border border-uiverse-sky/30 rounded-xl">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <p className="font-medium text-foreground">Department Limit</p>
+                    <p className="text-sm text-muted-foreground">
+                      Current: {stats.dept.total}/{settings.department_limit}
+                    </p>
+                  </div>
+                  <GraduationCap className="w-5 h-5 text-uiverse-sky" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    min={stats.dept.total}
+                    value={settings.department_limit}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val) && val >= stats.dept.total) {
+                        updateSetting("department_limit", val);
+                      }
+                    }}
+                    className="w-24 text-center"
+                  />
+                  <span className="text-sm text-muted-foreground">max</span>
+                </div>
+                {stats.dept.total >= settings.department_limit && (
+                  <p className="text-xs text-red-400 mt-2 flex items-center gap-1">
+                    <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
+                    Limit reached
                   </p>
                 )}
               </div>
@@ -405,44 +577,172 @@ const Admin = () => {
           </div>
         )}
 
-        {/* Combined Analytics */}
+        {/* Enhanced Analytics Dashboard */}
         <div className="glass-card rounded-xl p-6 mb-8">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-6">
             <BarChart3 className="w-5 h-5 text-primary" />
-            <h2 className="font-display text-xl font-bold text-foreground">Combined Analytics</h2>
+            <h2 className="font-display text-xl font-bold text-foreground">Event Analytics</h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-muted/30 rounded-xl p-4 text-center">
-              <p className="text-2xl font-display font-bold text-foreground">
+
+          {/* Summary Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl p-4 border border-primary/30">
+              <div className="flex items-center justify-between mb-2">
+                <Users className="w-5 h-5 text-primary" />
+                <span className="text-xs text-muted-foreground">Total</span>
+              </div>
+              <p className="text-3xl font-display font-bold text-foreground">
                 {stats.combined.total}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">Total Registrations</p>
+              <p className="text-xs text-muted-foreground mt-1">All Registrations</p>
             </div>
-            <div className="bg-muted/30 rounded-xl p-4 text-center">
-              <p className="text-2xl font-display font-bold text-green-400">
+            <div className="bg-gradient-to-br from-green-500/20 to-green-500/5 rounded-xl p-4 border border-green-500/30">
+              <div className="flex items-center justify-between mb-2">
+                <Check className="w-5 h-5 text-green-400" />
+                <span className="text-xs text-muted-foreground">Verified</span>
+              </div>
+              <p className="text-3xl font-display font-bold text-green-400">
                 {stats.combined.verified}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">Verified Payments</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {stats.combined.total > 0 ? Math.round((stats.combined.verified / stats.combined.total) * 100) : 0}% verified
+              </p>
             </div>
-            <div className="bg-muted/30 rounded-xl p-4 text-center">
-              <p className="text-2xl font-display font-bold text-neon-cyan">
+            <div className="bg-gradient-to-br from-neon-cyan/20 to-neon-cyan/5 rounded-xl p-4 border border-neon-cyan/30">
+              <div className="flex items-center justify-between mb-2">
+                <TrendingUp className="w-5 h-5 text-neon-cyan" />
+                <span className="text-xs text-muted-foreground">Attended</span>
+              </div>
+              <p className="text-3xl font-display font-bold text-neon-cyan">
                 {stats.combined.entered}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">Entry Confirmed</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {stats.combined.verified > 0 ? Math.round((stats.combined.entered / stats.combined.verified) * 100) : 0}% attendance
+              </p>
             </div>
-            <div className="bg-muted/30 rounded-xl p-4 text-center">
-              <p className="text-2xl font-display font-bold text-primary">
+            <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 rounded-xl p-4 border border-yellow-500/30">
+              <div className="flex items-center justify-between mb-2">
+                <PieChart className="w-5 h-5 text-yellow-400" />
+                <span className="text-xs text-muted-foreground">Revenue</span>
+              </div>
+              <p className="text-3xl font-display font-bold text-yellow-400">
                 ₹{stats.combined.revenue.toLocaleString("en-IN")}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">Total Revenue</p>
+              <p className="text-xs text-muted-foreground mt-1">Total collected</p>
+            </div>
+          </div>
+
+          {/* Category Breakdown */}
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="bg-muted/20 rounded-xl p-4 border border-uiverse-green/20">
+              <div className="flex items-center gap-2 mb-3">
+                <Building2 className="w-4 h-4 text-uiverse-green" />
+                <span className="font-medium text-foreground">Outer College</span>
+                <span className="ml-auto text-xs bg-uiverse-green/20 text-uiverse-green px-2 py-0.5 rounded-full">
+                  ₹300/pass
+                </span>
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Registered</span>
+                  <span className="font-medium">{stats.outer.total}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Verified</span>
+                  <span className="font-medium text-green-400">{stats.outer.verified}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Attended</span>
+                  <span className="font-medium text-neon-cyan">{stats.outer.entered}</span>
+                </div>
+                <div className="flex justify-between border-t border-border pt-2 mt-2">
+                  <span className="text-muted-foreground">Revenue</span>
+                  <span className="font-bold text-uiverse-green">₹{stats.outer.revenue.toLocaleString("en-IN")}</span>
+                </div>
+              </div>
+            </div>
+            <div className="bg-muted/20 rounded-xl p-4 border border-uiverse-purple/20">
+              <div className="flex items-center gap-2 mb-3">
+                <Users className="w-4 h-4 text-uiverse-purple" />
+                <span className="font-medium text-foreground">Inter College</span>
+                <span className="ml-auto text-xs bg-uiverse-purple/20 text-uiverse-purple px-2 py-0.5 rounded-full">
+                  ₹100/pass
+                </span>
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Registered</span>
+                  <span className="font-medium">{stats.inter.total}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Verified</span>
+                  <span className="font-medium text-green-400">{stats.inter.verified}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Attended</span>
+                  <span className="font-medium text-neon-cyan">{stats.inter.entered}</span>
+                </div>
+                <div className="flex justify-between border-t border-border pt-2 mt-2">
+                  <span className="text-muted-foreground">Revenue</span>
+                  <span className="font-bold text-uiverse-purple">₹{stats.inter.revenue.toLocaleString("en-IN")}</span>
+                </div>
+              </div>
+            </div>
+            <div className="bg-muted/20 rounded-xl p-4 border border-uiverse-sky/20">
+              <div className="flex items-center gap-2 mb-3">
+                <GraduationCap className="w-4 h-4 text-uiverse-sky" />
+                <span className="font-medium text-foreground">AI&DS Dept</span>
+                <span className="ml-auto text-xs bg-uiverse-sky/20 text-uiverse-sky px-2 py-0.5 rounded-full">
+                  Free
+                </span>
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Registered</span>
+                  <span className="font-medium">{stats.dept.total}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Confirmed</span>
+                  <span className="font-medium text-green-400">{stats.dept.total}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Attended</span>
+                  <span className="font-medium text-neon-cyan">{stats.dept.entered}</span>
+                </div>
+                <div className="flex justify-between border-t border-border pt-2 mt-2">
+                  <span className="text-muted-foreground">Status</span>
+                  <span className="font-bold text-uiverse-sky">No Payment</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Event Info */}
+          <div className="mt-6 p-4 bg-muted/10 rounded-xl border border-border flex flex-wrap items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Event Date:</span>
+              <span className="text-sm font-medium">{siteConfig.eventDate}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-yellow-500" />
+              <span className="text-sm text-muted-foreground">Reg Deadline:</span>
+              <span className="text-sm font-medium text-yellow-400">{siteConfig.registrationCloseDate}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-green-400" />
+              <span className="text-sm text-muted-foreground">Capacity:</span>
+              <span className="text-sm font-medium">
+                {stats.combined.total}/{settings.outer_college_limit + settings.inter_college_limit + settings.department_limit}
+              </span>
             </div>
           </div>
         </div>
 
         {/* College Type Selector */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-wrap gap-4 mb-6">
           <button
-            onClick={() => setCollegeType("outer")}
+            onClick={() => { setCollegeType("outer"); setActiveTab("pending"); }}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${collegeType === "outer"
               ? "bg-uiverse-green/20 text-uiverse-green border-2 border-uiverse-green/50"
               : "bg-muted text-muted-foreground hover:bg-muted/80 border-2 border-transparent"
@@ -452,7 +752,7 @@ const Admin = () => {
             Outer College ({stats.outer.total}/{settings.outer_college_limit})
           </button>
           <button
-            onClick={() => setCollegeType("inter")}
+            onClick={() => { setCollegeType("inter"); setActiveTab("pending"); }}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${collegeType === "inter"
               ? "bg-uiverse-purple/20 text-uiverse-purple border-2 border-uiverse-purple/50"
               : "bg-muted text-muted-foreground hover:bg-muted/80 border-2 border-transparent"
@@ -461,61 +761,113 @@ const Admin = () => {
             <Users className="w-5 h-5" />
             Inter College ({stats.inter.total}/{settings.inter_college_limit})
           </button>
+          <button
+            onClick={() => { setCollegeType("dept"); setActiveTab("pending"); }}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${collegeType === "dept"
+              ? "bg-uiverse-sky/20 text-uiverse-sky border-2 border-uiverse-sky/50"
+              : "bg-muted text-muted-foreground hover:bg-muted/80 border-2 border-transparent"
+              }`}
+          >
+            <GraduationCap className="w-5 h-5" />
+            AI&DS Dept ({stats.dept.total}/{settings.department_limit})
+          </button>
         </div>
 
         {/* Section Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${isInter ? 'border-uiverse-purple/30' : 'border-uiverse-green/30'}`}>
+          <div className={`glass-card rounded-xl p-6 text-center border-2 ${
+            collegeType === "inter" ? 'border-uiverse-purple/30' : 
+            collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
+          }`}>
             <p className="text-3xl font-display font-bold text-foreground">
-              {isInter ? stats.inter.total : stats.outer.total}
+              {collegeType === "inter" ? stats.inter.total : collegeType === "dept" ? stats.dept.total : stats.outer.total}
             </p>
             <p className="text-sm text-muted-foreground mt-1">Total Registrations</p>
           </div>
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${isInter ? 'border-uiverse-purple/30' : 'border-uiverse-green/30'}`}>
+          <div className={`glass-card rounded-xl p-6 text-center border-2 ${
+            collegeType === "inter" ? 'border-uiverse-purple/30' : 
+            collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
+          }`}>
             <p className="text-3xl font-display font-bold text-green-400">
-              {isInter ? stats.inter.verified : stats.outer.verified}
+              {collegeType === "inter" ? stats.inter.verified : collegeType === "dept" ? stats.dept.total : stats.outer.verified}
             </p>
-            <p className="text-sm text-muted-foreground mt-1">Verified Payments</p>
+            <p className="text-sm text-muted-foreground mt-1">{isDept ? "Confirmed" : "Verified Payments"}</p>
           </div>
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${isInter ? 'border-uiverse-purple/30' : 'border-uiverse-green/30'}`}>
+          <div className={`glass-card rounded-xl p-6 text-center border-2 ${
+            collegeType === "inter" ? 'border-uiverse-purple/30' : 
+            collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
+          }`}>
             <p className="text-3xl font-display font-bold text-neon-cyan">
-              {isInter ? stats.inter.entered : stats.outer.entered}
+              {collegeType === "inter" ? stats.inter.entered : collegeType === "dept" ? stats.dept.entered : stats.outer.entered}
             </p>
             <p className="text-sm text-muted-foreground mt-1">Entry Confirmed</p>
           </div>
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${isInter ? 'border-uiverse-purple/30' : 'border-uiverse-green/30'}`}>
-            <p className={`text-3xl font-display font-bold ${isInter ? 'text-uiverse-purple' : 'text-uiverse-green'}`}>
-              ₹{(isInter ? stats.inter.revenue : stats.outer.revenue).toLocaleString("en-IN")}
+          <div className={`glass-card rounded-xl p-6 text-center border-2 ${
+            collegeType === "inter" ? 'border-uiverse-purple/30' : 
+            collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
+          }`}>
+            <p className={`text-3xl font-display font-bold ${
+              collegeType === "inter" ? 'text-uiverse-purple' : 
+              collegeType === "dept" ? 'text-uiverse-sky' : 'text-uiverse-green'
+            }`}>
+              {isDept ? "Free" : `₹${(collegeType === "inter" ? stats.inter.revenue : stats.outer.revenue).toLocaleString("en-IN")}`}
             </p>
-            <p className="text-sm text-muted-foreground mt-1">Revenue ({isInter ? '₹100/pass' : '₹300/pass'})</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              {isDept ? 'No Payment Required' : `Revenue (₹${collegeType === "inter" ? '100' : '300'}/pass)`}
+            </p>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
-          {[
-            { id: "pending", label: "Pending Verification" },
-            { id: "verified", label: "Verified Payments" },
-            { id: "entered", label: "Entry Confirmed" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as TabType)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === tab.id
-                ? isInter ? "bg-uiverse-purple text-white" : "bg-primary text-white"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {isDept ? (
+            <>
+              {[
+                { id: "pending", label: "Pending Entry" },
+                { id: "entered", label: "Entry Confirmed" },
+                { id: "all", label: "All" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as TabType)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === tab.id
+                    ? "bg-uiverse-sky text-white"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </>
+          ) : (
+            <>
+              {[
+                { id: "pending", label: "Pending Verification" },
+                { id: "verified", label: "Verified Payments" },
+                { id: "entered", label: "Entry Confirmed" },
+                { id: "all", label: "All" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as TabType)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === tab.id
+                    ? collegeType === "inter" ? "bg-uiverse-purple text-white" : "bg-primary text-white"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </>
+          )}
         </div>
 
         {/* Search */}
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
-            placeholder={isInter ? "Search by email, phone, name, or register number..." : "Search by email, phone, or name..."}
+            placeholder={isDept ? "Search by name, email, phone, or register number..." : 
+              collegeType === "inter" ? "Search by email, phone, name, or register number..." : "Search by email, phone, or name..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -540,10 +892,14 @@ const Admin = () => {
                     <th className="px-4 py-3 text-left text-sm font-medium">Name</th>
                     <th className="px-4 py-3 text-left text-sm font-medium">Contact</th>
                     <th className="px-4 py-3 text-left text-sm font-medium">
-                      {isInter ? "Register No." : "College"}
+                      {isDept ? "Register No." : collegeType === "inter" ? "Register No." : "College"}
                     </th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Year/Dept</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Screenshot</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium">
+                      {isDept ? "Year/Section" : "Year/Dept"}
+                    </th>
+                    {!isDept && (
+                      <th className="px-4 py-3 text-left text-sm font-medium">Screenshot</th>
+                    )}
                     <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>
                   </tr>
                 </thead>
@@ -558,83 +914,132 @@ const Admin = () => {
                         <p className="text-sm text-muted-foreground">{reg.phone}</p>
                       </td>
                       <td className="px-4 py-3 text-sm">
-                        {isInter ? reg.register_number : reg.college_name}
+                        {isDept || collegeType === "inter" ? reg.register_number : reg.college_name}
                       </td>
                       <td className="px-4 py-3 text-sm">
-                        Year {reg.year} - {reg.department}
+                        {isDept ? `Year ${reg.year} - ${reg.section}` : `Year ${reg.year} - ${reg.department}`}
                       </td>
-                      <td className="px-4 py-3">
-                        {reg.payment_screenshot_url ? (
-                          <button
-                            onClick={() => setSelectedScreenshot(reg.payment_screenshot_url)}
-                            className={`hover:underline flex items-center gap-1 ${isInter ? 'text-uiverse-purple' : 'text-primary'}`}
-                          >
-                            <Eye className="w-4 h-4" />
-                            View
-                          </button>
-                        ) : (
-                          <span className="text-muted-foreground text-sm">No screenshot</span>
-                        )}
-                      </td>
+                      {!isDept && (
+                        <td className="px-4 py-3">
+                          {reg.payment_screenshot_url ? (
+                            <button
+                              onClick={() => setSelectedScreenshot(reg.payment_screenshot_url!)}
+                              className={`hover:underline flex items-center gap-1 ${
+                                collegeType === "inter" ? 'text-uiverse-purple' : 'text-primary'
+                              }`}
+                            >
+                              <Eye className="w-4 h-4" />
+                              View
+                            </button>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">No screenshot</span>
+                          )}
+                        </td>
+                      )}
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
-                          {!reg.payment_verified ? (
-                            <>
-                              <Button
-                                size="sm"
-                                onClick={() => handleVerifyPayment(reg.id, true, isInter)}
-                                className="bg-green-600 hover:bg-green-700"
-                              >
-                                <Check className="w-4 h-4 mr-1" />
-                                Verify
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => setDeleteConfirm({ id: reg.id, isInter })}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </>
-                          ) : !reg.entry_confirmed ? (
-                            <>
-                              <Button
-                                size="sm"
-                                onClick={() => handleConfirmEntry(reg.id, true, isInter)}
-                                className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
-                              >
-                                <Check className="w-4 h-4 mr-1" />
-                                Entry
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleVerifyPayment(reg.id, false, isInter)}
-                              >
-                                <X className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => setDeleteConfirm({ id: reg.id, isInter })}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </>
+                          {isDept ? (
+                            // Department: Only entry confirmation (no payment verification)
+                            !reg.entry_confirmed ? (
+                              <>
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleConfirmEntry(reg.id, true, collegeType)}
+                                  className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
+                                >
+                                  <Check className="w-4 h-4 mr-1" />
+                                  Entry
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <span className="text-green-400 flex items-center gap-1">
+                                  <Check className="w-4 h-4" />
+                                  Entered
+                                </span>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleConfirmEntry(reg.id, false, collegeType)}
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </>
+                            )
                           ) : (
-                            <>
-                              <span className="text-green-400 flex items-center gap-1">
-                                <Check className="w-4 h-4" />
-                                Completed
-                              </span>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => setDeleteConfirm({ id: reg.id, isInter })}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </>
+                            // Outer/Inter: Payment verification + entry confirmation
+                            !reg.payment_verified ? (
+                              <>
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleVerifyPayment(reg.id, true, collegeType)}
+                                  className="bg-green-600 hover:bg-green-700"
+                                >
+                                  <Check className="w-4 h-4 mr-1" />
+                                  Verify
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </>
+                            ) : !reg.entry_confirmed ? (
+                              <>
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleConfirmEntry(reg.id, true, collegeType)}
+                                  className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
+                                >
+                                  <Check className="w-4 h-4 mr-1" />
+                                  Entry
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleVerifyPayment(reg.id, false, collegeType)}
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <span className="text-green-400 flex items-center gap-1">
+                                  <Check className="w-4 h-4" />
+                                  Completed
+                                </span>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </>
+                            )
                           )}
                         </div>
                       </td>
@@ -708,6 +1113,14 @@ const Admin = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Click outside to close export dropdown */}
+      {showExportOptions && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => setShowExportOptions(false)} 
+        />
       )}
     </div>
   );

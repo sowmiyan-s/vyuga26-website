@@ -7,10 +7,12 @@ export interface SystemSettings {
     registration_open: boolean;
     outer_college_limit: number;
     inter_college_limit: number;
+    department_limit: number;
 }
 
 const DEFAULT_OUTER_LIMIT = 300;
 const DEFAULT_INTER_LIMIT = 100;
+const DEFAULT_DEPT_LIMIT = 150;
 
 export const useSettings = () => {
     const [settings, setSettings] = useState<SystemSettings>({
@@ -18,6 +20,7 @@ export const useSettings = () => {
         registration_open: true,
         outer_college_limit: DEFAULT_OUTER_LIMIT,
         inter_college_limit: DEFAULT_INTER_LIMIT,
+        department_limit: DEFAULT_DEPT_LIMIT,
     });
     const [loading, setLoading] = useState(true);
 
@@ -38,6 +41,7 @@ export const useSettings = () => {
                     registration_open: true,
                     outer_college_limit: DEFAULT_OUTER_LIMIT,
                     inter_college_limit: DEFAULT_INTER_LIMIT,
+                    department_limit: DEFAULT_DEPT_LIMIT,
                 };
                 
                 data.forEach((item) => {
@@ -52,6 +56,9 @@ export const useSettings = () => {
                     }
                     if (item.key === "inter_college_limit") {
                         newSettings.inter_college_limit = typeof item.value === "number" ? item.value : parseInt(String(item.value)) || DEFAULT_INTER_LIMIT;
+                    }
+                    if (item.key === "department_limit") {
+                        newSettings.department_limit = typeof item.value === "number" ? item.value : parseInt(String(item.value)) || DEFAULT_DEPT_LIMIT;
                     }
                 });
                 setSettings(newSettings);
@@ -108,6 +115,7 @@ export const useSettings = () => {
                 registration_open: "Registration status",
                 outer_college_limit: "Outer college limit",
                 inter_college_limit: "Inter college limit",
+                department_limit: "Department limit",
             };
             toast.success(`${labels[key] || key} updated!`);
         } catch (err) {
