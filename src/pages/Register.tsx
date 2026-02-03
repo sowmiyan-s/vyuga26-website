@@ -33,6 +33,7 @@ const Register = () => {
   const [formData, setFormData] = useState<RegistrationForm | null>(null);
   const [outerCount, setOuterCount] = useState(0);
   const [interCount, setInterCount] = useState(0);
+  const [deptCount, setDeptCount] = useState(0);
   const { settings, loading: settingsLoading } = useSettings();
 
   const {
@@ -52,14 +53,19 @@ const Register = () => {
       const { count: inter } = await supabase
         .from("intercollege_registrations")
         .select("*", { count: "exact", head: true });
+      const { count: dept } = await supabase
+        .from("department_registrations")
+        .select("*", { count: "exact", head: true });
       setOuterCount(outer || 0);
       setInterCount(inter || 0);
+      setDeptCount(dept || 0);
     };
     fetchCounts();
   }, []);
 
   const isOuterFull = outerCount >= settings.outer_college_limit;
   const isInterFull = interCount >= settings.inter_college_limit;
+  const isDeptFull = deptCount >= settings.department_limit;
   const isRegistrationClosed = !settings.registration_open || new Date() > siteConfig.registrationCloseDateFull;
   const [countdown, setCountdown] = useState(3);
 
@@ -258,7 +264,7 @@ const Register = () => {
               </motion.div>
             )}
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
               {/* Outer College Card */}
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
@@ -267,7 +273,7 @@ const Register = () => {
                 onClick={() => !isOuterFull && !isRegistrationClosed && setSelectedType("outer")}
                 className={`group ${isOuterFull || isRegistrationClosed ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
               >
-                <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-8 transition-all duration-300 ${isOuterFull || isRegistrationClosed
+                <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-6 transition-all duration-300 h-full ${isOuterFull || isRegistrationClosed
                   ? 'border-gray-600/30'
                   : 'border-uiverse-green/30 hover:border-uiverse-green/60 hover:shadow-[0_0_40px_rgba(1,220,3,0.2)]'
                   }`}>
@@ -281,22 +287,22 @@ const Register = () => {
                     </div>
                   )}
 
-                  <div className="mb-6">
-                    <div className="w-16 h-16 rounded-2xl bg-uiverse-green/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-3xl">🏛️</span>
+                  <div className="mb-4">
+                    <div className="w-14 h-14 rounded-2xl bg-uiverse-green/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-2xl">🏛️</span>
                     </div>
-                    <h3 className="font-display text-2xl font-bold text-white mb-2">
+                    <h3 className="font-display text-xl font-bold text-white mb-2">
                       Outer College
                     </h3>
                     <p className="text-gray-400 text-sm">
-                      For students from other colleges and institutions
+                      For students from other colleges
                     </p>
                     <p className="text-uiverse-green text-xs mt-2 font-medium">
                       {outerCount}/{settings.outer_college_limit} spots filled
                     </p>
                   </div>
 
-                  <ul className="space-y-2 text-sm text-gray-300 mb-6">
+                  <ul className="space-y-1.5 text-sm text-gray-300 mb-4">
                     <li className="flex items-center gap-2">
                       <span className="text-uiverse-green">✓</span> Full event access
                     </li>
@@ -304,13 +310,13 @@ const Register = () => {
                       <span className="text-uiverse-green">✓</span> Food & refreshments
                     </li>
                     <li className="flex items-center gap-2">
-                      <span className="text-uiverse-green">✓</span> Participation certificate
+                      <span className="text-uiverse-green">✓</span> Certificate
                     </li>
                   </ul>
 
                   <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${isOuterFull || isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-green group-hover:translate-x-2'
                     }`}>
-                    <span>{isOuterFull ? 'Registration Full' : 'Continue Registration'}</span>
+                    <span>{isOuterFull ? 'Full' : 'Register'}</span>
                     <span>→</span>
                   </div>
                 </div>
@@ -318,13 +324,13 @@ const Register = () => {
 
               {/* Inter College Card */}
               <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 className={`group ${isInterFull || isRegistrationClosed ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
               >
                 <Link to={isInterFull || isRegistrationClosed ? "#" : "/register-intercollege"} onClick={(e) => (isInterFull || isRegistrationClosed) && e.preventDefault()}>
-                  <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-8 transition-all duration-300 ${isInterFull || isRegistrationClosed
+                  <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-6 transition-all duration-300 h-full ${isInterFull || isRegistrationClosed
                     ? 'border-gray-600/30'
                     : 'border-uiverse-purple/30 hover:border-uiverse-purple/60 hover:shadow-[0_0_40px_rgba(223,25,251,0.2)]'
                     }`}>
@@ -338,22 +344,22 @@ const Register = () => {
                       </div>
                     )}
 
-                    <div className="mb-6">
-                      <div className="w-16 h-16 rounded-2xl bg-uiverse-purple/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <span className="text-3xl">🎓</span>
+                    <div className="mb-4">
+                      <div className="w-14 h-14 rounded-2xl bg-uiverse-purple/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <span className="text-2xl">🎓</span>
                       </div>
-                      <h3 className="font-display text-2xl font-bold text-white mb-2">
+                      <h3 className="font-display text-xl font-bold text-white mb-2">
                         Inter College
                       </h3>
                       <p className="text-gray-400 text-sm">
-                        For students of VSB College of Engineering
+                        For VSB College students
                       </p>
                       <p className="text-uiverse-purple text-xs mt-2 font-medium">
                         {interCount}/{settings.inter_college_limit} spots filled
                       </p>
                     </div>
 
-                    <ul className="space-y-2 text-sm text-gray-300 mb-6">
+                    <ul className="space-y-1.5 text-sm text-gray-300 mb-4">
                       <li className="flex items-center gap-2">
                         <span className="text-uiverse-purple">✓</span> Full event access
                       </li>
@@ -361,13 +367,71 @@ const Register = () => {
                         <span className="text-uiverse-purple">✓</span> Food & refreshments
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-uiverse-purple">✓</span> Participation certificate
+                        <span className="text-uiverse-purple">✓</span> Certificate
                       </li>
                     </ul>
 
                     <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${isInterFull || isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-purple group-hover:translate-x-2'
                       }`}>
-                      <span>{isInterFull ? 'Registration Full' : 'Continue Registration'}</span>
+                      <span>{isInterFull ? 'Full' : 'Register'}</span>
+                      <span>→</span>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+
+              {/* AI&DS Department Card */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+                className={`group ${isDeptFull || isRegistrationClosed ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+              >
+                <Link to={isDeptFull || isRegistrationClosed ? "#" : "/register-department"} onClick={(e) => (isDeptFull || isRegistrationClosed) && e.preventDefault()}>
+                  <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-6 transition-all duration-300 h-full ${isDeptFull || isRegistrationClosed
+                    ? 'border-gray-600/30'
+                    : 'border-uiverse-sky/30 hover:border-uiverse-sky/60 hover:shadow-[0_0_40px_rgba(18,184,255,0.2)]'
+                    }`}>
+                    <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-uiverse-sky/20 border border-uiverse-sky/40 text-uiverse-sky text-xs font-bold">
+                      FREE
+                    </div>
+
+                    {isDeptFull && (
+                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-bold">
+                        FULL
+                      </div>
+                    )}
+
+                    <div className="mb-4">
+                      <div className="w-14 h-14 rounded-2xl bg-uiverse-sky/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <span className="text-2xl">🔬</span>
+                      </div>
+                      <h3 className="font-display text-xl font-bold text-white mb-2">
+                        AI&DS Dept
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        For AI&DS students only
+                      </p>
+                      <p className="text-uiverse-sky text-xs mt-2 font-medium">
+                        {deptCount}/{settings.department_limit} spots filled
+                      </p>
+                    </div>
+
+                    <ul className="space-y-1.5 text-sm text-gray-300 mb-4">
+                      <li className="flex items-center gap-2">
+                        <span className="text-uiverse-sky">✓</span> Full event access
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-uiverse-sky">✓</span> No payment required
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-uiverse-sky">✓</span> Certificate
+                      </li>
+                    </ul>
+
+                    <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${isDeptFull || isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-sky group-hover:translate-x-2'
+                      }`}>
+                      <span>{isDeptFull ? 'Full' : 'Register'}</span>
                       <span>→</span>
                     </div>
                   </div>

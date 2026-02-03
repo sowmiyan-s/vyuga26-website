@@ -32,6 +32,45 @@ export type Database = {
         }
         Relationships: []
       }
+      department_registrations: {
+        Row: {
+          created_at: string
+          email: string
+          entry_confirmed: boolean | null
+          id: string
+          name: string
+          phone: string
+          register_number: string
+          section: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          entry_confirmed?: boolean | null
+          id?: string
+          name: string
+          phone: string
+          register_number: string
+          section: string
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          entry_confirmed?: boolean | null
+          id?: string
+          name?: string
+          phone?: string
+          register_number?: string
+          section?: string
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
       intercollege_registrations: {
         Row: {
           created_at: string
