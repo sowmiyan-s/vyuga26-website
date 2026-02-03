@@ -1,0 +1,234 @@
+Event: IDEATHON
+ID: ideathon
+Category: technical
+Description: To encourage innovation and critical thinking by enabling students to propose feasible technology-driven solutions to real-world problems.
+Full Description: Ideathon provides a structured platform for students to pitch original ideas across modern technology domains. Participants must clearly articulate the problem, proposed solution, and its real-world applicability.
+Time: 10:00 AM – 1:00 PM
+Rules:
+- Open to all departments. Team size: Exactly 3 members
+- Domains allowed: AI, Machine Learning, Data Science, IoT, Cyber Security, Recommendation Systems, Educational Systems
+- Presentation language: English
+- Equal participation from all team members is mandatory
+- Preliminary PPT: Maximum 10 slides
+- Final PPT: Maximum 7 slides (excluding title and thank-you slides)
+- PPT must be created manually; AI tools are strictly prohibited
+- Evaluation Criteria: Innovation and originality, Technical feasibility, Clarity of presentation
+Coordinators: mathivadhana-p, preethika-mh, dharshini-p, sanjai-krishnan-s, barath-r
+Flags: Spotlight: Yes, Cash Prize: Yes, Pre-Registration: Yes
+Image: /images/IDEATHON.png
+Submission Link: https://docs.google.com/forms/d/e/1FAIpQLSeO7HIiZ-oI2spHVyGf7oS2Dt55A0UgFHcicYbnH883yiYUhg/viewform
+
+--------------------------------------------------
+
+Event: Project Expo
+ID: project-expo
+Category: technical
+Description: To provide a platform for demonstrating working projects that offer practical solutions to real-world challenges.
+Full Description: Project Expo allows participants to present functional hardware or software projects, emphasizing implementation quality, clarity, and technical soundness.
+Time: 10:00 AM – 1:00 PM
+Rules:
+- Open to all departments. Team size: Exactly 3 members
+- Project domains: IoT or Software-based solutions
+- Offline presentation must be in English
+- Equal contribution from all team members is mandatory
+- Preliminary demo (photo/video) submission deadline: ${siteConfig.registrationCloseDate}
+- Evaluation Criteria: Innovation and originality, Technical feasibility, Presentation clarity
+Coordinators: madhu-mitha-r, pratthima-s, sandhiya-k, chenthurr-c-k, harsith-s-j
+Flags: Spotlight: No, Cash Prize: Yes, Pre-Registration: No
+Image: /images/PROJECT-EXPO.png
+
+--------------------------------------------------
+
+Event: Codathon
+ID: codathon
+Category: technical
+Description: Codathon is a competitive programming event designed to evaluate participants’ problem-solving ability, algorithmic thinking, and coding efficiency.
+Full Description: Codathon is a competitive programming event designed to evaluate participants’ problem-solving ability, algorithmic thinking, and coding efficiency. Participants will solve Data Structures and Algorithms (DSA)–based problems on an online coding platform using their own laptops. The problem set will include Easy, Medium, and Hard difficulty levels, and submissions will be evaluated through an automated judging system that ensures fair and unbiased scoring. Strict monitoring will be enforced, and the use of AI tools or any form of malpractice is not permitted.
+Time: Duration: 2 – 3 hours
+Rules:
+- Participants must bring their own laptop to take part in the event
+- All problems must be solved on the designated online coding platform
+- Use of AI tools, plagiarism, or any external assistance is strictly prohibited
+- Any programming language is allowed
+- Late submissions will not be accepted
+- Participants must follow the instructions provided by the coordinators throughout the event
+- Open to all departments. Team size: 1 – 3 members
+- Rounds: Single round (Online Coding Challenge)
+- Duration: 2 – 3 hours
+- Problem levels: Easy / Medium / Hard
+- Scoring: Fully automated evaluation
+- Evaluation Criteria: Correctness and efficiency of solutions, Logical and algorithmic approach, Code quality and optimization
+Coordinators: divya-harini, kaviya, subha, thangam-s-k, vishal-n, sowmiyan-s
+Flags: Spotlight: Yes, Cash Prize: Yes, Pre-Registration: No
+Image: /images/CODATHON.png
+
+--------------------------------------------------
+
+Event: UXplore – UI / UX Design
+ID: ui-ux
+Category: technical
+Description: UXplore is an exciting UI/UX design competition that challenges participants to explore, analyze, and design meaningful digital experiences.
+Full Description: UXplore is an exciting UI/UX design competition that challenges participants to explore, analyze, and design meaningful digital experiences. The event focuses on user-centered design, encouraging students to think beyond visuals and craft interfaces that are intuitive, accessible, and impactful. Participants will be given a real-world problem statement and are expected to design creative and functional solutions within a limited time. UXplore provides a platform for students to showcase their design thinking, creativity, and problem-solving skills using modern UI/UX tools.
+Time: Duration: 180 minutes
+Rules:
+- Open to all departments. Team size: 1 – 3 members
+- Designs must be original. Plagiarism or copying direct disqualification
+- No pre-made templates allowed
+- The use of AI tools for creating designs is strictly prohibited
+- Participants must design only during the event time. Any prior work is not allowed
+- Participants may use only UI/UX design tools (Figma, Adobe XD, Penpot, Canva, etc.). Coding is not required
+- Participants should be ready to explain their design decisions if asked by the judges
+- Organizers reserve the right to modify rules or disqualify entries if necessary
+- Rounds: Preliminary / Final
+- Duration: 180 minutes
+- Evaluation Criteria: User Experience (UX) & Flow, Creativity & Innovation, Visual Design (UI), Usability & Accessibility, Problem Understanding, Presentation / Explanation
+Coordinators: manojkrishna-m, kabeel-raj-k, shijitha-jenifer, ramya-s, oviya-maheswari
+Flags: Spotlight: No, Cash Prize: No, Pre-Registration: No
+Image: /images/UXPLORE-UIUX.png
+
+--------------------------------------------------
+
+Event: Web Development
+ID: web-development
+Category: technical
+Description: To test participants’ ability to design and develop functional, responsive websites within a limited timeframe.
+Full Description: Participants create original web solutions showcasing modern design principles, coding skills, and technical execution.
+Time: 10:00 AM – 01:00 PM
+Rules:
+- Open to all departments. Team size: 2 to 3 members
+- Pre-built projects are not allowed
+- Plagiarism or malpractice leads to disqualification
+- Minimal AI assistance allowed; prompt-generated websites are prohibited
+- Laptop and mobile device are mandatory
+- Duration: 3 hours
+- Evaluation Criteria: Originality of design and code, Relevance to theme, Creativity and execution
+Coordinators: sathya-k, anurathi-l, aiswarya-v, pooja-m, jaya-surya
+Flags: Spotlight: No, Cash Prize: No, Pre-Registration: No
+Image: /images/WEB-DEVELOPMENT.png
+
+--------------------------------------------------
+
+Event: TECH ARCHITECTURE
+ID: tech-architecture
+Category: technical
+Description: Tech Architecture is a hands-on technical event where participants are required to analyse, design, and clone the architecture of a given application within a limited time.
+Full Description: The event focuses on system design thinking, architectural planning, scalability, feasibility, and clarity of presentation rather than just coding. Participants must demonstrate their understanding of how real-world applications are structured and delivered efficiently.
+Time: Duration: 3 Hours
+Rules:
+- Open to all departments. Team size: 2 – 3 members
+- A specific application/problem statement will be provided on the spot
+- The architecture design must be original and created during the event
+- Any form of plagiarism or copying existing architectures will lead to immediate disqualification
+- Participants are allowed to use tools such as VS Code, Figma, Lucid chart, Draw.io, or similar design tools
+- The decision of the judges will be final and binding
+- Laptop (mandatory)
+- Basic knowledge of system design, architecture patterns, and application flow
+- Number of Rounds: Single Round
+- Evaluation Criteria: Innovation & Creativity, Technical Feasibility, Architecture clarity & structure, Presentation & Communication skills
+Coordinators: amar-karthik, aiswarya-r, kokiladevi-a, pilo-francy-f, shivani-t
+Flags: Spotlight: No, Cash Prize: No, Pre-Registration: No
+Image: /images/TECH-ARCHITECTURE.png
+
+--------------------------------------------------
+
+Event: Quiz
+ID: quiz
+Category: non-technical
+Description: To test general knowledge, logical reasoning, and quick decision-making skills.
+Full Description: A fast-paced quiz competition conducted across multiple rounds.
+Time: 10:00 AM – 11:00 AM
+Rules:
+- Open to all departments. Team size: Exactly 2 members
+- Quizmaster’s decision is final
+- No electronic devices allowed except during buzzer round
+- Malpractice results in disqualification
+- Round 1: MCQs
+- Round 2: Buzzer
+- Duration: 1 hour
+Coordinators: blessy-r, monica-g, gowtham-m, prithiv-a-k
+Flags: Spotlight: No, Cash Prize: No, Pre-Registration: No
+Image: /images/QUIZ.png
+
+--------------------------------------------------
+
+Event: Connections
+ID: connections
+Category: non-technical
+Description: To enhance analytical and associative thinking through pattern recognition challenges.
+Full Description: Participants identify logical links between images, words, or concepts.
+Time: 11:30 AM – 12:30 PM
+Rules:
+- Open to all departments. Team size: 2 to 3 members
+- No discussion between teams
+- No mobile or internet usage
+- Answers once submitted cannot be changed
+- Quizmaster’s decision is final
+- Evaluation Criteria: Accuracy, Relevance, Clarity of explanation
+Coordinators: semmozhi-s, agneya-p-k, saru-bala-b, reshma-b
+Flags: Spotlight: No, Cash Prize: No, Pre-Registration: No
+Image: /images/CONNECTIONS.png
+
+--------------------------------------------------
+
+Event: Esports
+ID: e-sports
+Category: non-technical
+Description: Esports is a competitive gaming tournament featuring popular multiplayer battle royale titles such as Free Fire and PUBG/BGMI.
+Full Description: Esports is a competitive gaming tournament featuring popular multiplayer battle royale titles such as Free Fire and PUBG/BGMI. The event is designed to test players’ strategic gameplay, teamwork, reflexes, and in-game decision-making skills. Matches will be conducted as full-map battle royale games under standard tournament conditions to ensure fair and competitive play.
+Time: As per match schedule
+Rules:
+- Matches will be conducted in full-map battle royale format
+- Players must use their own mobile devices and stable internet connection
+- Only in-game voice chat is allowed during matches
+- Use of hacks, mods, emulators (unless permitted), or any third-party software is strictly prohibited
+- Teaming with other squads, exploiting glitches, or intentional unfair play is not allowed
+- Players must join the custom room on time; late entry may lead to disqualification
+- All participants must follow the instructions given by the coordinators
+- The coordinators reserve the right to modify rules or match settings at any time to ensure fair conduct of the tournament
+- Open to all departments
+- Team size: As per game rules (Solo / Duo / Squad)
+- Game titles: Free Fire / PUBG (BGMI)
+- Match type: Full-map custom room match
+- Rounds: Preliminary and Final (based on number of teams)
+- Duration: As per match progression and game rules
+- Evaluation Criteria: Placement / Rank achieved, Team coordination and fair play
+Coordinators: prasanth, sebin, harshit, rishvan, nandha-kumar
+Flags: Spotlight: Yes, Cash Prize: Yes, Pre-Registration: No
+Image: /images/ESPORTS.png
+
+--------------------------------------------------
+
+Event: Spotlight
+ID: spotlight
+Category: non-technical
+Description: To assess communication skills, confidence, and spontaneity.
+Full Description: Participants compete in debate and Just-A-Minute (JAM) speaking rounds based on on-the-spot topics.
+Time: 2:00 PM – 3:30 PM
+Rules:
+- Open to all departments. Individual participation only
+- Topics will be given on the spot
+- Offensive or inappropriate language is prohibited
+- Round 1: Debate
+- Round 2: JAM
+Coordinators: sasmita-r, nithanya-k, ashmita-p, juwairiya-m
+Flags: Spotlight: Yes, Cash Prize: No, Pre-Registration: No
+Image: /images/SPOTLIGHT.png
+
+--------------------------------------------------
+
+Event: Startup Arena
+ID: startup
+Category: non-technical
+Description: To encourage entrepreneurial thinking and business innovation among students.
+Full Description: Participants pitch startup ideas focusing on innovation, market relevance, and feasibility.
+Time: 2:00 PM – 3:30 PM
+Rules:
+- Open to all departments. Team size: 2 to 3 members
+- Preliminary: Online PPT submission
+- Final: Offline presentation before judges
+- Duration: 10 minutes per team (presentation and Q&A)
+- Evaluation Criteria: Innovation and originality, Business and technical feasibility, Clarity of presentation
+Coordinators: priyaadharshini-s-k, sri-dharshini, mithun-m, naveen-m, abinesh-a, amar-karthik
+Flags: Spotlight: Yes, Cash Prize: No, Pre-Registration: Yes
+Component: Submission Link: https://docs.google.com/forms/d/e/1FAIpQLSf...
+Image: /images/STARTUP.png

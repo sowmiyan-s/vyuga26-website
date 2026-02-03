@@ -250,17 +250,17 @@ export const events: Event[] = [
     category: "non-technical",
     image: "/images/STARTUP.png",
     rules: [
-      "Open to all departments. Team size: 2 to 3 members",
+      "Open to all departments. Team size: 1 to 3 members",
       "Preliminary: Online PPT submission",
       "Final: Offline presentation before judges",
       "Duration: 10 minutes per team (presentation and Q&A)",
       "Evaluation Criteria: Innovation and originality, Business and technical feasibility, Clarity of presentation"
     ],
     time: "2:00 PM – 3:30 PM",
-    coordinatorIds: ["priyaadharshini-s-k", "sri-dharshini", "mithun-m", "naveen-m", "abinesh-a", "amar-karthik"],
+    coordinatorIds: ["priyaadharshini-s-k", "sri-dharshini", "mithun-m", "naveen-m", "abinesh-a"],
     isSpotlight: true,
     isPreRegistration: true,
-    submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLSf...", // Placeholder - User to update
+    submissionLink: "https://docs.google.com/forms/d/1rBud14mlpEXRUGruziuF3H2oWdjULKhdyPxUdSkyY4g/edit?pli=1",
   },
 ];
 
