@@ -6,8 +6,9 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { UiverseButton } from "@/components/ui/UiverseButton";
 import { UiverseCard } from "@/components/ui/UiverseCard";
-import { ArrowLeft, IndianRupee } from "lucide-react";
+import { ArrowLeft, IndianRupee, Clock, Trophy, AlertTriangle, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
+import SEO from "@/components/SEO";
 
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,7 @@ const EventDetail = () => {
   if (!event) {
     return (
       <div className="min-h-screen bg-transparent text-white flex items-center justify-center">
+        <SEO title="Event Not Found" description="The requested event could not be found." />
         <div className="text-center">
           <h1 className="font-display text-4xl font-bold mb-4">Event Not Found</h1>
           <Link to="/events">
@@ -29,9 +31,15 @@ const EventDetail = () => {
 
   return (
     <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
+      <SEO
+        title={event.title}
+        description={event.fullDescription.substring(0, 160) + "..."}
+        image={event.image}
+        url={window.location.href}
+      />
       {/* Background Effects */}
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-uiverse-purple/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-uiverse-sky/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-uiverse-sky/10 rounded-full blur-120px pointer-events-none" />
 
       <Navbar />
 
@@ -142,7 +150,7 @@ const EventDetail = () => {
                     </h2>
                     <p className="text-xl text-gray-300">
                       Exciting cash prizes await the winners!
-                      <span className="block text-sm text-yellow-500/80 mt-2 font-mono">🏆 Win Big with {event.title}</span>
+                      <span className="text-sm text-yellow-500/80 mt-2 font-mono flex items-center gap-2"><Trophy className="w-4 h-4" /> Win Big with {event.title}</span>
                     </p>
                   </div>
                 </UiverseCard>
@@ -154,7 +162,7 @@ const EventDetail = () => {
                   Time
                 </h2>
                 <div className="flex items-center gap-3 text-xl text-gray-300">
-                  <span className="text-2xl">⏰</span>
+                  <Clock className="w-7 h-7 text-white" />
                   {event.time}
                 </div>
               </UiverseCard>
@@ -220,13 +228,13 @@ const EventDetail = () => {
                     variant="primary"
                     className="text-xl px-12 py-6 shadow-[0_0_30px_rgba(18,184,255,0.3)] hover:shadow-[0_0_50px_rgba(18,184,255,0.6)] !bg-gradient-to-r !from-uiverse-sky !to-blue-600"
                   >
-                    Submit PPT (Free) 🚀
+                    Submit PPT (Free) <Rocket className="w-5 h-5 ml-2" />
                   </UiverseButton>
                 </a>
 
                 <div className="max-w-2xl mx-auto p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
                   <p className="text-yellow-200 text-sm font-medium">
-                    ⚠️ <span className="underline">IMPORTANT:</span> Payment details and event passes will be shared <strong className="text-white">only with shortlisted teams</strong> via email/WhatsApp.
+                    <span className="flex items-center gap-2 mb-1"><AlertTriangle className="w-4 h-4" /> <span className="underline">IMPORTANT:</span></span> Payment details and event passes will be shared <strong className="text-white">only with shortlisted teams</strong> via email/WhatsApp.
                   </p>
                   <p className="text-yellow-200/70 text-xs mt-1">
                     Direct payments made without selection confirmation are invalid and will not be refunded.

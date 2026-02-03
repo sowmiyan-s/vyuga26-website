@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { UiverseCard } from "@/components/ui/UiverseCard";
 import { motion } from "framer-motion";
-import { GraduationCap, Target, Lightbulb, University, MapPin, Calendar, Users, Trophy, Rocket, BookOpen } from "lucide-react";
+import { GraduationCap, Target, Lightbulb, University, MapPin, Calendar, Users, Trophy, Rocket, BookOpen, Check } from "lucide-react";
 
 // Placeholder images from Unsplash for realistic feel
 const IMAGES = {
@@ -52,29 +52,7 @@ const About = () => {
 
       <main className="relative z-10">
 
-        {/* Stats Grid */}
-        <section className="py-12 relative z-20 px-4">
-          <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: "Established", value: aboutUs.department.established, icon: University, color: "text-uiverse-purple" },
-              { label: "Students", value: aboutUs.department.students + "+", icon: Users, color: "text-uiverse-sky" },
-              { label: "Faculty", value: aboutUs.department.faculty + "+", icon: GraduationCap, color: "text-uiverse-pink" },
-              { label: "Events", value: "15+", icon: Trophy, color: "text-orange-400" },
-            ].map((stat, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="bg-black/80 border border-white/10 backdrop-blur-xl p-6 rounded-2xl text-center hover:border-white/20 transition-all shadow-xl"
-              >
-                <stat.icon className={`w-8 h-8 mx-auto mb-3 ${stat.color}`} />
-                <h3 className="text-3xl font-bold text-white font-display mb-1">{stat.value}</h3>
-                <p className="text-xs text-gray-400 uppercase tracking-widest">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+
 
         {/* Department Section - Zig Zag Layout */}
         <section className="py-20 px-4">
@@ -108,7 +86,7 @@ const About = () => {
                     ].map((item, i) => (
                       <li key={i} className="flex items-center gap-3 text-gray-300">
                         <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
-                          <span className="text-green-500 text-xs">✓</span>
+                          <Check className="w-3 h-3 text-green-500" />
                         </div>
                         {item}
                       </li>
@@ -166,7 +144,7 @@ const About = () => {
                   <span className="text-green-500 font-bold uppercase tracking-widest text-sm">Our Campus</span>
                 </div>
                 <h2 className="text-2xl md:text-5xl font-bold font-display text-white break-words">
-                  VSB College of <br />Engineering
+                  VSB College of <br />Engineering Technical Campus
                 </h2>
                 <div className="flex flex-col md:flex-row justify-center gap-2 md:gap-4 mb-4">
                   <div className="px-4 py-2 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center gap-2 w-full md:w-auto">

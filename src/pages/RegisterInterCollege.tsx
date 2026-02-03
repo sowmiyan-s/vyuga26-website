@@ -12,6 +12,8 @@ import RegistrationClosed from "@/components/RegistrationClosed";
 import { UiverseButton } from "@/components/ui/UiverseButton";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Megaphone, AlertTriangle, ArrowRight, Upload, CheckCircle2 } from "lucide-react";
 import "@/components/RegistrationForm.css";
 
 const interCollegeSchema = z.object({
@@ -186,6 +188,14 @@ const RegisterInterCollege = () => {
 
       <main className="pt-32 pb-20 px-4 relative z-10">
         <div className="max-w-2xl mx-auto">
+          {/* Back Button */}
+          <Link
+            to="/register"
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Registration Types
+          </Link>
           {/* Inter College Badge */}
           <div className="flex justify-center mb-6">
             <div className="px-4 py-1.5 rounded-full bg-uiverse-purple/20 border border-uiverse-purple/40 text-uiverse-purple text-sm font-bold tracking-wider">
@@ -196,7 +206,7 @@ const RegisterInterCollege = () => {
           {/* Pre-Registration Info (Compact) */}
           <div className="mb-8 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
             <p className="text-gray-300 text-sm">
-              <span className="text-blue-400 font-bold block mb-1">📢 Ideathon & Startup Arena:</span>
+              <span className="text-blue-400 font-bold mb-1 flex items-center gap-2"><Megaphone className="w-4 h-4" /> Ideathon & Startup Arena:</span>
               Register here <strong>only if shortlisted</strong>. For other events, you can proceed.
             </p>
           </div>
@@ -204,11 +214,11 @@ const RegisterInterCollege = () => {
           {/* Mandatory Requirements Warning */}
           <div className="mb-8 bg-red-900/20 border border-red-500/30 rounded-xl p-5 text-center shadow-[0_0_20px_rgba(239,68,68,0.1)]">
             <h3 className="font-display font-bold text-xl mb-3 animate-blink-text flex items-center justify-center gap-2">
-              ⚠️ MANDATORY REQUIREMENTS ⚠️
+              <AlertTriangle className="w-6 h-6" /> MANDATORY REQUIREMENTS <AlertTriangle className="w-6 h-6" />
             </h3>
             <ul className="text-sm md:text-base space-y-2 text-gray-300 font-medium text-left inline-block">
               <li className="flex items-start gap-2">
-                <span className="text-red-400 mt-1">➜</span>
+                <ArrowRight className="w-4 h-4 text-red-400 mt-1" />
                 <span>Bring your <strong>College ID Card</strong> (Compulsory for entry).</span>
               </li>
               <li className="flex items-start gap-2">
@@ -282,6 +292,7 @@ const RegisterInterCollege = () => {
                         placeholder="Full Name (Initial at back)"
                         {...register("name")}
                         className={errors.name ? "border-red-500" : ""}
+                        aria-label="Full Name"
                       />
                       {errors.name && <span className="text-red-400 text-xs block mt-1">{errors.name.message}</span>}
                     </div>
@@ -291,6 +302,7 @@ const RegisterInterCollege = () => {
                         placeholder="Register Number"
                         {...register("registerNumber")}
                         className={errors.registerNumber ? "border-red-500" : ""}
+                        aria-label="Register Number"
                       />
                       {errors.registerNumber && <span className="text-red-400 text-xs block mt-1">{errors.registerNumber.message}</span>}
                     </div>
@@ -301,6 +313,7 @@ const RegisterInterCollege = () => {
                         type="email"
                         {...register("email")}
                         className={errors.email ? "border-red-500" : ""}
+                        aria-label="Email Address"
                       />
                       {errors.email && <span className="text-red-400 text-xs block mt-1">{errors.email.message}</span>}
                     </div>
@@ -311,6 +324,7 @@ const RegisterInterCollege = () => {
                         type="tel"
                         {...register("phone")}
                         className={errors.phone ? "border-red-500" : ""}
+                        aria-label="Phone Number"
                       />
                       {errors.phone && <span className="text-red-400 text-xs block mt-1">{errors.phone.message}</span>}
                     </div>
@@ -321,6 +335,7 @@ const RegisterInterCollege = () => {
                           {...register("year")}
                           className={errors.year ? "border-red-500" : ""}
                           defaultValue=""
+                          aria-label="Select Year"
                         >
                           <option value="" disabled className="bg-black text-white">Select Year</option>
                           <option value="1" className="bg-black text-white">1st Year</option>
@@ -336,6 +351,7 @@ const RegisterInterCollege = () => {
                           {...register("department")}
                           className={errors.department ? "border-red-500" : ""}
                           defaultValue=""
+                          aria-label="Select Department"
                         >
                           <option value="" disabled className="bg-black text-white">Select Department</option>
                           {departments.map((dept) => (
@@ -418,7 +434,7 @@ const RegisterInterCollege = () => {
                         </div>
                       ) : (
                         <>
-                          <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">📤</span>
+                          <Upload className="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" />
                           <span className="text-gray-400 group-hover:text-uiverse-purple transition-colors">
                             Click to upload screenshot
                           </span>
@@ -450,7 +466,7 @@ const RegisterInterCollege = () => {
                 className="bg-black/40 backdrop-blur-xl border border-uiverse-purple/30 rounded-3xl p-12 text-center shadow-[0_0_50px_rgba(223,25,251,0.2)]"
               >
                 <div className="w-24 h-24 mx-auto rounded-full bg-uiverse-purple/20 flex items-center justify-center mb-6 border border-uiverse-purple/50 shadow-[0_0_20px_rgba(223,25,251,0.4)]">
-                  <span className="text-5xl text-uiverse-purple">✓</span>
+                  <CheckCircle2 className="w-16 h-16 text-uiverse-purple" />
                 </div>
                 <h2 className="font-display text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-uiverse-purple to-primary mb-4">
                   Registration Successful!

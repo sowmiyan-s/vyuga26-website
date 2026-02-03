@@ -13,6 +13,7 @@ import { UiverseButton } from "@/components/ui/UiverseButton";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import { ArrowLeft, Clock, Lightbulb, AlertOctagon, Landmark, Check, GraduationCap, Microscope, Megaphone, AlertTriangle, ArrowRight, Upload, CheckCircle2 } from "lucide-react";
 import "@/components/RegistrationForm.css";
 
 const registrationSchema = z.object({
@@ -207,7 +208,7 @@ const Register = () => {
               {/* Registration Info Banner */}
               {!isRegistrationClosed && (
                 <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-sm">
-                  <span>⏰</span>
+                  <Clock className="w-4 h-4 text-yellow-300" />
                   Registration closes on <strong className="ml-1">{siteConfig.registrationCloseDate}</strong>
                 </div>
               )}
@@ -220,7 +221,7 @@ const Register = () => {
 
                   <div className="relative p-6 text-left z-10">
                     <h3 className="text-xl md:text-2xl font-bold text-white mb-3 flex items-center gap-3">
-                      <span className="text-3xl animate-bounce">💡</span>
+                      <Lightbulb className="w-8 h-8 text-uiverse-sky animate-bounce" />
                       <span className="bg-clip-text text-transparent bg-gradient-to-r from-uiverse-sky to-white">
                         Ideathon & Startup Arena
                       </span>
@@ -233,7 +234,7 @@ const Register = () => {
                       </div>
 
                       <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 flex gap-3 items-center">
-                        <span className="text-3xl">🛑</span>
+                        <AlertOctagon className="w-8 h-8 text-red-500" />
                         <div>
                           <p className="text-red-200 font-bold text-xl leading-tight mb-1">
                             Do NOT Pay Now!
@@ -272,6 +273,14 @@ const Register = () => {
                 transition={{ delay: 0.1 }}
                 onClick={() => !isOuterFull && !isRegistrationClosed && setSelectedType("outer")}
                 className={`group ${isOuterFull || isRegistrationClosed ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                role="button"
+                tabIndex={!isOuterFull && !isRegistrationClosed ? 0 : -1}
+                onKeyDown={(e) => {
+                  if ((e.key === "Enter" || e.key === " ") && !isOuterFull && !isRegistrationClosed) {
+                    e.preventDefault();
+                    setSelectedType("outer");
+                  }
+                }}
               >
                 <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-6 transition-all duration-300 h-full ${isOuterFull || isRegistrationClosed
                   ? 'border-gray-600/30'
@@ -289,7 +298,7 @@ const Register = () => {
 
                   <div className="mb-4">
                     <div className="w-14 h-14 rounded-2xl bg-uiverse-green/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-2xl">🏛️</span>
+                      <Landmark className="w-8 h-8 text-uiverse-green" />
                     </div>
                     <h3 className="font-display text-xl font-bold text-white mb-2">
                       Outer College
@@ -304,10 +313,10 @@ const Register = () => {
 
                   <ul className="space-y-1.5 text-sm text-gray-300 mb-4">
                     <li className="flex items-center gap-2">
-                      <span className="text-uiverse-green">✓</span> Full event access
+                      <Check className="w-4 h-4 text-uiverse-green" /> Full event access
                     </li>
                     <li className="flex items-center gap-2">
-                      <span className="text-uiverse-green">✓</span> Food & refreshments
+                      <span className="text-uiverse-green">✓</span> Food
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="text-uiverse-green">✓</span> Certificate
@@ -328,6 +337,28 @@ const Register = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 className={`group ${isInterFull || isRegistrationClosed ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                role="button"
+                tabIndex={!isInterFull && !isRegistrationClosed ? 0 : -1}
+                onKeyDown={(e) => {
+                  // Check if it's NOT disabled before allowing action
+                  if ((e.key === "Enter" || e.key === " ") && !isInterFull && !isRegistrationClosed) {
+                    e.preventDefault();
+                    // Since this wraps a Link, we might just let the Link handle it or trigger the click.
+                    // However, the Link is inside. The Card itself is the motion.div.
+                    // Actually, there is a Link inside: <Link to=...>.
+                    // So maybe we don't need role="button" on the outer div if the Link handles it?
+                    // The Link covers the whole card?
+                    // Line 332: <Link ...> <div ...> ... </div> </Link>
+                    // Yes, the Link is a child of motion.div.
+                    // If the Link is the interactive element, we should probably not make the div interactive unless necessary.
+                    // BUT, for the first card (Outer), there is NO Link, just onClick on motion.div.
+                    // For Inter and Dept, there IS a Link.
+                    // So for Inter/Dept, the Link provided by react-router-dom should be accessible by default.
+                    // I will primarily fix the Outer card which has onClick.
+                    // Wait, for Inter/Dept, the Link logic is:
+                    // <Link to={isInterFull... ? "#" : "/register-intercollege"} ...>
+                  }
+                }}
               >
                 <Link to={isInterFull || isRegistrationClosed ? "#" : "/register-intercollege"} onClick={(e) => (isInterFull || isRegistrationClosed) && e.preventDefault()}>
                   <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-6 transition-all duration-300 h-full ${isInterFull || isRegistrationClosed
@@ -346,7 +377,7 @@ const Register = () => {
 
                     <div className="mb-4">
                       <div className="w-14 h-14 rounded-2xl bg-uiverse-purple/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <span className="text-2xl">🎓</span>
+                        <GraduationCap className="w-8 h-8 text-uiverse-purple" />
                       </div>
                       <h3 className="font-display text-xl font-bold text-white mb-2">
                         Inter College
@@ -361,10 +392,10 @@ const Register = () => {
 
                     <ul className="space-y-1.5 text-sm text-gray-300 mb-4">
                       <li className="flex items-center gap-2">
-                        <span className="text-uiverse-purple">✓</span> Full event access
+                        <Check className="w-4 h-4 text-uiverse-purple" /> Full event access
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-uiverse-purple">✓</span> Food & refreshments
+                        <span className="text-uiverse-purple">✓</span> Food
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-uiverse-purple">✓</span> Certificate
@@ -404,7 +435,7 @@ const Register = () => {
 
                     <div className="mb-4">
                       <div className="w-14 h-14 rounded-2xl bg-uiverse-sky/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <span className="text-2xl">🔬</span>
+                        <Microscope className="w-8 h-8 text-uiverse-sky" />
                       </div>
                       <h3 className="font-display text-xl font-bold text-white mb-2">
                         AI&DS INTER COLLEGE
@@ -419,10 +450,10 @@ const Register = () => {
 
                     <ul className="space-y-1.5 text-sm text-gray-300 mb-4">
                       <li className="flex items-center gap-2">
-                        <span className="text-uiverse-sky">✓</span> Full event access
+                        <Check className="w-4 h-4 text-uiverse-sky" /> Full event access
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-uiverse-sky">✓</span> No payment required
+                        <span className="text-uiverse-sky">✓</span> Food
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-uiverse-sky">✓</span> Certificate
@@ -483,7 +514,8 @@ const Register = () => {
               onClick={() => setSelectedType("select")}
               className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"
             >
-              ← Back to selection
+              <ArrowLeft className="w-4 h-4" />
+              Back to Registration Types
             </button>
             <div className="px-4 py-1.5 rounded-full bg-uiverse-green/20 border border-uiverse-green/40 text-uiverse-green text-sm font-bold tracking-wider">
               OUTER COLLEGE
@@ -493,7 +525,7 @@ const Register = () => {
           {/* Pre-Registration Info (Compact) */}
           <div className="mb-8 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
             <p className="text-gray-300 text-sm">
-              <span className="text-blue-400 font-bold block mb-1">📢 Ideathon & Startup Arena:</span>
+              <span className="text-blue-400 font-bold mb-1 flex items-center gap-2"><Megaphone className="w-4 h-4" /> Ideathon & Startup Arena:</span>
               Register here <strong>only if shortlisted</strong>. For other events, you can proceed.
             </p>
           </div>
@@ -501,11 +533,11 @@ const Register = () => {
           {/* Mandatory Requirements Warning */}
           <div className="mb-8 bg-red-900/20 border border-red-500/30 rounded-xl p-5 text-center shadow-[0_0_20px_rgba(239,68,68,0.1)]">
             <h3 className="font-display font-bold text-xl mb-3 animate-blink-text flex items-center justify-center gap-2">
-              ⚠️ MANDATORY REQUIREMENTS ⚠️
+              <AlertTriangle className="w-6 h-6" /> MANDATORY REQUIREMENTS <AlertTriangle className="w-6 h-6" />
             </h3>
             <ul className="text-sm md:text-base space-y-2 text-gray-300 font-medium text-left inline-block">
               <li className="flex items-start gap-2">
-                <span className="text-red-400 mt-1">➜</span>
+                <ArrowRight className="w-4 h-4 text-red-400 mt-1" />
                 <span>Bring your <strong>College ID Card</strong> (Compulsory for entry).</span>
               </li>
               <li className="flex items-start gap-2">
@@ -578,6 +610,7 @@ const Register = () => {
                         placeholder="Full Name (Initial at back)"
                         {...register("name")}
                         className={errors.name ? "border-red-500" : ""}
+                        aria-label="Full Name"
                       />
                       {errors.name && <span className="text-red-400 text-xs block mt-1">{errors.name.message}</span>}
                     </div>
@@ -588,6 +621,7 @@ const Register = () => {
                         type="email"
                         {...register("email")}
                         className={errors.email ? "border-red-500" : ""}
+                        aria-label="Email Address"
                       />
                       {errors.email && <span className="text-red-400 text-xs block mt-1">{errors.email.message}</span>}
                     </div>
@@ -598,6 +632,7 @@ const Register = () => {
                         type="tel"
                         {...register("phone")}
                         className={errors.phone ? "border-red-500" : ""}
+                        aria-label="Phone Number"
                       />
                       {errors.phone && <span className="text-red-400 text-xs block mt-1">{errors.phone.message}</span>}
                     </div>
@@ -607,6 +642,7 @@ const Register = () => {
                         placeholder="College Name"
                         {...register("collegeName")}
                         className={errors.collegeName ? "border-red-500" : ""}
+                        aria-label="College Name"
                       />
                       {errors.collegeName && <span className="text-red-400 text-xs block mt-1">{errors.collegeName.message}</span>}
                     </div>
@@ -617,6 +653,7 @@ const Register = () => {
                           {...register("year")}
                           className={errors.year ? "border-red-500" : ""}
                           defaultValue=""
+                          aria-label="Select Year"
                         >
                           <option value="" disabled className="bg-black text-white">Select Year</option>
                           <option value="1" className="bg-black text-white">1st Year</option>
@@ -632,6 +669,7 @@ const Register = () => {
                           placeholder="Department"
                           {...register("department")}
                           className={errors.department ? "border-red-500" : ""}
+                          aria-label="Department"
                         />
                         {errors.department && <span className="text-red-400 text-xs block mt-1">{errors.department.message}</span>}
                       </div>
@@ -706,7 +744,7 @@ const Register = () => {
                         </div>
                       ) : (
                         <>
-                          <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">📤</span>
+                          <Upload className="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" />
                           <span className="text-gray-400 group-hover:text-uiverse-green transition-colors">
                             Click to upload screenshot
                           </span>
@@ -738,7 +776,7 @@ const Register = () => {
                 className="bg-black/40 backdrop-blur-xl border border-uiverse-green/30 rounded-3xl p-12 text-center shadow-[0_0_50px_rgba(1,220,3,0.2)]"
               >
                 <div className="w-24 h-24 mx-auto rounded-full bg-uiverse-green/20 flex items-center justify-center mb-6 border border-uiverse-green/50 shadow-[0_0_20px_rgba(1,220,3,0.4)]">
-                  <span className="text-5xl text-uiverse-green">✓</span>
+                  <CheckCircle2 className="w-16 h-16 text-uiverse-green" />
                 </div>
                 <h2 className="font-display text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-uiverse-green to-emerald-400 mb-4">
                   Registration Successful!

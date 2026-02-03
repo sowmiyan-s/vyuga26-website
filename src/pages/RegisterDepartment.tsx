@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { ArrowLeft, Sparkles, GraduationCap } from "lucide-react";
 import { Link } from "react-router-dom";
+import "@/components/RegistrationForm.css";
 
 const departmentRegistrationSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -233,129 +234,130 @@ const RegisterDepartment = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="glass-card rounded-3xl p-8 border-2 border-uiverse-sky/30"
           >
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Full Name <span className="text-red-400">*</span>
-                </label>
-                <input
-                  {...register("name")}
-                  className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:border-uiverse-sky/50 focus:outline-none transition-colors"
-                  placeholder="Enter your full name"
-                />
-                {errors.name && (
-                  <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>
-                )}
-              </div>
+            <div className="registration-container">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div className="form-title"><span>Register for</span></div>
+                <div className="title-2 font-display"><span>Department</span></div>
 
-              {/* Register Number */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Register Number <span className="text-red-400">*</span>
-                </label>
-                <input
-                  {...register("registerNumber")}
-                  className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:border-uiverse-sky/50 focus:outline-none transition-colors"
-                  placeholder="Enter your register number"
-                />
-                {errors.registerNumber && (
-                  <p className="text-red-400 text-sm mt-1">{errors.registerNumber.message}</p>
-                )}
-              </div>
+                <section className="bg-stars">
+                  <span className="star" />
+                  <span className="star" />
+                  <span className="star" />
+                  <span className="star" />
+                </section>
 
-              {/* Year & Section */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Year <span className="text-red-400">*</span>
-                  </label>
-                  <select
-                    {...register("year")}
-                    className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white focus:border-uiverse-sky/50 focus:outline-none transition-colors"
-                  >
-                    <option value="" className="bg-black text-white">Select Year</option>
-                    <option value="1" className="bg-black text-white">1st Year</option>
-                    <option value="2" className="bg-black text-white">2nd Year</option>
-                    <option value="3" className="bg-black text-white">3rd Year</option>
-                    <option value="4" className="bg-black text-white">4th Year</option>
-                  </select>
-                  {errors.year && (
-                    <p className="text-red-400 text-sm mt-1">{errors.year.message}</p>
+                {/* Name */}
+                <div className="input-container">
+                  <input
+                    {...register("name")}
+                    placeholder="Full Name (Initial at back)"
+                    aria-label="Full Name"
+                    className={errors.name ? "border-red-500" : ""}
+                  />
+                  {errors.name && (
+                    <span className="text-red-400 text-xs block mt-1">{errors.name.message}</span>
                   )}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Section <span className="text-red-400">*</span>
-                  </label>
-                  <select
-                    {...register("section")}
-                    className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white focus:border-uiverse-sky/50 focus:outline-none transition-colors"
-                  >
-                    <option value="" className="bg-black text-white">Select</option>
-                    <option value="A" className="bg-black text-white">A</option>
-                    <option value="B" className="bg-black text-white">B</option>
-                    <option value="C" className="bg-black text-white">C</option>
-                    <option value="D" className="bg-black text-white">D</option>
-                    <option value="E" className="bg-black text-white">E</option>
-                  </select>
-                  {errors.section && (
-                    <p className="text-red-400 text-sm mt-1">{errors.section.message}</p>
+                {/* Register Number */}
+                <div className="input-container">
+                  <input
+                    {...register("registerNumber")}
+                    placeholder="Register Number"
+                    aria-label="Register Number"
+                    className={errors.registerNumber ? "border-red-500" : ""}
+                  />
+                  {errors.registerNumber && (
+                    <span className="text-red-400 text-xs block mt-1">{errors.registerNumber.message}</span>
                   )}
                 </div>
-              </div>
 
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Email <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="email"
-                  {...register("email")}
-                  className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:border-uiverse-sky/50 focus:outline-none transition-colors"
-                  placeholder="your.email@example.com"
-                />
-                {errors.email && (
-                  <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
-                )}
-              </div>
+                {/* Year & Section */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="input-container">
+                    <select
+                      {...register("year")}
+                      defaultValue=""
+                      aria-label="Select Year"
+                      className={errors.year ? "border-red-500" : ""}
+                    >
+                      <option value="" disabled className="bg-black text-white">Select Year</option>
+                      <option value="1" className="bg-black text-white">1st Year</option>
+                      <option value="2" className="bg-black text-white">2nd Year</option>
+                      <option value="3" className="bg-black text-white">3rd Year</option>
+                      <option value="4" className="bg-black text-white">4th Year</option>
+                    </select>
+                    {errors.year && (
+                      <span className="text-red-400 text-xs block mt-1">{errors.year.message}</span>
+                    )}
+                  </div>
 
-              {/* Phone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Phone Number <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="tel"
-                  {...register("phone")}
-                  className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:border-uiverse-sky/50 focus:outline-none transition-colors"
-                  placeholder="10-digit phone number"
-                />
-                {errors.phone && (
-                  <p className="text-red-400 text-sm mt-1">{errors.phone.message}</p>
-                )}
-              </div>
+                  <div className="input-container">
+                    <select
+                      {...register("section")}
+                      defaultValue=""
+                      aria-label="Select Section"
+                      className={errors.section ? "border-red-500" : ""}
+                    >
+                      <option value="" disabled className="bg-black text-white">Section</option>
+                      <option value="A" className="bg-black text-white">A</option>
+                      <option value="B" className="bg-black text-white">B</option>
+                      <option value="C" className="bg-black text-white">C</option>
+                      <option value="D" className="bg-black text-white">D</option>
+                      <option value="E" className="bg-black text-white">E</option>
+                    </select>
+                    {errors.section && (
+                      <span className="text-red-400 text-xs block mt-1">{errors.section.message}</span>
+                    )}
+                  </div>
+                </div>
 
-              {/* Submit Button */}
-              <UiverseButton
-                type="submit"
-                className="w-full"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Registering..." : "Complete Registration"}
-              </UiverseButton>
+                {/* Email */}
+                <div className="input-container">
+                  <input
+                    type="email"
+                    {...register("email")}
+                    placeholder="Email Address"
+                    aria-label="Email Address"
+                    className={errors.email ? "border-red-500" : ""}
+                  />
+                  {errors.email && (
+                    <span className="text-red-400 text-xs block mt-1">{errors.email.message}</span>
+                  )}
+                </div>
 
-              <p className="text-center text-gray-500 text-xs mt-4">
-                By registering, you agree to our{" "}
-                <Link to="/terms" className="text-uiverse-sky hover:underline">
-                  Terms of Service
-                </Link>
-              </p>
-            </form>
+                {/* Phone */}
+                <div className="input-container">
+                  <input
+                    type="tel"
+                    {...register("phone")}
+                    placeholder="Phone Number"
+                    aria-label="Phone Number"
+                    className={errors.phone ? "border-red-500" : ""}
+                  />
+                  {errors.phone && (
+                    <span className="text-red-400 text-xs block mt-1">{errors.phone.message}</span>
+                  )}
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  className="submit-btn mt-6"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  <span className="sign-text">{isSubmitting ? "Registering..." : "Complete Registration"}</span>
+                </button>
+
+                <p className="text-center text-gray-400 text-xs mt-4">
+                  By registering, you agree to our{" "}
+                  <Link to="/terms" className="text-uiverse-sky hover:underline">
+                    Terms of Service
+                  </Link>
+                </p>
+              </form>
+            </div>
           </motion.div>
         </div>
       </main>
