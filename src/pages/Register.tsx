@@ -684,10 +684,7 @@ const Register = () => {
 
                 <div className="text-center mb-8 bg-white/5 rounded-xl p-4 border border-white/10">
                   <p className="text-gray-400 mb-2 text-sm uppercase tracking-wider">Or pay to this UPI ID</p>
-                  <p className="font-mono text-xl font-bold text-uiverse-sky mb-2 copy-text select-all">{siteConfig.paymentUPI}</p>
-                  <p className="text-sm text-gray-500">
-                    📞 {siteConfig.paymentPhone}
-                  </p>
+                  <p className="font-mono text-xl font-bold text-uiverse-sky copy-text select-all">{siteConfig.paymentUPI}</p>
                 </div>
 
                 <div className="border-t border-white/10 pt-6">
