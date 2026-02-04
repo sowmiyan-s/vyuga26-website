@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 interface Particle {
@@ -14,6 +15,7 @@ interface Particle {
 const CustomCursor = () => {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
+  const location = useLocation();
 
   // Smooth spring for the cursor movement to reduce jitter
   const springConfig = { damping: 20, stiffness: 400, mass: 0.5 };
@@ -173,7 +175,7 @@ const CustomCursor = () => {
     };
   }, [isMobile]);
 
-  if (isMobile) return null;
+  if (isMobile || location.pathname.startsWith('/admin')) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[100000] overflow-hidden">
