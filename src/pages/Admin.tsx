@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { siteConfig } from "@/config/config";
+import { events } from "@/config/events";
 import {
   Dialog,
   DialogContent,
@@ -830,6 +831,49 @@ const Admin = () => {
                     Limit reached
                   </p>
                 )}
+              </div>
+            </div>
+
+            {/* Event Registration Status */}
+            <div className="mb-6">
+              <h3 className="font-bold text-lg mb-4 text-white flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-uiverse-pink" />
+                Event Registration Control
+              </h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {events.map((event) => {
+                  const isClosed = settings.registration_closed_events?.[event.id];
+                  return (
+                    <div key={event.id} className={`p-4 rounded-xl border transition-colors ${isClosed
+                        ? "bg-red-500/10 border-red-500/30"
+                        : "bg-green-500/10 border-green-500/30"
+                      }`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`font-medium ${isClosed ? "text-red-400" : "text-green-400"}`}>
+                          {event.title}
+                        </span>
+                        <Switch
+                          checked={!isClosed}
+                          onCheckedChange={(checked) => {
+                            const newStatus = { ...(settings.registration_closed_events || {}) };
+                            if (checked) {
+                              delete newStatus[event.id]; // Open (remove from closed list)
+                            } else {
+                              newStatus[event.id] = true; // Close
+                            }
+                            updateSetting("registration_closed_events", newStatus);
+                          }}
+                          className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-400">
+                        Status: <span className={isClosed ? "text-red-400 font-bold" : "text-green-400 font-bold"}>
+                          {isClosed ? "CLOSED" : "OPEN"}
+                        </span>
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 

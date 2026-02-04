@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { getEventById } from "@/config/events";
 import { getCoordinatorsByEventId } from "@/config/coordinators";
+import { useSettings } from "@/hooks/useSettings"; // Import hook
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -12,8 +13,11 @@ import SEO from "@/components/SEO";
 
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const { settings } = useSettings(); // Use hook
   const event = id ? getEventById(id) : undefined;
   const coordinators = id ? getCoordinatorsByEventId(id) : [];
+
+  const isEventClosed = id && settings.registration_closed_events?.[id]; // Check status
 
   if (!event) {
     return (
@@ -217,40 +221,57 @@ const EventDetail = () => {
             whileInView={{ opacity: 1, y: 0 }}
             className="mt-16 text-center"
           >
-            {event.isPreRegistration ? (
+            {isEventClosed ? (
               <div className="flex flex-col items-center gap-6">
-                <a
-                  href={event.submissionLink || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block"
-                >
-                  <UiverseButton
-                    variant="primary"
-                    className="text-xl px-12 py-6 shadow-[0_0_30px_rgba(18,184,255,0.3)] hover:shadow-[0_0_50px_rgba(18,184,255,0.6)] !bg-gradient-to-r !from-uiverse-sky !to-blue-600"
-                  >
-                    {event.registrationButtonLabel || "Submit PPT (Free)"} <Rocket className="w-5 h-5 ml-2" />
-                  </UiverseButton>
-                </a>
-
-                <div className="max-w-2xl mx-auto p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
-                  <p className="text-yellow-200 text-sm font-medium">
-                    <span className="flex items-center gap-2 mb-1"><AlertTriangle className="w-4 h-4" /> <span className="underline">IMPORTANT:</span></span> Payment details and event passes will be shared <strong className="text-white">only with shortlisted teams</strong> via email/WhatsApp.
-                  </p>
-                  <p className="text-yellow-200/70 text-xs mt-1">
-                    Direct payments made without selection confirmation are invalid and will not be refunded.
+                <div className="p-6 rounded-2xl bg-red-500/10 border-2 border-red-500/50 text-center max-w-lg mx-auto shadow-[0_0_30px_rgba(239,68,68,0.2)]">
+                  <h3 className="text-2xl font-bold text-red-500 mb-2 flex items-center justify-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                    Registration Closed
+                  </h3>
+                  <p className="text-gray-400">
+                    Registration for {event.title} is officially closed. Thank you for your interest!
                   </p>
                 </div>
               </div>
             ) : (
-              <Link to="/register">
-                <UiverseButton
-                  variant="primary"
-                  className="text-xl px-12 py-6 shadow-[0_0_30px_rgba(223,25,251,0.3)] hover:shadow-[0_0_50px_rgba(223,25,251,0.6)]"
-                >
-                  Register for this Event
-                </UiverseButton>
-              </Link>
+              // Original Logic
+              <>
+                {event.isPreRegistration ? (
+                  <div className="flex flex-col items-center gap-6">
+                    <a
+                      href={event.submissionLink || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block"
+                    >
+                      <UiverseButton
+                        variant="primary"
+                        className="text-xl px-12 py-6 shadow-[0_0_30px_rgba(18,184,255,0.3)] hover:shadow-[0_0_50px_rgba(18,184,255,0.6)] !bg-gradient-to-r !from-uiverse-sky !to-blue-600"
+                      >
+                        {event.registrationButtonLabel || "Submit PPT (Free)"} <Rocket className="w-5 h-5 ml-2" />
+                      </UiverseButton>
+                    </a>
+
+                    <div className="max-w-2xl mx-auto p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+                      <p className="text-yellow-200 text-sm font-medium">
+                        <span className="flex items-center gap-2 mb-1"><AlertTriangle className="w-4 h-4" /> <span className="underline">IMPORTANT:</span></span> Payment details and event passes will be shared <strong className="text-white">only with shortlisted teams</strong> via email/WhatsApp.
+                      </p>
+                      <p className="text-yellow-200/70 text-xs mt-1">
+                        Direct payments made without selection confirmation are invalid and will not be refunded.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <Link to="/register">
+                    <UiverseButton
+                      variant="primary"
+                      className="text-xl px-12 py-6 shadow-[0_0_30px_rgba(223,25,251,0.3)] hover:shadow-[0_0_50px_rgba(223,25,251,0.6)]"
+                    >
+                      Register for this Event
+                    </UiverseButton>
+                  </Link>
+                )}
+              </>
             )}
           </motion.div>
         </div>

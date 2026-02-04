@@ -8,6 +8,7 @@ export interface SystemSettings {
     outer_college_limit: number;
     inter_college_limit: number;
     department_limit: number;
+    registration_closed_events: Record<string, boolean>;
 }
 
 const DEFAULT_OUTER_LIMIT = 300;
@@ -21,6 +22,7 @@ export const useSettings = () => {
         outer_college_limit: DEFAULT_OUTER_LIMIT,
         inter_college_limit: DEFAULT_INTER_LIMIT,
         department_limit: DEFAULT_DEPT_LIMIT,
+        registration_closed_events: {},
     });
     const [loading, setLoading] = useState(true);
 
@@ -42,8 +44,9 @@ export const useSettings = () => {
                     outer_college_limit: DEFAULT_OUTER_LIMIT,
                     inter_college_limit: DEFAULT_INTER_LIMIT,
                     department_limit: DEFAULT_DEPT_LIMIT,
+                    registration_closed_events: {},
                 };
-                
+
                 data.forEach((item) => {
                     if (item.key === "maintenance_mode") {
                         newSettings.maintenance_mode = item.value === true || item.value === "true";
@@ -60,6 +63,9 @@ export const useSettings = () => {
                     if (item.key === "department_limit") {
                         newSettings.department_limit = typeof item.value === "number" ? item.value : parseInt(String(item.value)) || DEFAULT_DEPT_LIMIT;
                     }
+                    if (item.key === "registration_closed_events") {
+                        newSettings.registration_closed_events = typeof item.value === 'object' ? item.value : (JSON.parse(String(item.value)) || {});
+                    }
                 });
                 setSettings(newSettings);
             }
@@ -70,7 +76,7 @@ export const useSettings = () => {
         }
     }, []);
 
-    const updateSetting = async (key: keyof SystemSettings, value: boolean | number) => {
+    const updateSetting = async (key: keyof SystemSettings, value: boolean | number | Record<string, boolean>) => {
         try {
             // Optimistic update
             setSettings((prev) => ({ ...prev, [key]: value }));
@@ -87,7 +93,7 @@ export const useSettings = () => {
                 // Update existing record
                 const result = await supabase
                     .from("site_settings")
-                    .update({ 
+                    .update({
                         value: value,
                         updated_at: new Date().toISOString()
                     })
@@ -97,7 +103,7 @@ export const useSettings = () => {
                 // Insert new record
                 const result = await supabase
                     .from("site_settings")
-                    .insert({ 
+                    .insert({
                         key: key,
                         value: value,
                         updated_at: new Date().toISOString()
@@ -116,6 +122,7 @@ export const useSettings = () => {
                 outer_college_limit: "Outer college limit",
                 inter_college_limit: "Inter college limit",
                 department_limit: "Department limit",
+                registration_closed_events: "Event registration status"
             };
             toast.success(`${labels[key] || key} updated!`);
         } catch (err) {

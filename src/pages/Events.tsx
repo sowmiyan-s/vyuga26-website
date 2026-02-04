@@ -8,6 +8,7 @@ import { UiverseButton } from "@/components/ui/UiverseButton";
 import { UiverseCard } from "@/components/ui/UiverseCard";
 import { motion, AnimatePresence } from "framer-motion";
 import { IndianRupee } from "lucide-react";
+import { useSettings } from "@/hooks/useSettings";
 
 const categories: { id: EventCategory | "all"; label: string }[] = [
   { id: "all", label: "All Events" },
@@ -19,6 +20,7 @@ const Events = () => {
   const [searchParams] = useSearchParams();
   const initialCategory = (searchParams.get("category") as EventCategory) || "all";
   const [activeCategory, setActiveCategory] = useState<EventCategory | "all">(initialCategory);
+  const { settings } = useSettings();
 
   const filteredEvents =
     activeCategory === "all"
@@ -89,8 +91,11 @@ const Events = () => {
                 <UiverseCard
                   key={event.id}
                   delay={index * 0.1}
-                  className={`h-full border-white/10 ${event.category === 'technical' ? 'hover:border-uiverse-purple/50 active-border-uiverse-purple' :
-                    'hover:border-uiverse-sky/50 active-border-uiverse-sky'
+                  className={`h-full border-white/10 ${settings.registration_closed_events?.[event.id]
+                      ? 'border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]'
+                      : event.category === 'technical'
+                        ? 'hover:border-uiverse-purple/50 active-border-uiverse-purple'
+                        : 'hover:border-uiverse-sky/50 active-border-uiverse-sky'
                     }`}
                 >
                   <div className={`h-48 relative overflow-hidden flex items-center justify-center bg-black/40`}>
@@ -99,6 +104,14 @@ const Events = () => {
                       alt={event.title}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 brightness-110 contrast-125"
                     />
+                    {/* Event Closed Overlay */}
+                    {settings.registration_closed_events?.[event.id] && (
+                      <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
+                        <span className="px-4 py-2 bg-red-600/90 text-white font-bold rounded-lg border-2 border-red-400/50 shadow-[0_0_20px_rgba(220,38,38,0.5)] transform -rotate-6 uppercase tracking-widest text-sm">
+                          Registration Closed
+                        </span>
+                      </div>
+                    )}
                     {event.hasCashPrize && (
                       <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md border border-yellow-500/50 rounded-full p-2.5 z-10 shadow-[0_0_15px_rgba(234,179,8,0.5)] transition-all duration-500 group-hover:scale-125 group-hover:shadow-[0_0_30px_rgba(255,215,0,0.8)] group-hover:border-yellow-400 group-hover:bg-yellow-500/20" title="Win Cash Prizes!">
                         <IndianRupee className="w-5 h-5 text-yellow-400 group-hover:text-yellow-200" />
