@@ -380,7 +380,7 @@ const Register = () => {
                         <GraduationCap className="w-8 h-8 text-uiverse-purple" />
                       </div>
                       <h3 className="font-display text-xl font-bold text-white mb-2">
-                        Inter College
+                        Intra College
                       </h3>
                       <p className="text-gray-400 text-sm">
                         For VSB College students
@@ -438,7 +438,7 @@ const Register = () => {
                         <Microscope className="w-8 h-8 text-uiverse-sky" />
                       </div>
                       <h3 className="font-display text-xl font-bold text-white mb-2">
-                        AI&DS INTER COLLEGE
+                        AI&DS INTRA COLLEGE
                       </h3>
                       <p className="text-gray-400 text-sm">
                         ONLY FROM VSBCETC
@@ -705,7 +705,7 @@ const Register = () => {
                 <div className="bg-white rounded-2xl p-6 mb-6 mx-auto w-fit shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                   <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden relative">
                     <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
+                      src={siteConfig.paymentQR || "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"}
                       alt="Payment QR Code"
                       className="w-full h-full object-contain"
                     />

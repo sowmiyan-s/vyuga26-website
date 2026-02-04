@@ -289,7 +289,7 @@ const Admin = () => {
       }
       if (sources.inter) {
         const data = processData(interRegistrations, 'inter');
-        if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Inter College");
+        if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Intra College");
       }
       if (sources.dept) {
         const data = processData(deptRegistrations, 'dept');
@@ -367,7 +367,7 @@ const Admin = () => {
         case "all":
           // All registrations
           addSheetIfData(processOuterData(registrations), "Outer College - All");
-          addSheetIfData(processInterData(interRegistrations), "Inter College - All");
+          addSheetIfData(processInterData(interRegistrations), "Intra College - All");
           addSheetIfData(processDeptData(deptRegistrations), "Department - All");
           break;
 
@@ -378,9 +378,9 @@ const Admin = () => {
           break;
 
         case "inter":
-          addSheetIfData(processInterData(interRegistrations.filter(r => !r.payment_verified)), "Inter - Pending");
-          addSheetIfData(processInterData(interRegistrations.filter(r => r.payment_verified && !r.entry_confirmed)), "Inter - Verified");
-          addSheetIfData(processInterData(interRegistrations.filter(r => r.entry_confirmed)), "Inter - Entered");
+          addSheetIfData(processInterData(interRegistrations.filter(r => !r.payment_verified)), "Intra - Pending");
+          addSheetIfData(processInterData(interRegistrations.filter(r => r.payment_verified && !r.entry_confirmed)), "Intra - Verified");
+          addSheetIfData(processInterData(interRegistrations.filter(r => r.entry_confirmed)), "Intra - Entered");
           break;
 
         case "dept":
@@ -390,20 +390,20 @@ const Admin = () => {
 
         case "verified":
           addSheetIfData(processOuterData(registrations.filter(r => r.payment_verified)), "Outer - Verified");
-          addSheetIfData(processInterData(interRegistrations.filter(r => r.payment_verified)), "Inter - Verified");
+          addSheetIfData(processInterData(interRegistrations.filter(r => r.payment_verified)), "Intra - Verified");
           addSheetIfData(processDeptData(deptRegistrations), "Dept - All (No Payment)");
           break;
 
         case "entered":
           addSheetIfData(processOuterData(registrations.filter(r => r.entry_confirmed)), "Outer - Entered");
-          addSheetIfData(processInterData(interRegistrations.filter(r => r.entry_confirmed)), "Inter - Entered");
+          addSheetIfData(processInterData(interRegistrations.filter(r => r.entry_confirmed)), "Intra - Entered");
           addSheetIfData(processDeptData(deptRegistrations.filter(r => r.entry_confirmed)), "Dept - Entered");
           break;
 
         default:
           // Default: all with status sheets
           addSheetIfData(processOuterData(registrations), "Outer College");
-          addSheetIfData(processInterData(interRegistrations), "Inter College");
+          addSheetIfData(processInterData(interRegistrations), "Intra College");
           addSheetIfData(processDeptData(deptRegistrations), "Department");
       }
 
@@ -528,7 +528,7 @@ const Admin = () => {
                             onCheckedChange={(c) => setExportConfig(prev => ({ ...prev, sources: { ...prev.sources, inter: !!c } }))}
                             className="border-white/20 data-[state=checked]:bg-uiverse-purple data-[state=checked]:border-uiverse-purple"
                           />
-                          <Label htmlFor="src-inter" className="text-gray-300 font-medium cursor-pointer">Inter College</Label>
+                          <Label htmlFor="src-inter" className="text-gray-300 font-medium cursor-pointer">Intra College</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Checkbox
@@ -693,7 +693,7 @@ const Admin = () => {
               <div className="p-4 bg-uiverse-purple/10 border border-uiverse-purple/30 rounded-xl">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="font-medium text-foreground">Inter College Limit</p>
+                    <p className="font-medium text-foreground">Intra College Limit</p>
                     <p className="text-sm text-muted-foreground">
                       Current: {stats.inter.total}/{settings.inter_college_limit}
                     </p>

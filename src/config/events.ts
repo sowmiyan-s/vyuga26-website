@@ -87,7 +87,7 @@ export const events: Event[] = [
       "Evaluation Criteria: Correctness and efficiency of solutions, Logical and algorithmic approach, Code quality and optimization"
     ],
     time: "Duration: 2 – 3 hours",
-    coordinatorIds: ["divya-harini", "kaviya", "subha", "thangam-s-k", "vishal-n", "sowmiyan-s"],
+    coordinatorIds: ["divya-harini", "kaviya", "subha", "thangam-s-k", "vishal-n", "sowmiyan-s", "sudarson-b"],
     isSpotlight: true,
     hasCashPrize: true,
   },

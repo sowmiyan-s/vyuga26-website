@@ -220,7 +220,7 @@ const RegisterDepartment = () => {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-uiverse-sky/20 border border-uiverse-sky/40 text-uiverse-sky text-sm font-bold mb-4">
               <GraduationCap className="w-4 h-4" />
-              Inter College / AI&DS Dept Only
+              Intra College / AI&DS Dept Only
             </div>
             <h1 className="font-display text-3xl md:text-4xl font-bold text-white mb-2">
               Department Registration

@@ -123,7 +123,7 @@ const PassCard = () => {
             <SinglePassCard
               type="inter"
               price={siteConfig.interCollegePassPrice}
-              label="INTER COLLEGE"
+              label="INTRA COLLEGE"
               linkTo="/register-intercollege"
             />
           </motion.div>
@@ -145,7 +145,7 @@ const PassCard = () => {
             <SinglePassCard
               type="dept"
               price="FREE"
-              label="AI&DS DEPT (Inter College)"
+              label="AI&DS DEPT (Intra College)"
               linkTo="/register-department"
             />
           </motion.div>

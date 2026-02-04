@@ -103,6 +103,7 @@ export const coordinators: Coordinator[] = [
   { id: "thangam-s-k", name: "Thangam S K", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
   { id: "vishal-n", name: "Vishal N", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
   { id: "sowmiyan-s", name: "Sowmiyan S", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
+  { id: "sudarson-b", name: "Sudarson B", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
 
   // UI/UX Coordinators
   { id: "shijitha-jenifer", name: "Shijitha Jenifer", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["ui-ux"] },

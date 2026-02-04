@@ -27,21 +27,21 @@ export const siteConfig = {
 
   // Pass Details
   passPrice: 300, // Outer college price in INR
-  interCollegePassPrice: 100, // Inter college price in INR
+  interCollegePassPrice: 100, // Intra college price in INR
   passIncludes: ["Food", "Participate in all events", "Certificate"],
 
-  // Inter College Departments
+  // Intra College Departments
   interCollegeDepartments: ["AGRI", "AIDS", "CIVIL", "CSC", "ECE", "EEE", "MECH", "IT", "AIML"],
 
-  // Inter College QR Code (different from outer college)
+  // Intra College QR Code (different from outer college)
   interCollegePaymentQR: "/images/intercollege-payment-qr.png",
-  interCollegePaymentUPI: "intercollege@upi",
-  interCollegePaymentPhone: "9876543211",
+  interCollegePaymentUPI: "9042561295@upi",
+  interCollegePaymentPhone: "9042561295",
 
   // Payment Details
   paymentQR: "/images/payment-qr.png",
-  paymentPhone: "9876543210",
-  paymentUPI: "symposium@upi",
+  paymentPhone: "9042561295",
+  paymentUPI: "9042561295@upi",
 
   // Social Links
   whatsappGroupLink: "https://chat.whatsapp.com/KjaAKqK9NcO1CVl3zrCZA8?mode=gi_t",

@@ -77,7 +77,7 @@ const RegisterInterCollege = () => {
 
   const onSubmitForm = async (data: InterCollegeForm) => {
     if (isInterFull) {
-      toast.error("Inter college registration is full!");
+      toast.error("Intra college registration is full!");
       return;
     }
     if (isRegistrationClosed) {
@@ -199,7 +199,7 @@ const RegisterInterCollege = () => {
           {/* Inter College Badge */}
           <div className="flex justify-center mb-6">
             <div className="px-4 py-1.5 rounded-full bg-uiverse-purple/20 border border-uiverse-purple/40 text-uiverse-purple text-sm font-bold tracking-wider">
-              INTER COLLEGE
+              INTRA COLLEGE
             </div>
           </div>
 
