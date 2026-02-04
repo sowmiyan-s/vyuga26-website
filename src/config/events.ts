@@ -200,7 +200,7 @@ export const events: Event[] = [
   },
   {
     id: "e-sports",
-    title: "Esports",
+    title: "ESPORTS (FREE FIRE)",
     description: "Esports is a competitive gaming tournament featuring the popular multiplayer battle royale title Free Fire.",
     fullDescription: "Esports is a competitive gaming tournament featuring the popular multiplayer battle royale title Free Fire. The event is designed to test players’ strategic gameplay, teamwork, reflexes, and in-game decision-making skills. Matches will be conducted as full-map battle royale games under standard tournament conditions to ensure fair and competitive play.",
     category: "non-technical",
