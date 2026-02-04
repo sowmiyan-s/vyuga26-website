@@ -22,13 +22,13 @@ const Index = () => {
       />
       <Navbar />
       <HeroSection />
+      <PassCard />
       <PrizePool />
       <Countdown />
       <MarqueeSection />
       <SpotlightEvents />
       <PreRegistrationEvents />
       <EventCategories />
-      <PassCard />
       <CoordinatorPreview />
       <MapSection />
       <Footer />
