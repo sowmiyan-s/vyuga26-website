@@ -2,7 +2,7 @@
 
 export const siteConfig = {
   // Event Information
-  eventName: "Vyuga 26",
+  eventName: "Vyuga' 26",
   departmentName: "Department of Artificial Intelligence and Data Science",
   tagline: "presents",
   eventDate: "17/02/2026",
@@ -27,7 +27,7 @@ export const siteConfig = {
 
   // Pass Details
   passPrice: 300, // Outer college price in INR
-  interCollegePassPrice: 100, // Intra college price in INR
+  interCollegePassPrice: 0, // Intra college - FREE for other departments
   passIncludes: ["Food", "Participate in all events", "Certificate"],
 
   // Intra College Departments

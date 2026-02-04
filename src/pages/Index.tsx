@@ -8,6 +8,7 @@ import PreRegistrationEvents from "@/components/PreRegistrationEvents";
 import EventCategories from "@/components/EventCategories";
 import PassCard from "@/components/PassCard";
 import CoordinatorPreview from "@/components/CoordinatorPreview";
+import EventPoster from "@/components/EventPoster";
 import MapSection from "@/components/MapSection";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -17,8 +18,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-transparent">
       <SEO
-        title="Vyuga 26"
-        description="Join Vyuga 26, the National Level Technical Symposium at VSB College of Engineering. Technical & Non-Technical events, Workshops, and more!"
+        title="Vyuga' 26"
+        description="Join Vyuga' 26, the National Level Technical Symposium at VSB College of Engineering. Technical & Non-Technical events, Workshops, and more!"
       />
       <Navbar />
       <HeroSection />
@@ -30,6 +31,7 @@ const Index = () => {
       <PreRegistrationEvents />
       <EventCategories />
       <CoordinatorPreview />
+      <EventPoster />
       <MapSection />
       <Footer />
       <WhatsAppButton />

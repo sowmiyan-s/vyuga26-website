@@ -134,7 +134,6 @@ const Admin = () => {
       // Calculate stats
       const outerVerified = outerData?.filter((r) => r.payment_verified).length || 0;
       const outerEntered = outerData?.filter((r) => r.entry_confirmed).length || 0;
-      const interVerified = interData?.filter((r) => r.payment_verified).length || 0;
       const interEntered = interData?.filter((r) => r.entry_confirmed).length || 0;
       const deptEntered = deptData?.filter((r) => r.entry_confirmed).length || 0;
 
@@ -147,9 +146,9 @@ const Admin = () => {
         },
         inter: {
           total: interData?.length || 0,
-          verified: interVerified,
+          verified: interData?.length || 0, // All inter registrations are "verified" (free)
           entered: interEntered,
-          revenue: interVerified * 100,
+          revenue: 0, // Free registration
         },
         dept: {
           total: deptData?.length || 0,
@@ -159,9 +158,9 @@ const Admin = () => {
         },
         combined: {
           total: (outerData?.length || 0) + (interData?.length || 0) + (deptData?.length || 0),
-          verified: outerVerified + interVerified + (deptData?.length || 0),
+          verified: outerVerified + (interData?.length || 0) + (deptData?.length || 0),
           entered: outerEntered + interEntered + deptEntered,
-          revenue: (outerVerified * 300) + (interVerified * 100),
+          revenue: (outerVerified * 300), // Only outer college pays
         },
       });
     } catch (error: any) {
@@ -338,7 +337,6 @@ const Admin = () => {
           "Register No": r.register_number,
           Year: r.year,
           Department: r.department,
-          "Payment Status": r.payment_verified ? "Verified" : "Pending",
           "Entry Status": r.entry_confirmed ? "Confirmed" : "Pending",
           "Registration Date": new Date(r.created_at).toLocaleDateString(),
         }));
@@ -378,8 +376,8 @@ const Admin = () => {
           break;
 
         case "inter":
-          addSheetIfData(processInterData(interRegistrations.filter(r => !r.payment_verified)), "Intra - Pending");
-          addSheetIfData(processInterData(interRegistrations.filter(r => r.payment_verified && !r.entry_confirmed)), "Intra - Verified");
+          // Inter is now free - no payment verification, just entry status
+          addSheetIfData(processInterData(interRegistrations.filter(r => !r.entry_confirmed)), "Intra - Pending Entry");
           addSheetIfData(processInterData(interRegistrations.filter(r => r.entry_confirmed)), "Intra - Entered");
           break;
 
@@ -389,9 +387,10 @@ const Admin = () => {
           break;
 
         case "verified":
+          // Only outer college has payment verification now
           addSheetIfData(processOuterData(registrations.filter(r => r.payment_verified)), "Outer - Verified");
-          addSheetIfData(processInterData(interRegistrations.filter(r => r.payment_verified)), "Intra - Verified");
-          addSheetIfData(processDeptData(deptRegistrations), "Dept - All (No Payment)");
+          addSheetIfData(processInterData(interRegistrations), "Intra - All (Free)");
+          addSheetIfData(processDeptData(deptRegistrations), "Dept - All (Free)");
           break;
 
         case "entered":
@@ -439,13 +438,15 @@ const Admin = () => {
       r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (r.register_number && r.register_number.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    if (isDept) {
+    // For dept AND inter (both are free now - no payment verification)
+    if (isDept || collegeType === "inter") {
       if (activeTab === "pending") return !r.entry_confirmed && matchesSearch;
       if (activeTab === "entered") return r.entry_confirmed && matchesSearch;
       if (activeTab === "all") return matchesSearch;
-      return !r.entry_confirmed && matchesSearch; // Default to pending for dept
+      return !r.entry_confirmed && matchesSearch; // Default to pending
     }
 
+    // Only outer college has payment verification
     if (activeTab === "pending") return !r.payment_verified && matchesSearch;
     if (activeTab === "verified") return r.payment_verified && !r.entry_confirmed && matchesSearch;
     if (activeTab === "entered") return r.entry_confirmed && matchesSearch;
@@ -1086,7 +1087,8 @@ const Admin = () => {
                     <th className="px-4 py-3 text-left text-sm font-medium">
                       {isDept ? "Year/Section" : "Year/Dept"}
                     </th>
-                    {!isDept && (
+                    {/* Only outer college has payment screenshots */}
+                    {collegeType === "outer" && (
                       <th className="px-4 py-3 text-left text-sm font-medium">Screenshot</th>
                     )}
                     <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>
@@ -1108,13 +1110,13 @@ const Admin = () => {
                       <td className="px-4 py-3 text-sm">
                         {isDept ? `Year ${reg.year} - ${reg.section}` : `Year ${reg.year} - ${reg.department}`}
                       </td>
-                      {!isDept && (
+                      {/* Only show payment screenshot for outer college */}
+                      {collegeType === "outer" && (
                         <td className="px-4 py-3">
                           {reg.payment_screenshot_url ? (
                             <button
                               onClick={() => setSelectedScreenshot(reg.payment_screenshot_url!)}
-                              className={`hover:underline flex items-center gap-1 ${collegeType === "inter" ? 'text-uiverse-purple' : 'text-primary'
-                                }`}
+                              className="hover:underline flex items-center gap-1 text-primary"
                             >
                               <Eye className="w-4 h-4" />
                               View
@@ -1126,8 +1128,8 @@ const Admin = () => {
                       )}
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
-                          {isDept ? (
-                            // Department: Only entry confirmation (no payment verification)
+                          {/* Dept and Inter: Only entry confirmation (no payment verification) */}
+                          {(isDept || collegeType === "inter") ? (
                             !reg.entry_confirmed ? (
                               <>
                                 <Button

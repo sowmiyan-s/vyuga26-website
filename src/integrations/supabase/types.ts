@@ -79,8 +79,6 @@ export type Database = {
           entry_confirmed: boolean | null
           id: string
           name: string
-          payment_screenshot_url: string | null
-          payment_verified: boolean | null
           phone: string
           register_number: string
           updated_at: string
@@ -93,8 +91,6 @@ export type Database = {
           entry_confirmed?: boolean | null
           id?: string
           name: string
-          payment_screenshot_url?: string | null
-          payment_verified?: boolean | null
           phone: string
           register_number: string
           updated_at?: string
@@ -107,8 +103,6 @@ export type Database = {
           entry_confirmed?: boolean | null
           id?: string
           name?: string
-          payment_screenshot_url?: string | null
-          payment_verified?: boolean | null
           phone?: string
           register_number?: string
           updated_at?: string

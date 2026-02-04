@@ -213,43 +213,13 @@ const Register = () => {
                 </div>
               )}
 
-              {/* Pre-Registration Info Section - High Visibility */}
+              {/* Pre-Registration Info Section - Compact */}
               {!isRegistrationClosed && (
-                <div className="mt-10 mb-8 relative group overflow-hidden rounded-xl border-2 border-uiverse-sky/50 bg-black/60 shadow-[0_0_30px_rgba(18,184,255,0.2)] animate-in fade-in slide-in-from-bottom-4">
-                  {/* Pulsing Background Glow */}
-                  <div className="absolute inset-0 bg-uiverse-sky/10 animate-pulse" />
-
-                  <div className="relative p-6 text-left z-10">
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-3 flex items-center gap-3">
-                      <Lightbulb className="w-8 h-8 text-uiverse-sky animate-bounce" />
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-uiverse-sky to-white">
-                        Ideathon & Startup Arena
-                      </span>
-                    </h3>
-
-                    <div className="space-y-4">
-                      <div className="flex flex-col gap-2 text-gray-200 text-lg font-medium">
-                        <p>1. <strong>Submit PPT first</strong> (Free).</p>
-                        <p>2. <strong>Wait</strong> for our selection message.</p>
-                      </div>
-
-                      <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 flex gap-3 items-center">
-                        <AlertOctagon className="w-8 h-8 text-red-500" />
-                        <div>
-                          <p className="text-red-200 font-bold text-xl leading-tight mb-1">
-                            Do NOT Pay Now!
-                          </p>
-                          <p className="text-red-100/90 text-base">
-                            Pay <strong>ONLY IF</strong> you get a <span className="underline font-bold text-white">"Selected"</span> message from us.
-                          </p>
-                        </div>
-                      </div>
-
-                      <p className="text-gray-400 text-sm border-t border-white/10 pt-3 mt-2">
-                        For other events, you can register and pay now.
-                      </p>
-                    </div>
-                  </div>
+                <div className="mt-8 mb-6 bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-left max-w-2xl mx-auto">
+                  <p className="text-amber-200 text-sm font-medium">
+                    <strong className="text-amber-400">📢 Ideathon, Startup Arena & ESPORTS (FREE FIRE):</strong>{" "}
+                    Submit PPT/register first → wait for "Selected" message → then pay & complete registration. For other events, register now.
+                  </p>
                 </div>
               )}
             </motion.div>
@@ -316,7 +286,7 @@ const Register = () => {
                       <Check className="w-4 h-4 text-uiverse-green" /> Full event access
                     </li>
                     <li className="flex items-center gap-2">
-                      <span className="text-uiverse-green">✓</span> Food
+                      <span className="text-uiverse-green">✓</span> Food & Hydrations
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="text-uiverse-green">✓</span> Certificate
@@ -366,7 +336,7 @@ const Register = () => {
                     : 'border-uiverse-purple/30 hover:border-uiverse-purple/60 hover:shadow-[0_0_40px_rgba(223,25,251,0.2)]'
                     }`}>
                     <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-uiverse-purple/20 border border-uiverse-purple/40 text-uiverse-purple text-xs font-bold">
-                      ₹{siteConfig.interCollegePassPrice}
+                      FREE
                     </div>
 
                     {isInterFull && (
@@ -380,10 +350,10 @@ const Register = () => {
                         <GraduationCap className="w-8 h-8 text-uiverse-purple" />
                       </div>
                       <h3 className="font-display text-xl font-bold text-white mb-2">
-                        Intra College
+                        Other Departments
                       </h3>
                       <p className="text-gray-400 text-sm">
-                        For VSB College students
+                        VSB students (except AI&DS)
                       </p>
                       <p className="text-uiverse-purple text-xs mt-2 font-medium">
                         {interCount}/{settings.inter_college_limit} spots filled
@@ -395,7 +365,7 @@ const Register = () => {
                         <Check className="w-4 h-4 text-uiverse-purple" /> Full event access
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-uiverse-purple">✓</span> Food
+                        <span className="text-uiverse-purple">✓</span> Food & Hydrations
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-uiverse-purple">✓</span> Certificate
@@ -453,7 +423,7 @@ const Register = () => {
                         <Check className="w-4 h-4 text-uiverse-sky" /> Full event access
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="text-uiverse-sky">✓</span> Food
+                        <span className="text-uiverse-sky">✓</span> Food & Hydrations
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-uiverse-sky">✓</span> Certificate

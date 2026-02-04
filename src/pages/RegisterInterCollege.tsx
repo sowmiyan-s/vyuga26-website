@@ -13,7 +13,7 @@ import { UiverseButton } from "@/components/ui/UiverseButton";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Megaphone, AlertTriangle, ArrowRight, Upload, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Megaphone, AlertTriangle, ArrowRight, CheckCircle2 } from "lucide-react";
 import "@/components/RegistrationForm.css";
 
 const interCollegeSchema = z.object({
@@ -30,8 +30,7 @@ type InterCollegeForm = z.infer<typeof interCollegeSchema>;
 const departments = siteConfig.interCollegeDepartments || ["AGRI", "AIDS", "CIVIL", "CSC", "ECE", "EEE", "MECH", "IT", "AIML"];
 
 const RegisterInterCollege = () => {
-  const [step, setStep] = useState<"form" | "payment" | "success">("form");
-  const [uploading, setUploading] = useState(false);
+  const [step, setStep] = useState<"form" | "success">("form");
   const [formData, setFormData] = useState<InterCollegeForm | null>(null);
   const [interCount, setInterCount] = useState(0);
   const { settings, loading: settingsLoading } = useSettings();
@@ -84,60 +83,26 @@ const RegisterInterCollege = () => {
       toast.error("Registration is closed!");
       return;
     }
-    setFormData(data);
-    setStep("payment");
-  };
-
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !formData) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB");
-      return;
-    }
-
-    setUploading(true);
 
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `intercollege-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("payment-screenshots")
-        .upload(fileName, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from("payment-screenshots")
-        .getPublicUrl(fileName);
-
-      // Save registration to intercollege_registrations table
+      // Save registration directly (no payment required)
       const { error: dbError } = await supabase.from("intercollege_registrations").insert({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        register_number: formData.registerNumber,
-        year: parseInt(formData.year),
-        department: formData.department,
-        payment_screenshot_url: urlData.publicUrl,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        register_number: data.registerNumber,
+        year: parseInt(data.year),
+        department: data.department,
       });
 
       if (dbError) throw dbError;
 
+      setFormData(data);
       toast.success("Registration successful!");
       setStep("success");
     } catch (error: any) {
       console.error("Error:", error);
-      toast.error(error.message || "Failed to upload screenshot");
-    } finally {
-      setUploading(false);
+      toast.error(error.message || "Failed to register");
     }
   };
 
@@ -196,17 +161,19 @@ const RegisterInterCollege = () => {
             <ArrowLeft className="w-4 h-4" />
             Back to Registration Types
           </Link>
-          {/* Inter College Badge */}
+          
+          {/* Badge */}
           <div className="flex justify-center mb-6">
-            <div className="px-4 py-1.5 rounded-full bg-uiverse-purple/20 border border-uiverse-purple/40 text-uiverse-purple text-sm font-bold tracking-wider">
-              INTRA COLLEGE
+            <div className="px-4 py-1.5 rounded-full bg-uiverse-purple/20 border border-uiverse-purple/40 text-uiverse-purple text-sm font-bold tracking-wider flex items-center gap-2">
+              <span>OTHER DEPARTMENTS</span>
+              <span className="px-2 py-0.5 rounded-full bg-uiverse-green/20 text-uiverse-green text-xs">FREE</span>
             </div>
           </div>
 
           {/* Pre-Registration Info (Compact) */}
-          <div className="mb-8 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+          <div className="mb-6 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
             <p className="text-gray-300 text-sm">
-              <span className="text-blue-400 font-bold mb-1 flex items-center gap-2"><Megaphone className="w-4 h-4" /> Ideathon & Startup Arena:</span>
+              <span className="text-blue-400 font-bold mb-1 flex items-center justify-center gap-2"><Megaphone className="w-4 h-4" /> Ideathon, Startup & ESPORTS:</span>
               Register here <strong>only if shortlisted</strong>. For other events, you can proceed.
             </p>
           </div>
@@ -223,10 +190,6 @@ const RegisterInterCollege = () => {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-400 mt-1">➜</span>
-                <span>Keep a <strong>Payment Screenshot</strong> safe for verification.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-red-400 mt-1">➜</span>
                 <span>Bring <strong>Laptop</strong> for Codathon / PPT submission events.</span>
               </li>
               <li className="flex items-start gap-2">
@@ -238,8 +201,8 @@ const RegisterInterCollege = () => {
 
           {/* Progress Steps */}
           <div className="flex items-center justify-center gap-4 mb-8">
-            {["Details", "Payment", "Done"].map((label, index) => {
-              const stepIndex = step === "form" ? 0 : step === "payment" ? 1 : 2;
+            {["Details", "Done"].map((label, index) => {
+              const stepIndex = step === "form" ? 0 : 1;
               return (
                 <div key={label} className="flex items-center gap-2">
                   <motion.div
@@ -253,12 +216,11 @@ const RegisterInterCollege = () => {
                     {index + 1}
                   </motion.div>
                   <span
-                    className={`hidden sm:block text-sm font-medium ${index <= stepIndex ? "text-white" : "text-white/40"
-                      }`}
+                    className={`hidden sm:block text-sm font-medium ${index <= stepIndex ? "text-white" : "text-white/40"}`}
                   >
                     {label}
                   </span>
-                  {index < 2 && (
+                  {index < 1 && (
                     <div className="w-8 h-0.5 bg-white/10 mx-2" />
                   )}
                 </div>
@@ -363,101 +325,14 @@ const RegisterInterCollege = () => {
                     </div>
 
                     <button className="submit-btn mt-6 inter-college-btn" type="submit" disabled={isSubmitting}>
-                      <span className="sign-text">Continue to Payment</span>
+                      <span className="sign-text">{isSubmitting ? "Registering..." : "Complete Registration"}</span>
                     </button>
                   </form>
                 </div>
               </motion.div>
             )}
 
-            {/* Step 2: Payment */}
-            {step === "payment" && (
-              <motion.div
-                key="payment"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="bg-black/40 backdrop-blur-xl border border-uiverse-purple/20 rounded-3xl p-8 shadow-[0_0_30px_rgba(223,25,251,0.2)]"
-              >
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-uiverse-purple/10 text-uiverse-purple mb-4 border border-uiverse-purple/20 shadow-[0_0_15px_rgba(223,25,251,0.2)]">
-                    <span className="font-display font-bold text-xl">₹{siteConfig.interCollegePassPrice}</span>
-                    <span className="text-sm opacity-80">per person</span>
-                  </div>
-                  <p className="text-gray-400">
-                    Scan the QR code or use UPI to make payment
-                  </p>
-                </div>
-
-                <div className="bg-white rounded-2xl p-6 mb-6 mx-auto w-fit shadow-[0_0_20px_rgba(223,25,251,0.3)]">
-                  <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden relative">
-                    <img
-                      src={siteConfig.interCollegePaymentQR || "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"}
-                      alt="Payment QR Code"
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                </div>
-
-                <div className="text-center mb-8 bg-white/5 rounded-xl p-4 border border-uiverse-purple/20">
-                  <p className="text-gray-400 mb-2 text-sm uppercase tracking-wider">Or pay to this UPI ID</p>
-                  <p className="font-mono text-xl font-bold text-uiverse-purple mb-2 copy-text select-all">
-                    {siteConfig.interCollegePaymentUPI || siteConfig.paymentUPI}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    📞 {siteConfig.interCollegePaymentPhone || siteConfig.paymentPhone}
-                  </p>
-                </div>
-
-                <div className="border-t border-uiverse-purple/20 pt-6">
-                  <label htmlFor="screenshot" className="block mb-4 text-center text-white">
-                    Upload Payment Screenshot
-                  </label>
-                  <div className="relative group">
-                    <input
-                      type="file"
-                      id="screenshot"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      disabled={uploading}
-                    />
-                    <label
-                      htmlFor="screenshot"
-                      className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-uiverse-purple/30 rounded-xl cursor-pointer group-hover:border-uiverse-purple group-hover:bg-uiverse-purple/5 transition-all duration-300 ${uploading ? "opacity-50 cursor-not-allowed" : ""
-                        }`}
-                    >
-                      {uploading ? (
-                        <div className="flex flex-col items-center">
-                          <div className="w-8 h-8 border-2 border-uiverse-purple border-t-transparent rounded-full animate-spin mb-2" />
-                          <span className="text-uiverse-purple">Uploading...</span>
-                        </div>
-                      ) : (
-                        <>
-                          <Upload className="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" />
-                          <span className="text-gray-400 group-hover:text-uiverse-purple transition-colors">
-                            Click to upload screenshot
-                          </span>
-                          <span className="text-xs text-gray-600 mt-1">
-                            Max 5MB, Images only
-                          </span>
-                        </>
-                      )}
-                    </label>
-                  </div>
-                </div>
-
-                <UiverseButton
-                  variant="outline"
-                  className="w-full mt-6 !border-uiverse-purple/20 !text-gray-400 hover:!text-uiverse-purple hover:!border-uiverse-purple"
-                  onClick={() => setStep("form")}
-                >
-                  ← Back to Form
-                </UiverseButton>
-              </motion.div>
-            )}
-
-            {/* Step 3: Success */}
+            {/* Step 2: Success */}
             {step === "success" && (
               <motion.div
                 key="success"
@@ -472,8 +347,7 @@ const RegisterInterCollege = () => {
                   Registration Successful!
                 </h2>
                 <p className="text-gray-400 mb-8 max-w-md mx-auto">
-                  Thank you for registering for {siteConfig.eventName}. Your payment is being verified.
-                  You will receive a confirmation email once verified.
+                  Thank you for registering for {siteConfig.eventName}. See you at the event!
                 </p>
                 <div className="bg-white/5 rounded-xl p-4 mb-8 text-left border border-uiverse-purple/20 inline-block min-w-[300px]">
                   <p className="text-sm text-gray-500 mb-1">Registered as:</p>

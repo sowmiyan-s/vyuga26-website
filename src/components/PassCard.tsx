@@ -46,7 +46,7 @@ const SinglePassCard = ({ type, price, label, linkTo }: SinglePassCardProps) => 
               </div>
               <div className="subtitle">
                 <span className="font-bold text-white tracking-widest uppercase mb-1">Includes</span>
-                <span className="text-gray-300">Food & Refreshments</span>
+                <span className="text-gray-300">Food & Hydrations</span>
                 <span className="text-gray-300">{isDept ? "No Payment Required" : "Access to All Events"}</span>
                 <span className="text-[10px] text-white/50 mt-1">*One Pass Per Person</span>
               </div>
@@ -122,8 +122,8 @@ const PassCard = () => {
           >
             <SinglePassCard
               type="inter"
-              price={siteConfig.interCollegePassPrice}
-              label="INTRA COLLEGE"
+              price="FREE"
+              label="OTHER DEPTS (Intra)"
               linkTo="/register-intercollege"
             />
           </motion.div>
@@ -162,15 +162,13 @@ const PassCard = () => {
           <span>⏰</span> Registration closes on <span className="text-uiverse-pink">{siteConfig.registrationCloseDate}</span>
         </p>
 
-        <div className="bg-uiverse-sky/10 border border-uiverse-sky/20 rounded-lg p-4 text-left">
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 text-left">
           <p className="text-gray-300 text-sm md:text-base leading-relaxed">
-            <strong className="text-uiverse-sky block mb-1">📢 Important for Ideathon & Startup Arena Participants:</strong>
-            If you wish to participate <em>only</em> in <strong>Ideathon</strong> or <strong>Startup Arena</strong>, you must first submit your abstract/PPT.
-            You can register and complete the payment <strong>only after being shortlisted</strong>.
-            Shortlisted teams will receive a separate confirmation.
-            <br /><br />
-            <span className="text-white/60 text-xs text-center block w-full">
-              (For all other events, you can register and pay immediately using the passes above.)
+            <strong className="text-amber-400 block mb-1">📢 Ideathon, Startup Arena & ESPORTS (FREE FIRE):</strong>
+            Submit PPT/register first → wait for "Selected" message → then pay & complete registration.
+            <br />
+            <span className="text-white/60 text-xs mt-2 block">
+              (For all other events, you can register immediately using the passes above.)
             </span>
           </p>
         </div>
