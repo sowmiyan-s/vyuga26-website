@@ -90,7 +90,8 @@ const EventDetail = () => {
           </motion.div>
 
           {/* Pre-Registration Flow - Only for Ideathon & Startup Arena */}
-          {event.isPreRegistration && (
+          {/* Pre-Registration Flow - Only if enabled (e.g., Ideathon & Startup Arena) */}
+          {event.isPreRegistration && event.showParticipationProcess && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -228,7 +229,7 @@ const EventDetail = () => {
                     variant="primary"
                     className="text-xl px-12 py-6 shadow-[0_0_30px_rgba(18,184,255,0.3)] hover:shadow-[0_0_50px_rgba(18,184,255,0.6)] !bg-gradient-to-r !from-uiverse-sky !to-blue-600"
                   >
-                    Submit PPT (Free) <Rocket className="w-5 h-5 ml-2" />
+                    {event.registrationButtonLabel || "Submit PPT (Free)"} <Rocket className="w-5 h-5 ml-2" />
                   </UiverseButton>
                 </a>
 

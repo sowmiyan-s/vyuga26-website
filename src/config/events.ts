@@ -18,6 +18,8 @@ export interface Event {
   hasCashPrize?: boolean;
   isPreRegistration?: boolean;
   submissionLink?: string;
+  registrationButtonLabel?: string;
+  showParticipationProcess?: boolean;
 }
 
 export const events: Event[] = [
@@ -44,6 +46,7 @@ export const events: Event[] = [
     isSpotlight: true,
     hasCashPrize: true,
     isPreRegistration: true,
+    showParticipationProcess: true,
     submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLSeO7HIiZ-oI2spHVyGf7oS2Dt55A0UgFHcicYbnH883yiYUhg/viewform",
   },
   {
@@ -198,31 +201,31 @@ export const events: Event[] = [
   {
     id: "e-sports",
     title: "Esports",
-    description: "Esports is a competitive gaming tournament featuring popular multiplayer battle royale titles such as Free Fire and PUBG/BGMI.",
-    fullDescription: "Esports is a competitive gaming tournament featuring popular multiplayer battle royale titles such as Free Fire and PUBG/BGMI. The event is designed to test players’ strategic gameplay, teamwork, reflexes, and in-game decision-making skills. Matches will be conducted as full-map battle royale games under standard tournament conditions to ensure fair and competitive play.",
+    description: "Esports is a competitive gaming tournament featuring the popular multiplayer battle royale title Free Fire.",
+    fullDescription: "Esports is a competitive gaming tournament featuring the popular multiplayer battle royale title Free Fire. The event is designed to test players’ strategic gameplay, teamwork, reflexes, and in-game decision-making skills. Matches will be conducted as full-map battle royale games under standard tournament conditions to ensure fair and competitive play.",
     category: "non-technical",
     image: "/images/ESPORTS.png",
     rules: [
-      "Matches will be conducted in full-map battle royale format",
+      "Game Title: Free Fire",
+      "Map: Bermuda (Full Map)",
+      "Match Format: Squad",
+      "Solo and Duo players are allowed to participate in the Squad match (must play vs Squads)",
       "Players must use their own mobile devices and stable internet connection",
       "Only in-game voice chat is allowed during matches",
-      "Use of hacks, mods, emulators (unless permitted), or any third-party software is strictly prohibited",
-      "Teaming with other squads, exploiting glitches, or intentional unfair play is not allowed",
+      "Use of hacks, mods, emulators, or any third-party software is strictly prohibited",
+      "Teaming with other squads, exploiting glitches, or intentional unfair play is prohibited",
       "Players must join the custom room on time; late entry may lead to disqualification",
       "All participants must follow the instructions given by the coordinators",
-      "The coordinators reserve the right to modify rules or match settings at any time to ensure fair conduct of the tournament",
-      "Open to all departments",
-      "Team size: As per game rules (Solo / Duo / Squad)",
-      "Game titles: Free Fire / PUBG (BGMI)",
-      "Match type: Full-map custom room match",
-      "Rounds: Preliminary and Final (based on number of teams)",
-      "Duration: As per match progression and game rules",
+      "Coordinators reserve the right to modify rules or match settings to ensure fair play",
       "Evaluation Criteria: Placement / Rank achieved, Team coordination and fair play"
     ],
     time: "As per match schedule",
     coordinatorIds: ["prasanth", "sebin", "harshit", "rishvan", "nandha-kumar"],
     isSpotlight: true,
     hasCashPrize: true,
+    isPreRegistration: true,
+    registrationButtonLabel: "Register Your Squad",
+    submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLScf877uhC9i8JpuZo-OTUM9krZn-GvEPrhyvGNu-wz9p6SoIA/viewform?usp=sharing&ouid=110811384431187641365",
   },
   {
     id: "spotlight",
@@ -260,6 +263,7 @@ export const events: Event[] = [
     coordinatorIds: ["priyaadharshini-s-k", "sri-dharshini", "mithun-m", "naveen-m", "abinesh-a"],
     isSpotlight: true,
     isPreRegistration: true,
+    showParticipationProcess: true,
     submissionLink: "https://docs.google.com/forms/d/1rBud14mlpEXRUGruziuF3H2oWdjULKhdyPxUdSkyY4g/edit?pli=1",
   },
 ];
