@@ -9,8 +9,8 @@ export const siteConfig = {
   eventDateFull: new Date("2026-02-17T09:00:00"),
 
   // Registration Limits
-  registrationCloseDate: "12/02/2026",
-  registrationCloseDateFull: new Date("2026-02-12T23:59:59"),
+  registrationCloseDate: "13/02/2026",
+  registrationCloseDateFull: new Date("2026-02-13T23:59:59"),
   outerCollegeLimit: 300,
   interCollegeLimit: 100,
 
@@ -31,7 +31,7 @@ export const siteConfig = {
   passIncludes: ["Food", "Participate in all events", "Certificate"],
 
   // Intra College Departments
-  interCollegeDepartments: ["AGRI", "AIDS", "CIVIL", "CSC", "ECE", "EEE", "MECH", "IT", "AIML"],
+  interCollegeDepartments: ["AGRI", "CIVIL", "CSC", "ECE", "EEE", "MECH", "IT", "AIML"],
 
   // Intra College QR Code (different from outer college)
   interCollegePaymentQR: "/images/intercollege-payment-qr.png",

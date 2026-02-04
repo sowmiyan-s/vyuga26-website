@@ -38,6 +38,7 @@ interface Registration {
   payment_verified?: boolean;
   entry_confirmed: boolean;
   created_at: string;
+  serialNumber?: number;
 }
 
 type CollegeType = "outer" | "inter" | "dept";
@@ -69,7 +70,9 @@ const Admin = () => {
   const [exportConfig, setExportConfig] = useState({
     sources: { outer: true, inter: true, dept: true },
     status: { pending: true, verified: true, entered: true },
+
     fields: {
+      serialNumber: true,
       name: true,
       email: true,
       phone: true,
@@ -81,7 +84,8 @@ const Admin = () => {
       paymentStatus: true,
       entryStatus: true,
       date: true
-    }
+    },
+    sortBy: "id" as "id" | "name"
   });
 
   // Stats
@@ -107,58 +111,78 @@ const Admin = () => {
       // Fetch outer college registrations
       const { data: outerData, error: outerError } = await supabase
         .from("registrations")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .select("*");
+      // We fetch all and sort in memory to guarantee consistent serial numbers based on all-time data
+      // .order("created_at", { ascending: false }); // Removed DB ordering to handle manually
 
       if (outerError) throw outerError;
-      setRegistrations(outerData || []);
 
       // Fetch inter college registrations
       const { data: interData, error: interError } = await supabase
         .from("intercollege_registrations")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .select("*");
 
       if (interError) throw interError;
-      setInterRegistrations(interData || []);
 
       // Fetch department registrations
       const { data: deptData, error: deptError } = await supabase
         .from("department_registrations")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .select("*");
 
       if (deptError) throw deptError;
-      setDeptRegistrations(deptData || []);
 
-      // Calculate stats
-      const outerVerified = outerData?.filter((r) => r.payment_verified).length || 0;
-      const outerEntered = outerData?.filter((r) => r.entry_confirmed).length || 0;
-      const interEntered = interData?.filter((r) => r.entry_confirmed).length || 0;
-      const deptEntered = deptData?.filter((r) => r.entry_confirmed).length || 0;
+      // Process data to add serial numbers (1-based index sorted by date)
+      const processData = (data: any[]) => {
+        if (!data) return [];
+        // Sort by date ascending to assign IDs
+        const sorted = [...data].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        // Assign serial numbers and return reversed (newest first) for UI
+        return sorted.map((item, index) => ({
+          ...item,
+          serialNumber: index + 1
+        })).reverse();
+      };
+
+      const processedOuter = processData(outerData || []);
+      setRegistrations(processedOuter);
+
+      const processedInter = processData(interData || []);
+      setInterRegistrations(processedInter);
+
+      const processedDept = processData(deptData || []).map(item => ({
+        ...item,
+        department: "AI&DS"
+      }));
+      setDeptRegistrations(processedDept);
+
+      // Calculate stats using processed data (essentially same counts)
+      const outerVerified = processedOuter.filter((r) => r.payment_verified).length;
+      const outerEntered = processedOuter.filter((r) => r.entry_confirmed).length;
+      const interEntered = processedInter.filter((r) => r.entry_confirmed).length;
+      const deptEntered = processedDept.filter((r) => r.entry_confirmed).length;
 
       setStats({
         outer: {
-          total: outerData?.length || 0,
+          total: processedOuter.length,
           verified: outerVerified,
           entered: outerEntered,
           revenue: outerVerified * 300,
         },
         inter: {
-          total: interData?.length || 0,
-          verified: interData?.length || 0, // All inter registrations are "verified" (free)
+          total: processedInter.length,
+          verified: processedInter.length, // All inter registrations are "verified" (free)
           entered: interEntered,
           revenue: 0, // Free registration
         },
         dept: {
-          total: deptData?.length || 0,
-          verified: deptData?.length || 0, // All dept registrations are "verified" (no payment)
+          total: processedDept.length,
+          verified: processedDept.length, // All dept registrations are "verified" (no payment)
           entered: deptEntered,
           revenue: 0,
         },
         combined: {
-          total: (outerData?.length || 0) + (interData?.length || 0) + (deptData?.length || 0),
-          verified: outerVerified + (interData?.length || 0) + (deptData?.length || 0),
+          total: processedOuter.length + processedInter.length + processedDept.length,
+          verified: outerVerified + processedInter.length + processedDept.length,
           entered: outerEntered + interEntered + deptEntered,
           revenue: (outerVerified * 300), // Only outer college pays
         },
@@ -265,8 +289,17 @@ const Admin = () => {
       };
 
       const processData = (data: Registration[], type: CollegeType) => {
-        return data.filter(r => shouldInclude(r, type)).map(r => {
+        // Sort based on config
+        const sortedForExport = [...data].sort((a, b) => {
+          if (exportConfig.sortBy === "name") {
+            return (a.name || "").localeCompare(b.name || "");
+          }
+          return (a.serialNumber || 0) - (b.serialNumber || 0);
+        });
+
+        return sortedForExport.filter(r => shouldInclude(r, type)).map(r => {
           const row: any = {};
+          if (fields.serialNumber) row["ID"] = r.serialNumber;
           if (fields.name) row["Name"] = r.name;
           if (fields.email) row["Email"] = r.email;
           if (fields.phone) row["Phone"] = r.phone;
@@ -317,6 +350,7 @@ const Admin = () => {
 
       const processOuterData = (data: Registration[]) => {
         return data.map((r) => ({
+          ID: r.serialNumber,
           Name: r.name,
           Email: r.email,
           Phone: r.phone,
@@ -331,6 +365,7 @@ const Admin = () => {
 
       const processInterData = (data: Registration[]) => {
         return data.map((r) => ({
+          ID: r.serialNumber,
           Name: r.name,
           Email: r.email,
           Phone: r.phone,
@@ -344,6 +379,7 @@ const Admin = () => {
 
       const processDeptData = (data: Registration[]) => {
         return data.map((r) => ({
+          ID: r.serialNumber,
           Name: r.name,
           Email: r.email,
           Phone: r.phone,
@@ -364,9 +400,10 @@ const Admin = () => {
       switch (exportType) {
         case "all":
           // All registrations
-          addSheetIfData(processOuterData(registrations), "Outer College - All");
-          addSheetIfData(processInterData(interRegistrations), "Intra College - All");
-          addSheetIfData(processDeptData(deptRegistrations), "Department - All");
+          // Sort by serial number for simple export too
+          addSheetIfData(processOuterData([...registrations].sort((a, b) => (a.serialNumber || 0) - (b.serialNumber || 0))), "Outer College - All");
+          addSheetIfData(processInterData([...interRegistrations].sort((a, b) => (a.serialNumber || 0) - (b.serialNumber || 0))), "Intra College - All");
+          addSheetIfData(processDeptData([...deptRegistrations].sort((a, b) => (a.serialNumber || 0) - (b.serialNumber || 0))), "Department - All");
           break;
 
         case "outer":
@@ -543,6 +580,33 @@ const Admin = () => {
                       </div>
                     </div>
 
+                    {/* Sort Order */}
+                    <div className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                      <h3 className="font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
+                        <TrendingUp className="w-4 h-4 text-uiverse-pink" /> Sort Order
+                      </h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="sort-id"
+                            checked={exportConfig.sortBy === "id"}
+                            onCheckedChange={() => setExportConfig(prev => ({ ...prev, sortBy: "id" }))}
+                            className="border-white/20 data-[state=checked]:bg-uiverse-pink data-[state=checked]:border-uiverse-pink rounded-full"
+                          />
+                          <Label htmlFor="sort-id" className="text-gray-300 font-medium cursor-pointer">Sort by ID (Default)</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="sort-name"
+                            checked={exportConfig.sortBy === "name"}
+                            onCheckedChange={() => setExportConfig(prev => ({ ...prev, sortBy: "name" }))}
+                            className="border-white/20 data-[state=checked]:bg-uiverse-pink data-[state=checked]:border-uiverse-pink rounded-full"
+                          />
+                          <Label htmlFor="sort-name" className="text-gray-300 font-medium cursor-pointer">Sort by Name</Label>
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Status Selection */}
                     <div className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10">
                       <h3 className="font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
@@ -585,7 +649,19 @@ const Admin = () => {
                         <BarChart3 className="w-4 h-4 text-uiverse-sky" /> Include Columns
                       </h3>
                       <div className="grid grid-cols-1 gap-2 text-sm overflow-y-auto max-h-[200px] pr-2 custom-scrollbar">
-                        {Object.entries(exportConfig.fields).map(([key, value]) => (
+                        {/* ID Field always first */}
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="fld-serialNumber"
+                            checked={exportConfig.fields.serialNumber}
+                            onCheckedChange={(c) => setExportConfig(prev => ({ ...prev, fields: { ...prev.fields, serialNumber: !!c } }))}
+                            className="w-4 h-4 border-white/20 data-[state=checked]:bg-uiverse-sky data-[state=checked]:border-uiverse-sky"
+                          />
+                          <Label htmlFor="fld-serialNumber" className="text-gray-300 capitalize cursor-pointer hover:text-white transition-colors">
+                            ID / S.No
+                          </Label>
+                        </div>
+                        {Object.entries(exportConfig.fields).filter(([k]) => k !== 'serialNumber').map(([key, value]) => (
                           <div key={key} className="flex items-center space-x-2">
                             <Checkbox
                               id={`fld-${key}`}

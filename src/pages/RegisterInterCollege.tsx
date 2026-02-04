@@ -161,13 +161,26 @@ const RegisterInterCollege = () => {
             <ArrowLeft className="w-4 h-4" />
             Back to Registration Types
           </Link>
-          
-          {/* Badge */}
+
           <div className="flex justify-center mb-6">
             <div className="px-4 py-1.5 rounded-full bg-uiverse-purple/20 border border-uiverse-purple/40 text-uiverse-purple text-sm font-bold tracking-wider flex items-center gap-2">
               <span>OTHER DEPARTMENTS</span>
               <span className="px-2 py-0.5 rounded-full bg-uiverse-green/20 text-uiverse-green text-xs">FREE</span>
             </div>
+          </div>
+
+          {/* AI&DS Warning */}
+          <div className="flex justify-center mb-6">
+            <Link to="/register-department" className="text-center group block w-full max-w-md">
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 hover:bg-red-500/20 transition-all cursor-pointer">
+                <p className="text-red-300 text-sm font-semibold flex items-center justify-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-red-500" />
+                  AI&DS Students: Register Here As VSB Student
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </p>
+                <p className="text-xs text-red-400/70 mt-1">intra college other department form is NOT for AI&DS</p>
+              </div>
+            </Link>
           </div>
 
           {/* Pre-Registration Info (Compact) */}
