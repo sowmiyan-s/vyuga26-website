@@ -154,7 +154,8 @@ export const events: Event[] = [
       "Laptop (mandatory)",
       "Basic knowledge of system design, architecture patterns, and application flow",
       "Number of Rounds: Single Round",
-      "Evaluation Criteria: Innovation & Creativity, Technical Feasibility, Architecture clarity & structure, Presentation & Communication skills"
+      "Evaluation Criteria: Innovation & Creativity, Technical Feasibility, Architecture clarity & structure, Presentation & Communication skills",
+      "Full Backend implementation or database coding is not required."
     ],
     time: "Duration: 3 Hours",
     coordinatorIds: ["amar-karthik", "aiswarya-r", "kokiladevi-a", "pilo-francy-f", "shivani-t"],
