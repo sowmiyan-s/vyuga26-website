@@ -13,6 +13,7 @@ export interface Event {
   image: string;
   rules: string[];
   time: string;
+  venue: string;
   coordinatorIds: string[];
   isSpotlight?: boolean;
   hasCashPrize?: boolean;
@@ -42,6 +43,7 @@ export const events: Event[] = [
       "Evaluation Criteria: Innovation and originality, Technical feasibility, Clarity of presentation"
     ],
     time: "10:00 AM – 1:00 PM",
+    venue: "A005",
     coordinatorIds: ["mathivadhana-p", "preethika-mh", "dharshini-p", "sanjai-krishnan-s", "barath-r"],
     isSpotlight: true,
     hasCashPrize: true,
@@ -65,6 +67,7 @@ export const events: Event[] = [
       "Evaluation Criteria: Innovation and originality, Technical feasibility, Presentation clarity"
     ],
     time: "10:00 AM – 1:00 PM",
+    venue: "A007",
     coordinatorIds: ["madhu-mitha-r", "pratthima-s", "sandhiya-k", "chenthurr-c-k", "harsith-s-j"],
     hasCashPrize: true,
   },
@@ -89,7 +92,8 @@ export const events: Event[] = [
       "Scoring: Fully automated evaluation",
       "Evaluation Criteria: Correctness and efficiency of solutions, Logical and algorithmic approach, Code quality and optimization"
     ],
-    time: "Duration: 2 – 3 hours",
+    time: "10:00 AM – 1:00 PM",
+    venue: "A006",
     coordinatorIds: ["divya-harini", "kaviya", "subha", "thangam-s-k", "vishal-n", "sowmiyan-s", "sudarson-b"],
     isSpotlight: true,
     hasCashPrize: true,
@@ -114,7 +118,8 @@ export const events: Event[] = [
       "Duration: 180 minutes",
       "Evaluation Criteria: User Experience (UX) & Flow, Creativity & Innovation, Visual Design (UI), Usability & Accessibility, Problem Understanding, Presentation / Explanation"
     ],
-    time: "Duration: 180 minutes",
+    time: "10:00 AM – 12:00 PM",
+    venue: "A002",
     coordinatorIds: ["manojkrishna-m", "kabeel-raj-k", "shijitha-jenifer", "ramya-s", "oviya-maheswari"],
   },
   {
@@ -133,8 +138,9 @@ export const events: Event[] = [
       "Duration: 3 hours",
       "Evaluation Criteria: Originality of design and code, Relevance to theme, Creativity and execution"
     ],
-    time: "10:00 AM – 01:00 PM",
-    coordinatorIds: ["sathya-k", "anurathi-l", "aiswarya-v", "pooja-m", "jaya-surya"],
+    time: "10:00 AM – 12:00 PM",
+    venue: "A003",
+    coordinatorIds: ["sathya-k", "anurathi-l", "aiswarya-v", "pooja-m", "jaya-surya", "deepan-m"],
   },
 
   {
@@ -157,7 +163,8 @@ export const events: Event[] = [
       "Evaluation Criteria: Innovation & Creativity, Technical Feasibility, Architecture clarity & structure, Presentation & Communication skills",
       "Full Backend implementation or database coding is not required."
     ],
-    time: "Duration: 3 Hours",
+    time: "10:00 AM – 1:00 PM",
+    venue: "A001",
     coordinatorIds: ["amar-karthik", "aiswarya-r", "kokiladevi-a", "pilo-francy-f", "shivani-t"],
   },
 
@@ -178,7 +185,8 @@ export const events: Event[] = [
       "Round 2: Buzzer",
       "Duration: 1 hour"
     ],
-    time: "10:00 AM – 11:00 AM",
+    time: "2:00 PM – 3:00 PM",
+    venue: "A208",
     coordinatorIds: ["blessy-r", "monica-g", "gowtham-m", "prithiv-a-k"],
   },
   {
@@ -196,8 +204,9 @@ export const events: Event[] = [
       "Quizmaster’s decision is final",
       "Evaluation Criteria: Accuracy, Relevance, Clarity of explanation"
     ],
-    time: "11:30 AM – 12:30 PM",
-    coordinatorIds: ["semmozhi-s", "agneya-p-k", "saru-bala-b", "reshma-b"],
+    time: "2:00 PM – 3:00 PM",
+    venue: "B210",
+    coordinatorIds: ["semmozhi-s", "agneya-p-k", "saru-bala-b", "reshma-b", "arun-m", "divakar-r", "kannan-r"],
   },
   {
     id: "e-sports",
@@ -220,7 +229,8 @@ export const events: Event[] = [
       "Coordinators reserve the right to modify rules or match settings to ensure fair play",
       "Evaluation Criteria: Placement / Rank achieved, Team coordination and fair play"
     ],
-    time: "As per match schedule",
+    time: "2:00 PM – 3:00 PM",
+    venue: "A211",
     coordinatorIds: ["prasanth", "sebin", "harshit", "rishvan", "nandha-kumar"],
     isSpotlight: true,
     hasCashPrize: true,
@@ -242,7 +252,8 @@ export const events: Event[] = [
       "Round 1: Debate",
       "Round 2: JAM"
     ],
-    time: "2:00 PM – 3:30 PM",
+    time: "10:00 AM – 12:00 PM",
+    venue: "B202",
     coordinatorIds: ["sasmita-r", "nithanya-k", "ashmita-p", "juwairiya-m"],
     isSpotlight: true,
   },
@@ -260,7 +271,8 @@ export const events: Event[] = [
       "Duration: 10 minutes per team (presentation and Q&A)",
       "Evaluation Criteria: Innovation and originality, Business and technical feasibility, Clarity of presentation"
     ],
-    time: "2:00 PM – 3:30 PM",
+    time: "10:00 AM – 12:00 PM",
+    venue: "A209",
     coordinatorIds: ["priyaadharshini-s-k", "sri-dharshini", "mithun-m", "naveen-m", "abinesh-a"],
     isSpotlight: true,
     isPreRegistration: true,

@@ -118,6 +118,7 @@ export const coordinators: Coordinator[] = [
   { id: "aiswarya-v", name: "Aiswarya V", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["web-development"] },
   { id: "pooja-m", name: "Pooja M", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["web-development"] },
   { id: "jaya-surya", name: "Jaya Surya", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["web-development"] },
+  { id: "deepan-m", name: "Deepan M", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["web-development"] },
 
   // Quiz Coordinators
   { id: "blessy-r", name: "Blessy R", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["quiz"] },
@@ -130,6 +131,9 @@ export const coordinators: Coordinator[] = [
   { id: "agneya-p-k", name: "Agneya P K", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["connections"] },
   { id: "saru-bala-b", name: "Saru Bala B", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["connections"] },
   { id: "reshma-b", name: "Reshma B", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["connections"] },
+  { id: "arun-m", name: "Arun M", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["connections"] },
+  { id: "divakar-r", name: "Divakar R", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["connections"] },
+  { id: "kannan-r", name: "Kannan R", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["connections"] },
 
   // Spotlight Coordinators
   { id: "sasmita-r", name: "Sasmita R", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["spotlight"] },

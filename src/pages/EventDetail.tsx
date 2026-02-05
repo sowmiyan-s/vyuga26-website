@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { UiverseButton } from "@/components/ui/UiverseButton";
 import { UiverseCard } from "@/components/ui/UiverseCard";
-import { ArrowLeft, IndianRupee, Clock, Trophy, AlertTriangle, Rocket } from "lucide-react";
+import { ArrowLeft, IndianRupee, Clock, Trophy, AlertTriangle, Rocket, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import SEO from "@/components/SEO";
 
@@ -171,6 +171,19 @@ const EventDetail = () => {
                   {event.time}
                 </div>
               </UiverseCard>
+
+              {/* Venue */}
+              {event.venue && (
+                <UiverseCard className="p-8 border-white/10">
+                  <h2 className="font-display text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-uiverse-purple to-purple-300">
+                    Venue
+                  </h2>
+                  <div className="flex items-center gap-3 text-xl text-gray-300">
+                    <MapPin className="w-7 h-7 text-white" />
+                    {event.venue}
+                  </div>
+                </UiverseCard>
+              )}
 
               {/* Coordinators */}
               <UiverseCard className="p-8 border-white/10">
