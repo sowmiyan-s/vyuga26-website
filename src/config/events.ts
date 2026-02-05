@@ -133,7 +133,7 @@ export const events: Event[] = [
       "Open to all departments. Team size: 2 to 3 members",
       "Pre-built projects are not allowed",
       "Plagiarism or malpractice leads to disqualification",
-      "Minimal AI assistance allowed; prompt-generated websites are prohibited",
+      "Minimalistic AI use is allowed",
       "Laptop and mobile device are mandatory",
       "Duration: 3 hours",
       "Evaluation Criteria: Originality of design and code, Relevance to theme, Creativity and execution"
