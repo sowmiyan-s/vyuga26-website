@@ -60,7 +60,7 @@ export const siteConfig = {
   tosLink: "/terms",
 
   // Brochure
-  brochureLink: "https://drive.google.com/file/d/1og_dpeSQAThRQj7RUUaLTYHGQ9IjdHFI/view?usp=sharing",
+  brochureLink: "https://drive.google.com/file/d/1ViPjMncvaWE_6Ay66i2W47lEHuF-36Cc/view?usp=sharing",
 
   // Event Categories
   eventCategories: [

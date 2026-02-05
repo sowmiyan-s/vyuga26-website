@@ -226,7 +226,7 @@ const RegisterDepartment = () => {
               Department Registration
             </h1>
             <p className="text-gray-400">
-              Free registration for AI&DS students • {deptCount}/{settings.department_limit} spots filled
+              Free registration for AI&DS students
             </p>
           </motion.div>
 

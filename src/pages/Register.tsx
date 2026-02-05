@@ -276,9 +276,7 @@ const Register = () => {
                     <p className="text-gray-400 text-sm">
                       For students from other colleges
                     </p>
-                    <p className="text-uiverse-green text-xs mt-2 font-medium">
-                      {outerCount}/{settings.outer_college_limit} spots filled
-                    </p>
+
                   </div>
 
                   <ul className="space-y-1.5 text-sm text-gray-300 mb-4">
@@ -355,9 +353,7 @@ const Register = () => {
                       <p className="text-gray-400 text-sm">
                         VSB students (except AI&DS)
                       </p>
-                      <p className="text-uiverse-purple text-xs mt-2 font-medium">
-                        {interCount}/{settings.inter_college_limit} spots filled
-                      </p>
+
                     </div>
 
                     <ul className="space-y-1.5 text-sm text-gray-300 mb-4">
@@ -413,9 +409,7 @@ const Register = () => {
                       <p className="text-gray-400 text-sm">
                         ONLY FROM VSBCETC
                       </p>
-                      <p className="text-uiverse-sky text-xs mt-2 font-medium">
-                        {deptCount}/{settings.department_limit} spots filled
-                      </p>
+
                     </div>
 
                     <ul className="space-y-1.5 text-sm text-gray-300 mb-4">
