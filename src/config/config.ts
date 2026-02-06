@@ -45,7 +45,7 @@ export const siteConfig = {
 
   // Social Links
   whatsappGroupLink: "https://chat.whatsapp.com/KjaAKqK9NcO1CVl3zrCZA8?mode=gi_t",
-  instagramLink: "https://www.instagram.com/vsbcetc_aids/",
+  instagramLink: "https://www.instagram.com/ai_ds_vyuga/",
 
   // College Info
   collegeName: "VSB College of Engineering Technical Campus",

@@ -602,6 +602,11 @@
     animation: marquee 20s linear infinite !important;
   }
 
+  /* Exception: Enable blink text animation */
+  .animate-blink-text {
+    animation: blink-red-yellow 0.8s infinite !important;
+  }
+
   /* Reduce heavy blur effects on mobile */
   .backdrop-blur-md,
   .backdrop-blur-xl,

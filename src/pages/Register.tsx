@@ -520,11 +520,7 @@ const Register = () => {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-400 mt-1">➜</span>
-                <span>Bring <strong>Laptop</strong> for Codathon / PPT submission events.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-red-400 mt-1">➜</span>
-                <span>Carry <strong>Pendrives</strong> if required for your event.</span>
+                <span>Bring <strong>Laptop</strong>, <strong>Charging Equipments</strong> to attend <strong>Technical Events</strong>.</span>
               </li>
             </ul>
           </div>
@@ -572,7 +568,7 @@ const Register = () => {
                     <div className="form-title"><span>Register for</span></div>
                     <div className="title-2 font-display"><span>{siteConfig.eventName}</span></div>
 
-                    <section className="bg-stars">
+                    <section className="bg-stars hidden md:block">
                       <span className="star" />
                       <span className="star" />
                       <span className="star" />

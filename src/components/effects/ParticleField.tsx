@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Particle {
   x: number;
@@ -61,7 +61,7 @@ const ParticleField = ({ particleCount = 50, className = '' }: ParticleFieldProp
         const dx = mouseRef.current.x - particle.x;
         const dy = mouseRef.current.y - particle.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (dist < 150) {
           const force = (150 - dist) / 150;
           particle.vx -= (dx / dist) * force * 0.02;
@@ -123,6 +123,24 @@ const ParticleField = ({ particleCount = 50, className = '' }: ParticleFieldProp
       }
     };
   }, [particleCount]);
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Check initially
+    checkMobile();
+
+    // Check on resize
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Return null immediately if on mobile
+  if (isMobile) return null;
 
   return (
     <canvas

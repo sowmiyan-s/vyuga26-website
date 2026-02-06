@@ -8,7 +8,7 @@ const BackgroundWrapper = ({ children }: { children: React.ReactNode }) => {
         <div className="relative min-h-screen w-full bg-black overflow-hidden">
             <Pattern />
             <GradientOrbs />
-            <ParticleField particleCount={40} />
+            <ParticleField particleCount={40} className="hidden md:block" />
             <div className="relative z-10 w-full h-full">
                 {children}
             </div>

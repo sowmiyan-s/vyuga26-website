@@ -8,11 +8,12 @@ import { toast } from "sonner";
 import {
   Search, Check, Eye, X, Users, Building2, BarChart3, Trash2, Settings,
   AlertTriangle, FileDown, GraduationCap, TrendingUp, Calendar,
-  PieChart, ChevronDown
+  PieChart, ChevronDown, Edit
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { siteConfig } from "@/config/config";
 import { events } from "@/config/events";
+import EventSelector from "@/components/EventSelector";
 import {
   Dialog,
   DialogContent,
@@ -58,6 +59,9 @@ const Admin = () => {
   const [eventFilter, setEventFilter] = useState<string>("all");
   const [loading, setLoading] = useState(false);
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
+
+  // Edit Events State
+  const [editingUser, setEditingUser] = useState<{ id: string; type: CollegeType; name: string; events: string[] } | null>(null);
 
   // Settings
   const [showSettings, setShowSettings] = useState(false);
@@ -208,6 +212,29 @@ const Admin = () => {
     if (type === "inter") return "intercollege_registrations";
     if (type === "dept") return "department_registrations";
     return "registrations";
+  };
+
+  const handleUpdateUserEvents = async () => {
+    if (!editingUser) return;
+
+    try {
+      setLoading(true);
+      const { error } = await supabase
+        .from(getTableName(editingUser.type))
+        .update({ selected_events: editingUser.events })
+        .eq("id", editingUser.id);
+
+      if (error) throw error;
+
+      toast.success("Events updated successfully");
+      setEditingUser(null);
+      fetchRegistrations();
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Failed to update events");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleVerifyPayment = async (id: string, verified: boolean, type: CollegeType) => {
@@ -1330,6 +1357,21 @@ const Admin = () => {
                       )}
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setEditingUser({
+                              id: reg.id,
+                              type: collegeType,
+                              name: reg.name,
+                              events: reg.selected_events || []
+                            })}
+                            className="text-blue-400 border-blue-400/20 hover:bg-blue-400/10"
+                            title="Edit Events"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+
                           {/* Dept and Inter: Only entry confirmation (no payment verification) */}
                           {(isDept || collegeType === "inter") ? (
                             !reg.entry_confirmed ? (
@@ -1443,6 +1485,40 @@ const Admin = () => {
           )}
         </div>
       </div>
+
+
+      {/* Edit Events Modal */}
+      {editingUser && (
+        <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
+          <DialogContent className="max-w-4xl bg-black/95 border border-white/10 backdrop-blur-xl text-white shadow-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-uiverse-sky">
+                Edit Events for {editingUser.name}
+              </DialogTitle>
+              <DialogDescription className="text-gray-400">
+                Select or deselect events. Admin override allows selecting unlimited events.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="py-4">
+              <EventSelector
+                selectedEvents={editingUser.events}
+                onChange={(newEvents) => setEditingUser(prev => prev ? { ...prev, events: newEvents } : null)}
+                maxEvents={20} // Admin override limit
+              />
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setEditingUser(null)}>
+                Cancel
+              </Button>
+              <Button onClick={handleUpdateUserEvents} disabled={loading} className="bg-blue-600 hover:bg-blue-700">
+                {loading ? "Saving..." : "Save Changes"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Screenshot Modal */}
       {selectedScreenshot && (
