@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import RegistrationClosed from "@/components/RegistrationClosed";
+import EventSelector from "@/components/EventSelector";
 import { UiverseButton } from "@/components/ui/UiverseButton";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -31,6 +32,8 @@ const RegisterDepartment = () => {
   const [step, setStep] = useState<"form" | "success">("form");
   const [deptCount, setDeptCount] = useState(0);
   const [countdown, setCountdown] = useState(3);
+  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [eventError, setEventError] = useState("");
   const { settings, loading: settingsLoading } = useSettings();
 
   const {
@@ -77,6 +80,13 @@ const RegisterDepartment = () => {
       return;
     }
 
+    if (selectedEvents.length === 0) {
+      setEventError("Please select at least 1 event");
+      toast.error("Please select at least 1 event");
+      return;
+    }
+    setEventError("");
+
     try {
       // Check for duplicate register number
       const { data: existing } = await supabase
@@ -97,6 +107,7 @@ const RegisterDepartment = () => {
         year: parseInt(data.year),
         section: data.section.toUpperCase(),
         register_number: data.registerNumber,
+        selected_events: selectedEvents,
       });
 
       if (error) throw error;
@@ -339,6 +350,16 @@ const RegisterDepartment = () => {
                   {errors.phone && (
                     <span className="text-red-400 text-xs block mt-1">{errors.phone.message}</span>
                   )}
+                </div>
+
+                {/* Event Selection */}
+                <div className="mt-4 p-4 bg-black/30 rounded-xl border border-white/10">
+                  <EventSelector
+                    selectedEvents={selectedEvents}
+                    onChange={setSelectedEvents}
+                    maxEvents={4}
+                    error={eventError}
+                  />
                 </div>
 
                 {/* Submit Button */}

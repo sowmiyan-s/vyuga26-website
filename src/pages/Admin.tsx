@@ -40,6 +40,7 @@ interface Registration {
   entry_confirmed: boolean;
   created_at: string;
   serialNumber?: number;
+  selected_events?: string[];
 }
 
 type CollegeType = "outer" | "inter" | "dept";
@@ -54,6 +55,7 @@ const Admin = () => {
   const [interRegistrations, setInterRegistrations] = useState<Registration[]>([]);
   const [deptRegistrations, setDeptRegistrations] = useState<Registration[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [eventFilter, setEventFilter] = useState<string>("all");
   const [loading, setLoading] = useState(false);
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
 
@@ -71,7 +73,7 @@ const Admin = () => {
   const [exportConfig, setExportConfig] = useState({
     sources: { outer: true, inter: true, dept: true },
     status: { pending: true, verified: true, entered: true },
-
+    eventFilter: "all" as string,
     fields: {
       serialNumber: true,
       name: true,
@@ -84,6 +86,7 @@ const Admin = () => {
       section: true,
       paymentStatus: true,
       entryStatus: true,
+      selectedEvents: true,
       date: true
     },
     sortBy: "id" as "id" | "name"
@@ -265,11 +268,18 @@ const Admin = () => {
   const handleAdvancedExportLogic = () => {
     try {
       const wb = XLSX.utils.book_new();
-      const { sources, status, fields } = exportConfig;
+      const { sources, status, fields, eventFilter: exportEventFilter } = exportConfig;
 
       const shouldInclude = (r: Registration, type: CollegeType) => {
         const isVerified = r.payment_verified;
         const isEntered = r.entry_confirmed;
+
+        // Event filter check
+        if (exportEventFilter !== "all") {
+          if (!r.selected_events || !r.selected_events.includes(exportEventFilter)) {
+            return false;
+          }
+        }
 
         // For dept, 'verified' effectively means registered as they are free
         // 'pending' for dept might mean nothing or just 'not entered'
@@ -287,6 +297,12 @@ const Admin = () => {
         if (status.entered && isEntered) return true;
 
         return false;
+      };
+
+      // Helper to get event titles from IDs
+      const getEventTitles = (eventIds?: string[]) => {
+        if (!eventIds || eventIds.length === 0) return "None";
+        return eventIds.map(id => events.find(e => e.id === id)?.title || id).join(", ");
       };
 
       const processData = (data: Registration[], type: CollegeType) => {
@@ -311,6 +327,7 @@ const Admin = () => {
           if (fields.section) row["Section"] = r.section || "N/A";
           if (fields.paymentStatus) row["Payment Status"] = r.payment_verified ? "Verified" : "Pending";
           if (fields.entryStatus) row["Entry Status"] = r.entry_confirmed ? "Confirmed" : "Pending";
+          if (fields.selectedEvents) row["Selected Events"] = getEventTitles(r.selected_events);
           if (fields.date) row["Registration Date"] = new Date(r.created_at).toLocaleDateString();
           return row;
         });
@@ -349,6 +366,12 @@ const Admin = () => {
     try {
       const wb = XLSX.utils.book_new();
 
+      // Helper to get event titles from IDs
+      const getEventTitles = (eventIds?: string[]) => {
+        if (!eventIds || eventIds.length === 0) return "None";
+        return eventIds.map(id => events.find(e => e.id === id)?.title || id).join(", ");
+      };
+
       const processOuterData = (data: Registration[]) => {
         return data.map((r) => ({
           ID: r.serialNumber,
@@ -358,6 +381,7 @@ const Admin = () => {
           College: r.college_name,
           Year: r.year,
           Department: r.department,
+          "Selected Events": getEventTitles(r.selected_events),
           "Payment Status": r.payment_verified ? "Verified" : "Pending",
           "Entry Status": r.entry_confirmed ? "Confirmed" : "Pending",
           "Registration Date": new Date(r.created_at).toLocaleDateString(),
@@ -373,6 +397,7 @@ const Admin = () => {
           "Register No": r.register_number,
           Year: r.year,
           Department: r.department,
+          "Selected Events": getEventTitles(r.selected_events),
           "Entry Status": r.entry_confirmed ? "Confirmed" : "Pending",
           "Registration Date": new Date(r.created_at).toLocaleDateString(),
         }));
@@ -387,6 +412,7 @@ const Admin = () => {
           "Register No": r.register_number,
           Year: r.year,
           Section: r.section,
+          "Selected Events": getEventTitles(r.selected_events),
           "Entry Status": r.entry_confirmed ? "Confirmed" : "Pending",
           "Registration Date": new Date(r.created_at).toLocaleDateString(),
         }));
@@ -476,20 +502,24 @@ const Admin = () => {
       r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (r.register_number && r.register_number.toLowerCase().includes(searchQuery.toLowerCase()));
 
+    // Event filter
+    const matchesEvent = eventFilter === "all" || 
+      (r.selected_events && r.selected_events.includes(eventFilter));
+
     // For dept AND inter (both are free now - no payment verification)
     if (isDept || collegeType === "inter") {
-      if (activeTab === "pending") return !r.entry_confirmed && matchesSearch;
-      if (activeTab === "entered") return r.entry_confirmed && matchesSearch;
-      if (activeTab === "all") return matchesSearch;
-      return !r.entry_confirmed && matchesSearch; // Default to pending
+      if (activeTab === "pending") return !r.entry_confirmed && matchesSearch && matchesEvent;
+      if (activeTab === "entered") return r.entry_confirmed && matchesSearch && matchesEvent;
+      if (activeTab === "all") return matchesSearch && matchesEvent;
+      return !r.entry_confirmed && matchesSearch && matchesEvent; // Default to pending
     }
 
     // Only outer college has payment verification
-    if (activeTab === "pending") return !r.payment_verified && matchesSearch;
-    if (activeTab === "verified") return r.payment_verified && !r.entry_confirmed && matchesSearch;
-    if (activeTab === "entered") return r.entry_confirmed && matchesSearch;
-    if (activeTab === "all") return matchesSearch;
-    return matchesSearch;
+    if (activeTab === "pending") return !r.payment_verified && matchesSearch && matchesEvent;
+    if (activeTab === "verified") return r.payment_verified && !r.entry_confirmed && matchesSearch && matchesEvent;
+    if (activeTab === "entered") return r.entry_confirmed && matchesSearch && matchesEvent;
+    if (activeTab === "all") return matchesSearch && matchesEvent;
+    return matchesSearch && matchesEvent;
   });
 
   if (!isAuthenticated) {
@@ -642,6 +672,23 @@ const Admin = () => {
                           <Label htmlFor="sts-entered" className="text-gray-300 font-medium cursor-pointer">Entry Confirmed</Label>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Event Filter */}
+                    <div className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                      <h3 className="font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
+                        <Calendar className="w-4 h-4 text-uiverse-pink" /> Filter by Event
+                      </h3>
+                      <select
+                        value={exportConfig.eventFilter}
+                        onChange={(e) => setExportConfig(prev => ({ ...prev, eventFilter: e.target.value }))}
+                        className="w-full h-10 px-3 rounded-md bg-black/50 border border-white/20 text-sm text-white focus:outline-none focus:ring-2 focus:ring-uiverse-purple"
+                      >
+                        <option value="all">All Events</option>
+                        {events.map(event => (
+                          <option key={event.id} value={event.id}>{event.title}</option>
+                        ))}
+                      </select>
                     </div>
 
                     {/* Column Selection */}
@@ -1172,16 +1219,30 @@ const Admin = () => {
           )}
         </div>
 
-        {/* Search */}
-        <div className="relative mb-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <Input
-            placeholder={isDept ? "Search by name, email, phone, or register number..." :
-              collegeType === "inter" ? "Search by email, phone, name, or register number..." : "Search by email, phone, or name..."}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+        {/* Search and Event Filter */}
+        <div className="flex flex-wrap gap-4 mb-6">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input
+              placeholder={isDept ? "Search by name, email, phone, or register number..." :
+                collegeType === "inter" ? "Search by email, phone, name, or register number..." : "Search by email, phone, or name..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <div className="w-[200px]">
+            <select
+              value={eventFilter}
+              onChange={(e) => setEventFilter(e.target.value)}
+              className="w-full h-10 px-3 rounded-md bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="all">All Events</option>
+              {events.map(event => (
+                <option key={event.id} value={event.id}>{event.title}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Registrations List */}
@@ -1207,6 +1268,7 @@ const Admin = () => {
                     <th className="px-4 py-3 text-left text-sm font-medium">
                       {isDept ? "Year/Section" : "Year/Dept"}
                     </th>
+                    <th className="px-4 py-3 text-left text-sm font-medium">Events</th>
                     {/* Only outer college has payment screenshots */}
                     {collegeType === "outer" && (
                       <th className="px-4 py-3 text-left text-sm font-medium">Screenshot</th>
@@ -1229,6 +1291,27 @@ const Admin = () => {
                       </td>
                       <td className="px-4 py-3 text-sm">
                         {isDept ? `Year ${reg.year} - ${reg.section}` : `Year ${reg.year} - ${reg.department}`}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap gap-1 max-w-[200px]">
+                          {reg.selected_events && reg.selected_events.length > 0 ? (
+                            reg.selected_events.slice(0, 2).map(eventId => {
+                              const event = events.find(e => e.id === eventId);
+                              return event ? (
+                                <span key={eventId} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary truncate max-w-[80px]" title={event.title}>
+                                  {event.title}
+                                </span>
+                              ) : null;
+                            })
+                          ) : (
+                            <span className="text-muted-foreground text-xs">None</span>
+                          )}
+                          {reg.selected_events && reg.selected_events.length > 2 && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                              +{reg.selected_events.length - 2}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       {/* Only show payment screenshot for outer college */}
                       {collegeType === "outer" && (
