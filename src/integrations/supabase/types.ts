@@ -42,6 +42,7 @@ export type Database = {
           phone: string
           register_number: string
           section: string
+          selected_events: string[] | null
           updated_at: string
           year: number
         }
@@ -54,6 +55,7 @@ export type Database = {
           phone: string
           register_number: string
           section: string
+          selected_events?: string[] | null
           updated_at?: string
           year: number
         }
@@ -66,6 +68,7 @@ export type Database = {
           phone?: string
           register_number?: string
           section?: string
+          selected_events?: string[] | null
           updated_at?: string
           year?: number
         }
@@ -81,6 +84,7 @@ export type Database = {
           name: string
           phone: string
           register_number: string
+          selected_events: string[] | null
           updated_at: string
           year: number
         }
@@ -93,6 +97,7 @@ export type Database = {
           name: string
           phone: string
           register_number: string
+          selected_events?: string[] | null
           updated_at?: string
           year: number
         }
@@ -105,6 +110,7 @@ export type Database = {
           name?: string
           phone?: string
           register_number?: string
+          selected_events?: string[] | null
           updated_at?: string
           year?: number
         }
@@ -122,6 +128,7 @@ export type Database = {
           payment_screenshot_url: string | null
           payment_verified: boolean | null
           phone: string
+          selected_events: string[] | null
           updated_at: string
           year: number
         }
@@ -136,6 +143,7 @@ export type Database = {
           payment_screenshot_url?: string | null
           payment_verified?: boolean | null
           phone: string
+          selected_events?: string[] | null
           updated_at?: string
           year: number
         }
@@ -150,6 +158,7 @@ export type Database = {
           payment_screenshot_url?: string | null
           payment_verified?: boolean | null
           phone?: string
+          selected_events?: string[] | null
           updated_at?: string
           year?: number
         }
