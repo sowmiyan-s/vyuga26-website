@@ -188,7 +188,7 @@ export const events: Event[] = [
     ],
     time: "2:00 PM – 3:00 PM",
     venue: "A208",
-    coordinatorIds: ["blessy-r", "monica-g", "gowtham-m", "prithiv-a-k"],
+    coordinatorIds: ["blessy-r", "monica-g", "gowtham-m", "prithiv-a-k", "thowseena-safrin-j"],
   },
   {
     id: "connections",

@@ -503,7 +503,7 @@ const Admin = () => {
       (r.register_number && r.register_number.toLowerCase().includes(searchQuery.toLowerCase()));
 
     // Event filter
-    const matchesEvent = eventFilter === "all" || 
+    const matchesEvent = eventFilter === "all" ||
       (r.selected_events && r.selected_events.includes(eventFilter));
 
     // For dept AND inter (both are free now - no payment verification)
@@ -892,8 +892,8 @@ const Admin = () => {
                   const isClosed = settings.registration_closed_events?.[event.id];
                   return (
                     <div key={event.id} className={`p-4 rounded-xl border transition-colors ${isClosed
-                        ? "bg-red-500/10 border-red-500/30"
-                        : "bg-green-500/10 border-green-500/30"
+                      ? "bg-red-500/10 border-red-500/30"
+                      : "bg-green-500/10 border-green-500/30"
                       }`}>
                       <div className="flex items-center justify-between mb-2">
                         <span className={`font-medium ${isClosed ? "text-red-400" : "text-green-400"}`}>
@@ -1293,23 +1293,22 @@ const Admin = () => {
                         {isDept ? `Year ${reg.year} - ${reg.section}` : `Year ${reg.year} - ${reg.department}`}
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex flex-wrap gap-1 max-w-[200px]">
+                        <div className="flex flex-col gap-1.5 max-w-[250px]">
                           {reg.selected_events && reg.selected_events.length > 0 ? (
-                            reg.selected_events.slice(0, 2).map(eventId => {
+                            reg.selected_events.map(eventId => {
                               const event = events.find(e => e.id === eventId);
                               return event ? (
-                                <span key={eventId} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary truncate max-w-[80px]" title={event.title}>
+                                <span key={eventId} className="text-xs px-2 py-1 rounded bg-primary/20 text-primary w-fit" title={event.title}>
                                   {event.title}
                                 </span>
-                              ) : null;
+                              ) : (
+                                <span key={eventId} className="text-xs px-2 py-1 rounded bg-muted text-muted-foreground w-fit">
+                                  {eventId}
+                                </span>
+                              );
                             })
                           ) : (
                             <span className="text-muted-foreground text-xs">None</span>
-                          )}
-                          {reg.selected_events && reg.selected_events.length > 2 && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-                              +{reg.selected_events.length - 2}
-                            </span>
                           )}
                         </div>
                       </td>

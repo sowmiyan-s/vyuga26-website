@@ -99,16 +99,16 @@ export const coordinators: Coordinator[] = [
   // Codathon Coordinators
   { id: "divya-harini", name: "Divya Harini", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
   { id: "kaviya", name: "Kaviya", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
-  { id: "subha", name: "Subha", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
+  { id: "subha", name: "Subha M", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
   { id: "thangam-s-k", name: "Thangam S K", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
   { id: "vishal-n", name: "Vishal N", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
   { id: "sowmiyan-s", name: "Sowmiyan S", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
   { id: "sudarson-b", name: "Sudarson B", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["codathon"] },
 
   // UI/UX Coordinators
-  { id: "shijitha-jenifer", name: "Shijitha Jenifer", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["ui-ux"] },
+  { id: "shijitha-jenifer", name: "Shijitha Jenifer J", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["ui-ux"] },
   { id: "ramya-s", name: "Ramya S", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["ui-ux"] },
-  { id: "oviya-maheswari", name: "Oviya Maheswari", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["ui-ux"] },
+  { id: "oviya-maheswari", name: "Oviya Maheswari N", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["ui-ux"] },
   { id: "manojkrishna-m", name: "Manojkrishna M", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["ui-ux"] },
   { id: "kabeel-raj-k", name: "Kabeel Raj K", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["ui-ux"] },
 
@@ -125,6 +125,7 @@ export const coordinators: Coordinator[] = [
   { id: "monica-g", name: "Monica G", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["quiz"] },
   { id: "gowtham-m", name: "Gowtham M", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["quiz"] },
   { id: "prithiv-a-k", name: "Prithiv A K", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["quiz"] },
+  { id: "thowseena-safrin-j", name: "Thowseena Safrin J", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["quiz"] },
 
   // Connections Coordinators
   { id: "semmozhi-s", name: "Semmozhi S", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["connections"] },
@@ -143,7 +144,7 @@ export const coordinators: Coordinator[] = [
 
   // Startup Arena Coordinators
   { id: "priyaadharshini-s-k", name: "Priyaadharshini S K", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["startup"] },
-  { id: "sri-dharshini", name: "Sri Dharshini", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["startup"] },
+  { id: "sri-dharshini", name: "Sri Dharshini R", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["startup"] },
   { id: "mithun-m", name: "Mithun M", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["startup"] },
   { id: "naveen-m", name: "Naveen M", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["startup"] },
   { id: "abinesh-a", name: "Abinesh A", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["startup"] },
@@ -156,11 +157,11 @@ export const coordinators: Coordinator[] = [
   { id: "amar-karthik", name: "Amar Karthik", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["tech-architecture"] },
 
   // Esports Coordinators
-  { id: "prasanth", name: "Prasanth", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["e-sports"] },
-  { id: "sebin", name: "Sebin", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["e-sports"] },
+  { id: "prasanth", name: "Prasanth C", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["e-sports"] },
+  { id: "sebin", name: "Sebin S", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["e-sports"] },
   { id: "harshit", name: "Harshit", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["e-sports"] },
-  { id: "rishvan", name: "Rishvan", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["e-sports"] },
-  { id: "nandha-kumar", name: "Nandha Kumar", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["e-sports"] },
+  { id: "rishvan", name: "Rishvan R K", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["e-sports"] },
+  { id: "nandha-kumar", name: "Nandha Kumar S", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["e-sports"] },
 ];
 
 export const getHODs = (): Coordinator[] => {
