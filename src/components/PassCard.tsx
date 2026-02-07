@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { siteConfig } from "@/config/config";
 import { motion } from "framer-motion";
 import "./PassCard.css";
+import { AlertTriangle } from "lucide-react";
 
 interface SinglePassCardProps {
   type: "outer" | "inter" | "dept";
@@ -170,6 +171,15 @@ const PassCard = () => {
             <span className="text-white/60 text-xs mt-2 block">
               (For all other events, you can register immediately using the passes above.)
             </span>
+          </p>
+        </div>
+
+        {/* No Spot Registration Warning */}
+        <div className="mt-4 bg-red-600/20 border border-red-500/50 rounded-lg p-3 text-center shadow-[0_0_20px_rgba(220,38,38,0.3)]">
+          <p className="text-white font-bold text-lg tracking-wider uppercase flex items-center justify-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-red-400" />
+            NO ON-SPOT REGISTRATIONS
+            <AlertTriangle className="w-5 h-5 text-red-400" />
           </p>
         </div>
       </motion.div>

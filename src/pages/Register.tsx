@@ -504,6 +504,16 @@ const Register = () => {
             </p>
           </div>
 
+          {/* No Spot Registration Warning */}
+          <div className="mb-6 bg-red-600/20 border border-red-500/50 rounded-xl p-4 text-center shadow-[0_0_20px_rgba(220,38,38,0.3)]">
+            <p className="text-white font-bold text-lg tracking-wider uppercase flex items-center justify-center gap-2">
+              <AlertOctagon className="w-6 h-6 text-red-400" />
+              NO ON-SPOT REGISTRATIONS
+              <AlertOctagon className="w-6 h-6 text-red-400" />
+            </p>
+            <p className="text-red-200 text-sm mt-1">All participants must register online.</p>
+          </div>
+
           {/* Mandatory Requirements Warning */}
           <div className="mb-8 bg-red-900/20 border border-red-500/30 rounded-xl p-5 text-center shadow-[0_0_20px_rgba(239,68,68,0.1)]">
             <h3 className="font-display font-bold text-xl mb-3 animate-blink-text flex items-center justify-center gap-2">
