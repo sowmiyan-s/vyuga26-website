@@ -78,7 +78,7 @@ const Footer = () => {
               <li className="pt-2 border-t border-white/5">
                 <p className="text-xs text-gray-500 uppercase font-bold mb-2">Chief Coordinators</p>
                 <div className="space-y-1">
-                  <a href="tel:9578460005" className="block text-sm text-gray-400 hover:text-white transition-colors">Saihareesh S: 9578460005</a>
+                  <a href="tel:9597846005" className="block text-sm text-gray-400 hover:text-white transition-colors">Saihareesh S: 9597846005</a>
                   <a href="tel:9345585918" className="block text-sm text-gray-400 hover:text-white transition-colors">Jayashree K: 9345585918</a>
                 </div>
               </li>

@@ -93,7 +93,8 @@ const Admin = () => {
       selectedEvents: true,
       date: true
     },
-    sortBy: "id" as "id" | "name"
+    sortBy: "id" as "id" | "name",
+    combineSheets: false
   });
 
   // Stats
@@ -360,17 +361,41 @@ const Admin = () => {
         });
       };
 
-      if (sources.outer) {
-        const data = processData(registrations, 'outer');
-        if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Outer College");
-      }
-      if (sources.inter) {
-        const data = processData(interRegistrations, 'inter');
-        if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Intra College");
-      }
-      if (sources.dept) {
-        const data = processData(deptRegistrations, 'dept');
-        if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Department");
+      if (exportConfig.combineSheets) {
+        let combinedData: any[] = [];
+        if (sources.outer) {
+          const data = processData(registrations, 'outer');
+          // Add Category to distinguish if needed, but fields are consistent
+          const labeledData = data.map(d => ({ ...d, "Category": "Outer College" }));
+          combinedData = combinedData.concat(labeledData);
+        }
+        if (sources.inter) {
+          const data = processData(interRegistrations, 'inter');
+          const labeledData = data.map(d => ({ ...d, "Category": "Intra College" }));
+          combinedData = combinedData.concat(labeledData);
+        }
+        if (sources.dept) {
+          const data = processData(deptRegistrations, 'dept');
+          const labeledData = data.map(d => ({ ...d, "Category": "Department" }));
+          combinedData = combinedData.concat(labeledData);
+        }
+
+        if (combinedData.length) {
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(combinedData), "All Registrations");
+        }
+      } else {
+        if (sources.outer) {
+          const data = processData(registrations, 'outer');
+          if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Outer College");
+        }
+        if (sources.inter) {
+          const data = processData(interRegistrations, 'inter');
+          if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Intra College");
+        }
+        if (sources.dept) {
+          const data = processData(deptRegistrations, 'dept');
+          if (data.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Department");
+        }
       }
 
       if (wb.SheetNames.length === 0) {
@@ -635,6 +660,21 @@ const Admin = () => {
                           />
                           <Label htmlFor="src-dept" className="text-gray-300 font-medium cursor-pointer">AI&DS Dept</Label>
                         </div>
+                      </div>
+                      <div className="pt-3 mt-3 border-t border-white/10">
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id="combine-sheets"
+                            checked={exportConfig.combineSheets}
+                            onCheckedChange={(c) => setExportConfig(prev => ({ ...prev, combineSheets: c }))}
+                          />
+                          <Label htmlFor="combine-sheets" className="text-white font-bold cursor-pointer">
+                            Combine into Single Sheet
+                          </Label>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1 pl-12">
+                          Export all selected sources in one unified list
+                        </p>
                       </div>
                     </div>
 

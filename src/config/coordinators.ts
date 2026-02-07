@@ -71,7 +71,7 @@ export const coordinators: Coordinator[] = [
     name: "Saihareesh S",
     role: "chief-coordinator",
     department: "III AI & DS",
-    phone: "9578460005",
+    phone: "9597846005",
     eventIds: [],
   },
   {

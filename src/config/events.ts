@@ -278,7 +278,7 @@ export const events: Event[] = [
     isSpotlight: true,
     isPreRegistration: true,
     showParticipationProcess: true,
-    submissionLink: "https://docs.google.com/forms/d/1rBud14mlpEXRUGruziuF3H2oWdjULKhdyPxUdSkyY4g/edit?pli=1",
+    submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLSfvIDq3jsSlgevldVyLwUE3ATPfHG0rDRGnFxbSRPrzL_gsXQ/viewform",
   },
 ];
 
