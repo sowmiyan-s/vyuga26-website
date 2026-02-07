@@ -1,4 +1,4 @@
-import { getHODs, getStaffCoordinators, getChiefCoordinators, getAssociateCoordinators, getCoordinatorsByEventId } from "@/config/coordinators";
+import { getHODs, getDepartmentChairPersons, getStaffCoordinators, getChiefCoordinators, getAssociateCoordinators, getCoordinatorsByEventId } from "@/config/coordinators";
 import { events } from "@/config/events";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -9,6 +9,7 @@ import { Phone, Award, Users, GraduationCap, CheckCircle2 } from "lucide-react";
 
 const Coordinators = () => {
   const hods = getHODs();
+  const departmentChairPersons = getDepartmentChairPersons();
   const staffCoordinators = getStaffCoordinators();
   const chiefCoordinators = getChiefCoordinators();
   const associateCoordinators = getAssociateCoordinators();
@@ -83,6 +84,41 @@ const Coordinators = () => {
                       </p>
                     </UiverseCard>
                   </motion.div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Department Chair Persons Section */}
+          {departmentChairPersons.length > 0 && (
+            <section className="mb-20">
+              <div className="flex items-center gap-4 mb-6 md:mb-10 justify-center">
+                <span className="h-px w-8 md:w-12 bg-gradient-to-r from-transparent to-uiverse-purple/50" />
+                <h2 className="text-lg md:text-2xl font-bold text-white uppercase tracking-wider whitespace-nowrap">Department Chair Persons</h2>
+                <span className="h-px w-8 md:w-12 bg-gradient-to-l from-transparent to-uiverse-purple/50" />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                {departmentChairPersons.map((person, index) => (
+                  <UiverseCard
+                    key={person.id}
+                    delay={index * 0.1}
+                    className="p-4 md:p-4 border-white/5 hover:border-uiverse-purple/30 group"
+                  >
+                    <div className="flex items-center gap-4 md:gap-6">
+                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-uiverse-purple/10 to-purple-500/10 flex items-center justify-center border border-uiverse-purple/20 group-hover:border-uiverse-purple/50 transition-colors flex-shrink-0">
+                        <GraduationCap className="w-5 h-5 md:w-7 md:h-7 text-uiverse-purple group-hover:scale-110 transition-transform duration-300" />
+                      </div>
+                      <div className="flex-1 text-left min-w-0">
+                        <h3 className="font-display text-base md:text-xl font-bold text-white mb-0.5 md:mb-1 group-hover:text-uiverse-purple transition-colors truncate whitespace-nowrap">
+                          {person.name}
+                        </h3>
+                        <p className="text-xs md:text-sm text-gray-400 mb-1 font-medium truncate">
+                          {person.department}
+                        </p>
+                      </div>
+                    </div>
+                  </UiverseCard>
                 ))}
               </div>
             </section>

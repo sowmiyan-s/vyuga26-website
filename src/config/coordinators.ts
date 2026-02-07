@@ -3,7 +3,7 @@
 export interface Coordinator {
   id: string;
   name: string;
-  role: "hod" | "staff-coordinator" | "chief-coordinator" | "associate-coordinator" | "main-coordinator" | "coordinator";
+  role: "hod" | "department-chair-person" | "staff-coordinator" | "chief-coordinator" | "associate-coordinator" | "main-coordinator" | "coordinator";
   year?: number;
   department: string;
   section?: string;
@@ -30,6 +30,23 @@ export const coordinators: Coordinator[] = [
     phone: "",
     eventIds: [],
     image: "/images/hod2.png",
+  },
+  // Department Chair Persons
+  {
+    id: "chair-1",
+    name: "POTRISELVAN K",
+    role: "department-chair-person",
+    department: "IV AI & DS",
+    phone: "",
+    eventIds: [],
+  },
+  {
+    id: "chair-2",
+    name: "CHANDRAMUGI P S",
+    role: "department-chair-person",
+    department: "IV AI & DS",
+    phone: "",
+    eventIds: [],
   },
   // Staff Coordinators
   {
@@ -171,6 +188,10 @@ export const getHODs = (): Coordinator[] => {
 // Deprecated: kept for backward compatibility if needed temporarily, but returns first HOD
 export const getHOD = (): Coordinator | undefined => {
   return coordinators.find(c => c.role === "hod");
+};
+
+export const getDepartmentChairPersons = (): Coordinator[] => {
+  return coordinators.filter(c => c.role === "department-chair-person");
 };
 
 export const getStaffCoordinators = (): Coordinator[] => {
