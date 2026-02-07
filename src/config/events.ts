@@ -237,7 +237,7 @@ export const events: Event[] = [
     hasCashPrize: true,
     isPreRegistration: true,
     registrationButtonLabel: "Register Your Squad",
-    submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLScf877uhC9i8JpuZo-OTUM9krZn-GvEPrhyvGNu-wz9p6SoIA/viewform?usp=sharing&ouid=110811384431187641365",
+    submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLSc94f-uGdZKBO1BEC2bVx9K2im_1pDoAIVNtd_Rexi_X9QdOQ/viewform",
   },
   {
     id: "spotlight",
