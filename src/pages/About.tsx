@@ -1,10 +1,12 @@
+import { useRef, useState } from "react";
+import DeveloperCard from "@/components/DeveloperCard";
 import { aboutUs } from "@/config/aboutus";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { UiverseCard } from "@/components/ui/UiverseCard";
 import { motion } from "framer-motion";
-import { GraduationCap, Target, Lightbulb, University, MapPin, Calendar, Users, Trophy, Rocket, BookOpen, Check } from "lucide-react";
+import { GraduationCap, Target, Lightbulb, University, MapPin, Calendar, Users, Trophy, Rocket, BookOpen, Check, Code, Instagram, Linkedin, User, Github } from "lucide-react";
 
 // Placeholder images from Unsplash for realistic feel
 const IMAGES = {
@@ -15,8 +17,14 @@ const IMAGES = {
   hod: "/images/hod1.jpeg", // HOD photo
 };
 
+
+
+
+
+
 const About = () => {
   return (
+
     <div className="min-h-screen bg-transparent relative overflow-x-hidden">
       <Navbar />
 
@@ -188,6 +196,19 @@ const About = () => {
           </div>
         </section>
 
+        {/* Developer Section - Premium Realistic Design */}
+        <section className="py-24 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="flex flex-col items-center justify-center"
+            >
+              <DeveloperCard />
+            </motion.div>
+          </div>
+        </section>
       </main>
 
       <Footer />

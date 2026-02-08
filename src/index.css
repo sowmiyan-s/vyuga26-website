@@ -586,6 +586,31 @@
   .animate-blink-text {
     animation: blink-red-yellow 0.8s infinite;
   }
+
+  /* Animation for Developer Card Dot */
+  @keyframes moveDot {
+
+    0%,
+    100% {
+      top: 10%;
+      right: 10%;
+    }
+
+    25% {
+      top: 10%;
+      right: calc(100% - 35px);
+    }
+
+    50% {
+      top: calc(100% - 30px);
+      right: calc(100% - 35px);
+    }
+
+    75% {
+      top: calc(100% - 30px);
+      right: 10%;
+    }
+  }
 }
 
 @media (max-width: 768px) {
@@ -640,6 +665,11 @@
   .spotlight,
   .festival-particle {
     display: none !important;
+  }
+
+  /* Exception for Developer Card Dot Animation on mobile */
+  .dot-animate {
+    animation: moveDot 6s linear infinite !important;
   }
 }
 

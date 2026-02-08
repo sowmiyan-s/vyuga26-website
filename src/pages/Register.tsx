@@ -47,7 +47,7 @@ const Register = () => {
   const [interCount, setInterCount] = useState(0);
   const [deptCount, setDeptCount] = useState(0);
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
-  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+
   const [eventError, setEventError] = useState("");
   const [showReplaceDialog, setShowReplaceDialog] = useState(false);
   const [existingId, setExistingId] = useState<string | null>(null);
