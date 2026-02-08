@@ -16,6 +16,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Clock, Lightbulb, AlertOctagon, Landmark, Check, GraduationCap, Microscope, Megaphone, AlertTriangle, ArrowRight, Upload, CheckCircle2 } from "lucide-react";
 import "@/components/RegistrationForm.css";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const registrationSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -37,7 +47,10 @@ const Register = () => {
   const [interCount, setInterCount] = useState(0);
   const [deptCount, setDeptCount] = useState(0);
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
   const [eventError, setEventError] = useState("");
+  const [showReplaceDialog, setShowReplaceDialog] = useState(false);
+  const [existingId, setExistingId] = useState<string | null>(null);
   const { settings, loading: settingsLoading } = useSettings();
 
   const {
@@ -101,7 +114,60 @@ const Register = () => {
     }
     setEventError("");
     setFormData(data);
+
+    // Check for duplicates
+    try {
+      const { data: existing } = await supabase
+        .from("registrations")
+        .select("id")
+        .or(`email.eq.${data.email},phone.eq.${data.phone}`)
+        .maybeSingle();
+
+      if (existing) {
+        setExistingId(existing.id);
+        setShowReplaceDialog(true);
+        return;
+      }
+    } catch (error) {
+      console.error("Error checking duplicates:", error);
+    }
+
     setStep("payment");
+  };
+
+  const handleCreateOrUpdateRegistration = async (urlData: { publicUrl: string }) => {
+    if (!formData) return;
+
+    if (existingId) {
+      const { error: dbError } = await supabase
+        .from("registrations")
+        .update({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          college_name: formData.collegeName,
+          year: parseInt(formData.year),
+          department: formData.department,
+          payment_screenshot_url: urlData.publicUrl,
+          selected_events: selectedEvents,
+        })
+        .eq("id", existingId);
+
+      if (dbError) throw dbError;
+    } else {
+      const { error: dbError } = await supabase.from("registrations").insert({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        college_name: formData.collegeName,
+        year: parseInt(formData.year),
+        department: formData.department,
+        payment_screenshot_url: urlData.publicUrl,
+        selected_events: selectedEvents,
+      });
+
+      if (dbError) throw dbError;
+    }
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,18 +200,7 @@ const Register = () => {
         .from("payment-screenshots")
         .getPublicUrl(fileName);
 
-      const { error: dbError } = await supabase.from("registrations").insert({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        college_name: formData.collegeName,
-        year: parseInt(formData.year),
-        department: formData.department,
-        payment_screenshot_url: urlData.publicUrl,
-        selected_events: selectedEvents,
-      });
-
-      if (dbError) throw dbError;
+      await handleCreateOrUpdateRegistration(urlData);
 
       toast.success("Registration successful!");
       setStep("success");
@@ -817,6 +872,41 @@ const Register = () => {
 
       <Footer />
       <WhatsAppButton />
+
+      <AlertDialog open={showReplaceDialog} onOpenChange={setShowReplaceDialog}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-800 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold text-red-500 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5" />
+              Already Registered
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400 text-base mt-2">
+              You are already registered with this email or phone number.
+              <br /><br />
+              Proceeding will <strong className="text-white">REPLACE</strong> your existing registration details with these new ones.
+              <br /><br />
+              Do you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-4">
+            <AlertDialogCancel
+              onClick={() => setShowReplaceDialog(false)}
+              className="bg-transparent border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setShowReplaceDialog(false);
+                setStep("payment");
+              }}
+              className="bg-red-600 text-white hover:bg-red-700 border-none"
+            >
+              Replace & Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

@@ -13,9 +13,19 @@ import EventSelector from "@/components/EventSelector";
 import { UiverseButton } from "@/components/ui/UiverseButton";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { ArrowLeft, Sparkles, GraduationCap } from "lucide-react";
+import { ArrowLeft, Sparkles, GraduationCap, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 import "@/components/RegistrationForm.css";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const departmentRegistrationSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -34,6 +44,9 @@ const RegisterDepartment = () => {
   const [countdown, setCountdown] = useState(3);
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
   const [eventError, setEventError] = useState("");
+  const [showReplaceDialog, setShowReplaceDialog] = useState(false);
+  const [existingId, setExistingId] = useState<string | null>(null);
+  const [formData, setFormData] = useState<DepartmentRegistrationForm | null>(null);
   const { settings, loading: settingsLoading } = useSettings();
 
   const {
@@ -74,6 +87,44 @@ const RegisterDepartment = () => {
     }
   }, [step]);
 
+  const handleRegistration = async (data: DepartmentRegistrationForm) => {
+    try {
+      if (existingId) {
+        // Update
+        const { error } = await supabase.from("department_registrations").update({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          year: parseInt(data.year),
+          section: data.section.toUpperCase(),
+          register_number: data.registerNumber,
+          selected_events: selectedEvents,
+        }).eq("id", existingId);
+
+        if (error) throw error;
+      } else {
+        // Insert
+        const { error } = await supabase.from("department_registrations").insert({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          year: parseInt(data.year),
+          section: data.section.toUpperCase(),
+          register_number: data.registerNumber,
+          selected_events: selectedEvents,
+        });
+
+        if (error) throw error;
+      }
+
+      toast.success("Registration successful!");
+      setStep("success");
+    } catch (error: any) {
+      console.error("Error:", error);
+      toast.error(error.message || "Failed to register");
+    }
+  };
+
   const onSubmit = async (data: DepartmentRegistrationForm) => {
     if (isDeptFull) {
       toast.error("Department registration is full!");
@@ -92,31 +143,20 @@ const RegisterDepartment = () => {
       const { data: existing } = await supabase
         .from("department_registrations")
         .select("id")
-        .eq("register_number", data.registerNumber)
+        .or(`register_number.eq.${data.registerNumber},email.eq.${data.email},phone.eq.${data.phone}`)
         .maybeSingle();
 
       if (existing) {
-        toast.error("This register number is already registered!");
+        setExistingId(existing.id);
+        setFormData(data);
+        setShowReplaceDialog(true);
         return;
       }
 
-      const { error } = await supabase.from("department_registrations").insert({
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        year: parseInt(data.year),
-        section: data.section.toUpperCase(),
-        register_number: data.registerNumber,
-        selected_events: selectedEvents,
-      });
-
-      if (error) throw error;
-
-      toast.success("Registration successful!");
-      setStep("success");
+      await handleRegistration(data);
     } catch (error: any) {
-      console.error("Error:", error);
-      toast.error(error.message || "Failed to register");
+      console.error("Error checking duplicates:", error);
+      toast.error(error.message || "Failed to check duplicates");
     }
   };
 
@@ -385,6 +425,43 @@ const RegisterDepartment = () => {
 
       <Footer />
       <WhatsAppButton />
+
+      <AlertDialog open={showReplaceDialog} onOpenChange={setShowReplaceDialog}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-800 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold text-red-500 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5" />
+              Already Registered
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400 text-base mt-2">
+              You are already registered with this register number, email or phone.
+              <br /><br />
+              Proceeding will <strong className="text-white">REPLACE</strong> your existing registration details with these new ones.
+              <br /><br />
+              Do you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-4">
+            <AlertDialogCancel
+              onClick={() => setShowReplaceDialog(false)}
+              className="bg-transparent border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setShowReplaceDialog(false);
+                if (formData) {
+                  handleRegistration(formData);
+                }
+              }}
+              className="bg-red-600 text-white hover:bg-red-700 border-none"
+            >
+              Replace & Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

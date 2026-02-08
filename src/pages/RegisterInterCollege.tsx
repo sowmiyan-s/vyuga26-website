@@ -16,6 +16,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Megaphone, AlertTriangle, ArrowRight, CheckCircle2 } from "lucide-react";
 import "@/components/RegistrationForm.css";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const interCollegeSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -35,7 +45,10 @@ const RegisterInterCollege = () => {
   const [formData, setFormData] = useState<InterCollegeForm | null>(null);
   const [interCount, setInterCount] = useState(0);
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
   const [eventError, setEventError] = useState("");
+  const [showReplaceDialog, setShowReplaceDialog] = useState(false);
+  const [existingId, setExistingId] = useState<string | null>(null);
   const { settings, loading: settingsLoading } = useSettings();
 
   const {
@@ -77,6 +90,48 @@ const RegisterInterCollege = () => {
     }
   }, [step]);
 
+  const handleRegistration = async (data: InterCollegeForm) => {
+    try {
+      if (existingId) {
+        // Update existing registration
+        const { error: dbError } = await supabase
+          .from("intercollege_registrations")
+          .update({
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            register_number: data.registerNumber,
+            year: parseInt(data.year),
+            department: data.department,
+            selected_events: selectedEvents,
+          })
+          .eq("id", existingId);
+
+        if (dbError) throw dbError;
+      } else {
+        // Insert new registration
+        const { error: dbError } = await supabase.from("intercollege_registrations").insert({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          register_number: data.registerNumber,
+          year: parseInt(data.year),
+          department: data.department,
+          selected_events: selectedEvents,
+        });
+
+        if (dbError) throw dbError;
+      }
+
+      setFormData(data);
+      toast.success("Registration successful!");
+      setStep("success");
+    } catch (error: any) {
+      console.error("Error:", error);
+      toast.error(error.message || "Failed to register");
+    }
+  };
+
   const onSubmitForm = async (data: InterCollegeForm) => {
     if (isInterFull) {
       toast.error("Intra college registration is full!");
@@ -94,27 +149,25 @@ const RegisterInterCollege = () => {
     }
     setEventError("");
 
+    // Check for duplicates
     try {
-      // Save registration directly (no payment required)
-      const { error: dbError } = await supabase.from("intercollege_registrations").insert({
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        register_number: data.registerNumber,
-        year: parseInt(data.year),
-        department: data.department,
-        selected_events: selectedEvents,
-      });
+      const { data: existing } = await supabase
+        .from("intercollege_registrations")
+        .select("id")
+        .or(`email.eq.${data.email},phone.eq.${data.phone},register_number.eq.${data.registerNumber}`)
+        .maybeSingle();
 
-      if (dbError) throw dbError;
-
-      setFormData(data);
-      toast.success("Registration successful!");
-      setStep("success");
-    } catch (error: any) {
-      console.error("Error:", error);
-      toast.error(error.message || "Failed to register");
+      if (existing) {
+        setExistingId(existing.id);
+        setFormData(data);
+        setShowReplaceDialog(true);
+        return;
+      }
+    } catch (error) {
+      console.error("Error checking duplicates:", error);
     }
+
+    handleRegistration(data);
   };
 
   // Determine why registration is closed
@@ -421,7 +474,45 @@ const RegisterInterCollege = () => {
 
       <Footer />
       <WhatsAppButton />
-    </div>
+
+
+      <AlertDialog open={showReplaceDialog} onOpenChange={setShowReplaceDialog}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-800 text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold text-red-500 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5" />
+              Already Registered
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400 text-base mt-2">
+              You are already registered with this email, phone, or register number.
+              <br /><br />
+              Proceeding will <strong className="text-white">REPLACE</strong> your existing registration details with these new ones.
+              <br /><br />
+              Do you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-4">
+            <AlertDialogCancel
+              onClick={() => setShowReplaceDialog(false)}
+              className="bg-transparent border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setShowReplaceDialog(false);
+                if (formData) {
+                  handleRegistration(formData);
+                }
+              }}
+              className="bg-red-600 text-white hover:bg-red-700 border-none"
+            >
+              Replace & Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div >
   );
 };
 
