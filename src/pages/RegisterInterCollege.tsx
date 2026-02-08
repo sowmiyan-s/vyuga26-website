@@ -38,7 +38,7 @@ const interCollegeSchema = z.object({
 
 type InterCollegeForm = z.infer<typeof interCollegeSchema>;
 
-const departments = siteConfig.interCollegeDepartments || ["AGRI", "AIDS", "CIVIL", "CSC", "ECE", "EEE", "MECH", "IT", "AIML"];
+const departments = siteConfig.interCollegeDepartments || ["AGRI", "AIDS", "CIVIL", "CSE", "ECE", "EEE", "MECH", "IT", "AIML"];
 
 const RegisterInterCollege = () => {
   const [step, setStep] = useState<"form" | "success">("form");

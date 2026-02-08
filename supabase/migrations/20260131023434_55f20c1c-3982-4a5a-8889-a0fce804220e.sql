@@ -6,7 +6,7 @@ CREATE TABLE public.intercollege_registrations (
     phone TEXT NOT NULL,
     register_number TEXT NOT NULL,
     year INTEGER NOT NULL CHECK (year >= 1 AND year <= 4),
-    department TEXT NOT NULL CHECK (department IN ('AGRI', 'AIDS', 'CIVIL', 'CSC', 'ECE', 'EEE', 'MECH', 'IT', 'AIML')),
+    department TEXT NOT NULL CHECK (department IN ('AGRI', 'AIDS', 'CIVIL', 'CSE', 'ECE', 'EEE', 'MECH', 'IT', 'AIML')),
     payment_screenshot_url TEXT,
     payment_verified BOOLEAN DEFAULT false,
     entry_confirmed BOOLEAN DEFAULT false,

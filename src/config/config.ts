@@ -31,7 +31,7 @@ export const siteConfig = {
   passIncludes: ["Food", "Participate in all events", "Certificate"],
 
   // Intra College Departments
-  interCollegeDepartments: ["AGRI", "CIVIL", "CSC", "ECE", "EEE", "MECH", "IT", "AIML"],
+  interCollegeDepartments: ["AGRI", "CIVIL", "CSE", "ECE", "EEE", "MECH", "IT", "AIML"],
 
   // Intra College QR Code (different from outer college)
   interCollegePaymentQR: "/images/intercollege-payment-qr.png",

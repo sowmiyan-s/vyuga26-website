@@ -85,7 +85,7 @@ export const events: Event[] = [
       "Any programming language is allowed",
       "Late submissions will not be accepted",
       "Participants must follow the instructions provided by the coordinators throughout the event",
-      "Open to all departments. Individual Participation Only",
+      "Open to all departments. Solo Participating",
       "Rounds: Single round (Online Coding Challenge)",
       "Duration: 2 – 3 hours",
       "Problem levels: Easy / Medium / Hard",
