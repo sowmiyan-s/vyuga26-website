@@ -707,6 +707,15 @@ const Register = () => {
                   <p className="font-mono text-xl font-bold text-uiverse-sky copy-text select-all">{siteConfig.paymentUPI}</p>
                 </div>
 
+                <div className="mb-6 bg-red-500/10 border border-red-500/40 rounded-xl p-4 text-center">
+                  <p className="text-red-300 text-sm font-bold flex flex-col items-center gap-2">
+                    <span className="flex items-center gap-2 text-red-400">
+                      <AlertTriangle className="w-5 h-5" /> WARNING
+                    </span>
+                    Upload the payment screenshot by paying via the QR code. If an invalid screenshot is uploaded, your registration will be deleted.
+                  </p>
+                </div>
+
                 <div className="border-t border-white/10 pt-6">
                   <label htmlFor="screenshot" className="block mb-4 text-center text-white">
                     Upload Payment Screenshot
