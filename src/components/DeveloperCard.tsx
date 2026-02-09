@@ -31,22 +31,7 @@ const DeveloperCard = () => {
             onMouseLeave={handleMouseLeave}
             className="relative w-[320px] h-[270px] rounded-[10px] p-[1px] bg-[radial-gradient(circle_230px_at_0%_0%,#ffffff,#0c0d0d)] overflow-hidden hover:scale-105 transition-transform duration-500 z-30"
         >
-            {/* Golden Spark Mouse Effect */}
-            <div
-                className="pointer-events-none absolute -inset-px transition duration-300 z-20"
-                style={{
-                    opacity,
-                    background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(255, 215, 0, 0.15), transparent 40%)`,
-                }}
-            />
-            <div
-                className="pointer-events-none absolute inset-0 z-20 transition duration-300"
-                style={{
-                    opacity,
-                    background: `radial-gradient(40px circle at ${position.x}px ${position.y}px, rgba(255, 215, 0, 0.8), transparent 100%)`,
-                    filter: "blur(20px)",
-                }}
-            />
+
 
             {/* Inner Card */}
             <div className="relative w-full h-full rounded-[9px] border border-[#202222] bg-[#0c0d0d] bg-[radial-gradient(circle_280px_at_0%_0%,#444444,#0c0d0d)] flex flex-col items-center justify-center text-white z-[1] overflow-hidden">
