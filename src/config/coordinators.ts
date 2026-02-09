@@ -133,7 +133,7 @@ export const coordinators: Coordinator[] = [
   { id: "sathya-k", name: "Sathya K", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["web-development"] },
   { id: "anurathi-l", name: "Anurathi L", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["web-development"] },
   { id: "aiswarya-v", name: "Aiswarya V", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["web-development"] },
-  { id: "pooja-m", name: "Pooja M", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["web-development"] },
+  { id: "pooja-m", name: "Pooja M M", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["web-development"] },
   { id: "jaya-surya", name: "Jaya Surya", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["web-development"] },
   { id: "deepan-m", name: "Deepan M", role: "coordinator", department: "III AI & DS", phone: "", eventIds: ["web-development"] },
 

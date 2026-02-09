@@ -236,7 +236,7 @@ const Admin = () => {
     }
   }, [isAuthenticated]);
 
-  const getTableName = (type: CollegeType) => {
+  const getTableName = (type: CollegeType): "registrations" | "intercollege_registrations" | "department_registrations" => {
     if (type === "inter") return "intercollege_registrations";
     if (type === "dept") return "department_registrations";
     return "registrations";
@@ -325,7 +325,7 @@ const Admin = () => {
     setLoading(true);
     let fixedCount = 0;
 
-    const fixList = async (list: Registration[], table: string) => {
+    const fixList = async (list: Registration[], table: "registrations" | "intercollege_registrations" | "department_registrations") => {
       for (const reg of list) {
         if (reg.selected_events) {
           const uniqueEvents = [...new Set(reg.selected_events)];

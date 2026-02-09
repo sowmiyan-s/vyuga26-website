@@ -131,13 +131,16 @@ export const events: Event[] = [
     category: "technical",
     image: "/images/WEB-DEVELOPMENT.png",
     rules: [
-      "Open to all departments. Team size: 2 to 3 members",
-      "Pre-built projects are not allowed",
-      "Plagiarism or malpractice leads to disqualification",
-      "Minimalistic AI use is allowed",
-      "Laptop (mandatory)",
-      "Duration: 3 hours",
-      "Evaluation Criteria: Originality of design and code, Relevance to theme, Creativity and execution"
+      "Open to students from all departments.",
+      "Team Size: 1–3 members per team.",
+      "Requirements: Participants must bring their own laptops and chargers.",
+      "Duration: The total duration of the event is 3 hours.",
+      "Rounds: This is a single-round event.",
+      "AI Usage: Limited or minimal use of AI tools is permitted.",
+      "A functional, working prototype is mandatory.",
+      "The judges' decisions are final and binding.",
+      "The topic will be announced on the spot.",
+      "Pre-made websites or templates are not allowed."
     ],
     time: "10:00 AM – 1:00 PM",
     venue: "A003",
