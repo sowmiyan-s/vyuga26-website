@@ -265,6 +265,11 @@ const EventDetail = () => {
                       </UiverseButton>
                     </a>
 
+                    <div className="flex items-center gap-2 text-uiverse-sky font-semibold bg-uiverse-sky/10 border border-uiverse-sky/20 px-4 py-2 rounded-lg">
+                      <AlertTriangle className="w-4 h-4" />
+                      Note: Only the team leader is required to fill the form.
+                    </div>
+
                     <div className="max-w-2xl mx-auto p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
                       <p className="text-yellow-200 text-sm font-medium">
                         <span className="flex items-center gap-2 mb-1"><AlertTriangle className="w-4 h-4" /> <span className="underline">IMPORTANT:</span></span> Payment details and event passes will be shared <strong className="text-white">only with shortlisted teams</strong> via email/WhatsApp.

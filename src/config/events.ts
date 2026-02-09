@@ -70,6 +70,10 @@ export const events: Event[] = [
     venue: "A007",
     coordinatorIds: ["madhu-mitha-r", "pratthima-s", "sandhiya-k", "chenthurr-c-k", "harsith-s-j"],
     hasCashPrize: true,
+    isPreRegistration: true,
+    showParticipationProcess: true,
+    registrationButtonLabel: "Register Project",
+    submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLSdqMlzaz0AFZa0eTxiukTtLjuCOvHONb6wMAvdHM-VMPSrdDQ/viewform?usp=publish-editor",
   },
   {
     id: "codathon",
@@ -98,6 +102,8 @@ export const events: Event[] = [
     isSpotlight: true,
     hasCashPrize: true,
   },
+
+
   {
     id: "ui-ux",
     title: "UXplore – UI / UX Design",
@@ -122,6 +128,7 @@ export const events: Event[] = [
     time: "10:00 AM – 1:00 PM",
     venue: "A002",
     coordinatorIds: ["manojkrishna-m", "kabeel-raj-k", "shijitha-jenifer", "ramya-s", "oviya-maheswari"],
+    hasCashPrize: true,
   },
   {
     id: "web-development",
@@ -145,8 +152,8 @@ export const events: Event[] = [
     time: "10:00 AM – 1:00 PM",
     venue: "A003",
     coordinatorIds: ["sathya-k", "anurathi-l", "aiswarya-v", "pooja-m", "jaya-surya", "deepan-m"],
+    hasCashPrize: true,
   },
-
   {
     id: "tech-architecture",
     title: "TECH ARCHITECTURE",
@@ -170,6 +177,7 @@ export const events: Event[] = [
     time: "10:00 AM – 1:00 PM",
     venue: "A001",
     coordinatorIds: ["amar-karthik", "aiswarya-r", "kokiladevi-a", "pilo-francy-f", "shivani-t"],
+    hasCashPrize: true,
   },
 
   // Non-Technical Events
@@ -270,15 +278,16 @@ export const events: Event[] = [
     image: "/images/STARTUP.png",
     rules: [
       "Open to all departments. Team size: 1 to 3 members",
-      "Preliminary: Online PPT submission",
+      "Preliminary: Online PPT submission(7 slides)",
       "Final: Offline presentation before judges",
-      "Duration: 10 minutes per team (presentation and Q&A)",
+      "Duration: 7 minutes per team (presentation and Q&A)",
       "Evaluation Criteria: Innovation and originality, Business and technical feasibility, Clarity of presentation"
     ],
     time: "2:00 PM – 3:00 PM",
     venue: "A209",
     coordinatorIds: ["priyaadharshini-s-k", "sri-dharshini", "mithun-m", "naveen-m", "abinesh-a"],
     isSpotlight: true,
+    hasCashPrize: true,
     isPreRegistration: true,
     showParticipationProcess: true,
     submissionLink: "https://docs.google.com/forms/d/e/1FAIpQLSfvIDq3jsSlgevldVyLwUE3ATPfHG0rDRGnFxbSRPrzL_gsXQ/viewform",

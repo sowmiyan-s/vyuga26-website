@@ -63,6 +63,7 @@ const Admin = () => {
 
   // Edit Events State
   const [editingUser, setEditingUser] = useState<{ id: string; type: CollegeType; name: string; events: string[] } | null>(null);
+  const [updatePassword, setUpdatePassword] = useState("");
 
   // Settings
   const [showSettings, setShowSettings] = useState(false);
@@ -245,6 +246,11 @@ const Admin = () => {
   const handleUpdateUserEvents = async () => {
     if (!editingUser) return;
 
+    if (updatePassword !== "ud@me") {
+      toast.error("Invalid update password");
+      return;
+    }
+
     try {
       setLoading(true);
       const { error } = await supabase
@@ -256,6 +262,7 @@ const Admin = () => {
 
       toast.success("Events updated successfully");
       setEditingUser(null);
+      setUpdatePassword("");
       fetchRegistrations();
     } catch (error: any) {
       console.error(error);
@@ -1176,7 +1183,7 @@ const Admin = () => {
                 <Users className="w-4 h-4 text-uiverse-purple" />
                 <span className="font-medium text-foreground">Inter College</span>
                 <span className="ml-auto text-xs bg-uiverse-purple/20 text-uiverse-purple px-2 py-0.5 rounded-full">
-                  ₹100/pass
+                  Free
                 </span>
               </div>
               <div className="space-y-2 text-sm">
@@ -1194,7 +1201,7 @@ const Admin = () => {
                 </div>
                 <div className="flex justify-between border-t border-border pt-2 mt-2">
                   <span className="text-muted-foreground">Revenue</span>
-                  <span className="font-bold text-uiverse-purple">₹{stats.inter.revenue.toLocaleString("en-IN")}</span>
+                  <span className="font-bold text-uiverse-purple">No Payment</span>
                 </div>
               </div>
             </div>
@@ -1353,10 +1360,10 @@ const Admin = () => {
             <p className={`text-3xl font-display font-bold ${collegeType === "inter" ? 'text-uiverse-purple' :
               collegeType === "dept" ? 'text-uiverse-sky' : 'text-uiverse-green'
               }`}>
-              {isDept ? "Free" : `₹${(collegeType === "inter" ? stats.inter.revenue : stats.outer.revenue).toLocaleString("en-IN")}`}
+              {isDept || collegeType === "inter" ? "Free" : `₹${stats.outer.revenue.toLocaleString("en-IN")}`}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              {isDept ? 'No Payment Required' : `Revenue (₹${collegeType === "inter" ? '100' : '300'}/pass)`}
+              {isDept || collegeType === "inter" ? 'No Payment Required' : `Revenue (₹300/pass)`}
             </p>
           </div>
         </div>
@@ -1647,109 +1654,126 @@ const Admin = () => {
 
 
       {/* Edit Events Modal */}
-      {editingUser && (
-        <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
-          <DialogContent className="max-w-4xl bg-black/95 border border-white/10 backdrop-blur-xl text-white shadow-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-uiverse-sky">
-                Edit Events for {editingUser.name}
-              </DialogTitle>
-              <DialogDescription className="text-gray-400">
-                Select or deselect events. Admin override allows selecting unlimited events.
-              </DialogDescription>
-            </DialogHeader>
+      {
+        editingUser && (
+          <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
+            <DialogContent className="max-w-4xl bg-black/95 border border-white/10 backdrop-blur-xl text-white shadow-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-uiverse-sky">
+                  Edit Events for {editingUser.name}
+                </DialogTitle>
+                <DialogDescription className="text-gray-400">
+                  Select or deselect events. Admin override allows selecting unlimited events.
+                </DialogDescription>
+              </DialogHeader>
 
-            <div className="py-4">
-              <EventSelector
-                selectedEvents={editingUser.events}
-                onChange={(newEvents) => setEditingUser(prev => prev ? { ...prev, events: newEvents } : null)}
-                maxEvents={20} // Admin override limit
-              />
-            </div>
+              <div className="py-4">
+                <EventSelector
+                  selectedEvents={editingUser.events}
+                  onChange={(newEvents) => setEditingUser(prev => prev ? { ...prev, events: newEvents } : null)}
+                  maxEvents={20} // Admin override limit
+                />
+                <div className="mt-4">
+                  <label className="text-sm text-gray-400 mb-1 block">Update Password</label>
+                  <Input
+                    type="password"
+                    placeholder="Enter password to update"
+                    value={updatePassword}
+                    onChange={(e) => setUpdatePassword(e.target.value)}
+                  />
+                </div>
+              </div>
 
-            <DialogFooter className="gap-2">
-              <Button variant="outline" onClick={() => setEditingUser(null)}>
-                Cancel
-              </Button>
-              <Button onClick={handleUpdateUserEvents} disabled={loading} className="bg-blue-600 hover:bg-blue-700">
-                {loading ? "Saving..." : "Save Changes"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+              <DialogFooter className="gap-2">
+                <Button variant="outline" onClick={() => setEditingUser(null)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleUpdateUserEvents} disabled={loading} className="bg-blue-600 hover:bg-blue-700">
+                  {loading ? "Saving..." : "Save Changes"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )
+      }
 
       {/* Screenshot Modal */}
-      {selectedScreenshot && (
-        <div
-          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-          onClick={() => setSelectedScreenshot(null)}
-        >
-          <div className="relative max-w-2xl max-h-[80vh]">
-            <button
-              onClick={() => setSelectedScreenshot(null)}
-              className="absolute -top-10 right-0 text-white hover:text-red-400"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <img
-              src={selectedScreenshot}
-              alt="Payment Screenshot"
-              className="max-w-full max-h-[80vh] rounded-lg"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="glass-card rounded-2xl p-6 max-w-md w-full">
-            <h3 className="font-display text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-              <Trash2 className="w-5 h-5 text-red-500" />
-              Confirm Delete
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              Enter the delete password to remove this registration permanently.
-            </p>
-            <Input
-              type="password"
-              placeholder="Enter delete password"
-              value={deletePassword}
-              onChange={(e) => setDeletePassword(e.target.value)}
-              className="mb-4"
-            />
-            <div className="flex gap-2">
-              <Button
-                variant="destructive"
-                onClick={handleDeleteRegistration}
-                className="flex-1"
+      {
+        selectedScreenshot && (
+          <div
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+            onClick={() => setSelectedScreenshot(null)}
+          >
+            <div className="relative max-w-2xl max-h-[80vh]">
+              <button
+                onClick={() => setSelectedScreenshot(null)}
+                className="absolute -top-10 right-0 text-white hover:text-red-400"
               >
-                Delete
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setDeleteConfirm(null);
-                  setDeletePassword("");
-                }}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
+                <X className="w-6 h-6" />
+              </button>
+              <img
+                src={selectedScreenshot}
+                alt="Payment Screenshot"
+                className="max-w-full max-h-[80vh] rounded-lg"
+              />
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
+
+      {/* Delete Confirmation Modal */}
+      {
+        deleteConfirm && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+            <div className="glass-card rounded-2xl p-6 max-w-md w-full">
+              <h3 className="font-display text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                <Trash2 className="w-5 h-5 text-red-500" />
+                Confirm Delete
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                Enter the delete password to remove this registration permanently.
+              </p>
+              <Input
+                type="password"
+                placeholder="Enter delete password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                className="mb-4"
+              />
+              <div className="flex gap-2">
+                <Button
+                  variant="destructive"
+                  onClick={handleDeleteRegistration}
+                  className="flex-1"
+                >
+                  Delete
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setDeleteConfirm(null);
+                    setDeletePassword("");
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </div>
+        )
+      }
 
       {/* Click outside to close export dropdown */}
-      {showExportOptions && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setShowExportOptions(false)}
-        />
-      )}
-    </div>
+      {
+        showExportOptions && (
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setShowExportOptions(false)}
+          />
+        )
+      }
+    </div >
   );
 };
 
