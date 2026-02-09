@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import * as XLSX from "xlsx";
 import { useSettings } from "@/hooks/useSettings";
@@ -59,6 +59,7 @@ const Admin = () => {
   const [eventFilter, setEventFilter] = useState<string>("all");
   const [loading, setLoading] = useState(false);
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
+  const [statsFilter, setStatsFilter] = useState<"all" | "outer" | "inter" | "dept">("all");
 
   // Edit Events State
   const [editingUser, setEditingUser] = useState<{ id: string; type: CollegeType; name: string; events: string[] } | null>(null);
@@ -104,6 +105,32 @@ const Admin = () => {
     dept: { total: 0, verified: 0, entered: 0, revenue: 0 },
     combined: { total: 0, verified: 0, entered: 0, revenue: 0 },
   });
+
+  // Calculate event counts
+  const eventCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    events.forEach(event => {
+      counts[event.id] = 0;
+    });
+
+    const processList = (list: Registration[]) => {
+      list.forEach(reg => {
+        if (reg.selected_events) {
+          reg.selected_events.forEach(eventId => {
+            if (counts[eventId] !== undefined) {
+              counts[eventId]++;
+            }
+          });
+        }
+      });
+    };
+
+    if (statsFilter === "all" || statsFilter === "outer") processList(registrations);
+    if (statsFilter === "all" || statsFilter === "inter") processList(interRegistrations);
+    if (statsFilter === "all" || statsFilter === "dept") processList(deptRegistrations);
+
+    return counts;
+  }, [registrations, interRegistrations, deptRegistrations, statsFilter]);
 
   const handleLogin = () => {
     if (adminPassword === siteConfig.adminPassword) {
@@ -222,7 +249,7 @@ const Admin = () => {
       setLoading(true);
       const { error } = await supabase
         .from(getTableName(editingUser.type))
-        .update({ selected_events: editingUser.events })
+        .update({ selected_events: [...new Set(editingUser.events)] })
         .eq("id", editingUser.id);
 
       if (error) throw error;
@@ -292,6 +319,43 @@ const Admin = () => {
     }
   };
 
+  const handleFixDuplicates = async () => {
+    if (!window.confirm("This will scan all registrations and remove duplicate event entries. Continue?")) return;
+
+    setLoading(true);
+    let fixedCount = 0;
+
+    const fixList = async (list: Registration[], table: string) => {
+      for (const reg of list) {
+        if (reg.selected_events) {
+          const uniqueEvents = [...new Set(reg.selected_events)];
+          if (uniqueEvents.length !== reg.selected_events.length) {
+            const { error } = await supabase
+              .from(table)
+              .update({ selected_events: uniqueEvents })
+              .eq("id", reg.id);
+
+            if (!error) fixedCount++;
+          }
+        }
+      }
+    };
+
+    try {
+      await fixList(registrations, "registrations");
+      await fixList(interRegistrations, "intercollege_registrations");
+      await fixList(deptRegistrations, "department_registrations");
+
+      toast.success(`Fixed ${fixedCount} registrations with duplicate events.`);
+      fetchRegistrations();
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fixing duplicates");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Advanced Export Logic
   const handleAdvancedExportLogic = () => {
     try {
@@ -330,7 +394,7 @@ const Admin = () => {
       // Helper to get event titles from IDs
       const getEventTitles = (eventIds?: string[]) => {
         if (!eventIds || eventIds.length === 0) return "None";
-        return eventIds.map(id => events.find(e => e.id === id)?.title || id).join(", ");
+        return [...new Set(eventIds)].map(id => events.find(e => e.id === id)?.title || id).join(", ");
       };
 
       const processData = (data: Registration[], type: CollegeType) => {
@@ -421,7 +485,7 @@ const Admin = () => {
       // Helper to get event titles from IDs
       const getEventTitles = (eventIds?: string[]) => {
         if (!eventIds || eventIds.length === 0) return "None";
-        return eventIds.map(id => events.find(e => e.id === id)?.title || id).join(", ");
+        return [...new Set(eventIds)].map(id => events.find(e => e.id === id)?.title || id).join(", ");
       };
 
       const processOuterData = (data: Registration[]) => {
@@ -992,15 +1056,32 @@ const Admin = () => {
             </div>
 
             {/* Info Banner */}
-            <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm text-yellow-200">
-                  Registration closes on <strong>{siteConfig.registrationCloseDate}</strong>
-                </p>
-                <p className="text-xs text-yellow-200/70 mt-1">
-                  Registration will auto-close when limits are reached or deadline passes.
-                </p>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm text-yellow-200">
+                    Registration closes on <strong>{siteConfig.registrationCloseDate}</strong>
+                  </p>
+                  <p className="text-xs text-yellow-200/70 mt-1">
+                    Registration will auto-close when limits are reached or deadline passes.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-between gap-4">
+                <div>
+                  <p className="font-bold text-red-400 text-sm">Data Maintenance</p>
+                  <p className="text-xs text-red-300/70">Fix duplicate event entries</p>
+                </div>
+                <Button
+                  onClick={handleFixDuplicates}
+                  size="sm"
+                  variant="destructive"
+                  disabled={loading}
+                >
+                  Fix Duplicates
+                </Button>
               </div>
             </div>
           </div>
@@ -1165,6 +1246,44 @@ const Admin = () => {
                 {stats.combined.total}/{settings.outer_college_limit + settings.inter_college_limit + settings.department_limit}
               </span>
             </div>
+          </div>
+        </div>
+
+        {/* Event-wise Counts */}
+        <div className="glass-card rounded-xl p-6 mb-8">
+          <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
+            <h2 className="font-display text-xl font-bold text-foreground flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-uiverse-pink" />
+              Event Registrations Count
+            </h2>
+
+            <div className="flex bg-muted/40 rounded-lg p-1 gap-1">
+              {[
+                { id: "all", label: "All" },
+                { id: "outer", label: "Outer" },
+                { id: "inter", label: "Intra" },
+                { id: "dept", label: "Dept" },
+              ].map((filter) => (
+                <button
+                  key={filter.id}
+                  onClick={() => setStatsFilter(filter.id as any)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${statsFilter === filter.id
+                    ? "bg-primary text-white shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {events.map((event) => (
+              <div key={event.id} className="p-4 rounded-xl border border-white/10 bg-white/5 flex justify-between items-center hover:bg-white/10 transition-colors">
+                <span className="font-medium text-foreground text-sm">{event.title}</span>
+                <span className="text-xl font-bold text-uiverse-pink">{eventCounts[event.id] || 0}</span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -1362,7 +1481,7 @@ const Admin = () => {
                       <td className="px-4 py-3">
                         <div className="flex flex-col gap-1.5 max-w-[250px]">
                           {reg.selected_events && reg.selected_events.length > 0 ? (
-                            reg.selected_events.map(eventId => {
+                            Array.from(new Set(reg.selected_events)).map(eventId => {
                               const event = events.find(e => e.id === eventId);
                               return event ? (
                                 <span key={eventId} className="text-xs px-2 py-1 rounded bg-primary/20 text-primary w-fit" title={event.title}>
@@ -1404,7 +1523,7 @@ const Admin = () => {
                               id: reg.id,
                               type: collegeType,
                               name: reg.name,
-                              events: reg.selected_events || []
+                              events: [...new Set(reg.selected_events || [])]
                             })}
                             className="text-blue-400 border-blue-400/20 hover:bg-blue-400/10"
                             title="Edit Events"

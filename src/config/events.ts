@@ -253,7 +253,7 @@ export const events: Event[] = [
       "Round 1: Debate",
       "Round 2: JAM"
     ],
-    time: "10:00 AM – 12:00 PM",
+    time: "2:00 PM – 3:00 PM",
     venue: "B202",
     coordinatorIds: ["sasmita-r", "nithanya-k", "ashmita-p", "juwairiya-m"],
     isSpotlight: true,
@@ -272,7 +272,7 @@ export const events: Event[] = [
       "Duration: 10 minutes per team (presentation and Q&A)",
       "Evaluation Criteria: Innovation and originality, Business and technical feasibility, Clarity of presentation"
     ],
-    time: "10:00 AM – 12:00 PM",
+    time: "2:00 PM – 3:00 PM",
     venue: "A209",
     coordinatorIds: ["priyaadharshini-s-k", "sri-dharshini", "mithun-m", "naveen-m", "abinesh-a"],
     isSpotlight: true,

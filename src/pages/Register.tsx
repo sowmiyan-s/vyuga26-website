@@ -139,35 +139,26 @@ const Register = () => {
     if (!formData) return;
 
     if (existingId) {
-      const { error: dbError } = await supabase
+      const { error: deleteError } = await supabase
         .from("registrations")
-        .update({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          college_name: formData.collegeName,
-          year: parseInt(formData.year),
-          department: formData.department,
-          payment_screenshot_url: urlData.publicUrl,
-          selected_events: selectedEvents,
-        })
+        .delete()
         .eq("id", existingId);
 
-      if (dbError) throw dbError;
-    } else {
-      const { error: dbError } = await supabase.from("registrations").insert({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        college_name: formData.collegeName,
-        year: parseInt(formData.year),
-        department: formData.department,
-        payment_screenshot_url: urlData.publicUrl,
-        selected_events: selectedEvents,
-      });
-
-      if (dbError) throw dbError;
+      if (deleteError) throw deleteError;
     }
+
+    const { error: dbError } = await supabase.from("registrations").insert({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      college_name: formData.collegeName,
+      year: parseInt(formData.year),
+      department: formData.department,
+      payment_screenshot_url: urlData.publicUrl,
+      selected_events: selectedEvents,
+    });
+
+    if (dbError) throw dbError;
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {

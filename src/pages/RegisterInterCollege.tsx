@@ -93,35 +93,27 @@ const RegisterInterCollege = () => {
   const handleRegistration = async (data: InterCollegeForm) => {
     try {
       if (existingId) {
-        // Update existing registration
-        const { error: dbError } = await supabase
+        // Delete existing registration to replace it
+        const { error: deleteError } = await supabase
           .from("intercollege_registrations")
-          .update({
-            name: data.name,
-            email: data.email,
-            phone: data.phone,
-            register_number: data.registerNumber,
-            year: parseInt(data.year),
-            department: data.department,
-            selected_events: selectedEvents,
-          })
+          .delete()
           .eq("id", existingId);
 
-        if (dbError) throw dbError;
-      } else {
-        // Insert new registration
-        const { error: dbError } = await supabase.from("intercollege_registrations").insert({
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          register_number: data.registerNumber,
-          year: parseInt(data.year),
-          department: data.department,
-          selected_events: selectedEvents,
-        });
-
-        if (dbError) throw dbError;
+        if (deleteError) throw deleteError;
       }
+
+      // Insert new registration
+      const { error: dbError } = await supabase.from("intercollege_registrations").insert({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        register_number: data.registerNumber,
+        year: parseInt(data.year),
+        department: data.department,
+        selected_events: selectedEvents,
+      });
+
+      if (dbError) throw dbError;
 
       setFormData(data);
       toast.success("Registration successful!");
