@@ -131,18 +131,6 @@ const HeroSection = () => {
               </p>
             </motion.div>
 
-            {/* Glowing underline effect */}
-            <motion.div
-              initial={{ scaleX: 0, opacity: 0 }}
-              animate={{ scaleX: 1, opacity: 1 }}
-              transition={{ delay: 1.5, duration: 0.8, ease: "easeOut" }}
-              className="absolute left-1/2 -translate-x-1/2 top-[65%] h-1 w-1/3 rounded-full"
-              style={{
-                background: 'linear-gradient(90deg, transparent, hsl(270, 80%, 60%), hsl(180, 100%, 50%), hsl(270, 80%, 60%), transparent)',
-                boxShadow: '0 0 20px hsla(270, 80%, 60%, 0.8)',
-              }}
-            />
-
             {/* Bottom: Date Display */}
             <motion.div
               initial={{ y: 50, opacity: 0 }}
@@ -167,11 +155,24 @@ const HeroSection = () => {
                   className="h-[2px] bg-gradient-to-l from-transparent to-accent"
                 />
               </div>
+
+              {/* Desktop Glowing Underline */}
+              <motion.div
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={{ scaleX: 1, opacity: 1 }}
+                transition={{ delay: 1.5, duration: 0.8, ease: "easeOut" }}
+                className="h-1 w-64 rounded-full my-4"
+                style={{
+                  background: 'linear-gradient(90deg, transparent, hsl(270, 80%, 60%), hsl(180, 100%, 50%), hsl(270, 80%, 60%), transparent)',
+                  boxShadow: '0 0 20px hsla(270, 80%, 60%, 0.8)',
+                }}
+              />
+
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.4, duration: 0.6 }}
-                className="text-uiverse-sky/90 font-tech uppercase tracking-[0.3em] text-sm mt-2 font-bold drop-shadow-md"
+                className="text-uiverse-sky/90 font-tech uppercase tracking-[0.3em] text-sm font-bold drop-shadow-md"
               >
                 Mark the Date
               </motion.p>
