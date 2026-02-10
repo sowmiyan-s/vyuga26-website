@@ -23,7 +23,9 @@ const Index = () => {
       />
       <Navbar />
       <HeroSection />
-      <PassCard />
+      <div className="-mt-20 relative z-20">
+        <PassCard />
+      </div>
       <PrizePool />
       <Countdown />
       <MarqueeSection />

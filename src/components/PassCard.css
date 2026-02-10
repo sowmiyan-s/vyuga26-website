@@ -68,6 +68,7 @@
     letter-spacing: 2px;
     z-index: 20;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .college-type-badge.outer {

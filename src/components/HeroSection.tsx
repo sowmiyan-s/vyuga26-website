@@ -1,6 +1,5 @@
 import { siteConfig } from "@/config/config";
 import { motion, useScroll, useTransform } from "framer-motion";
-import TextReveal from "./effects/TextReveal";
 import { Brain, Cpu, Database, Network, Code, Globe, Zap, Server } from "lucide-react";
 
 const HeroBackground = () => {
@@ -51,10 +50,6 @@ const HeroBackground = () => {
         />
       </div>
 
-      {/* 3D Floating Assets (Generated & Centered) */}
-
-
-
       {/* Floating Tech Matrix */}
       {icons.map(({ Icon, x, y, size, delay }, index) => (
         <motion.div
@@ -87,91 +82,128 @@ const HeroBackground = () => {
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-transparent text-white">
+    <section className="relative min-h-[85vh] md:min-h-screen flex items-center justify-center overflow-hidden bg-transparent text-white pt-20 md:pt-0">
       <HeroBackground />
       {/* Content */}
-      <div className="relative z-30 text-center px-4 max-w-6xl mx-auto">
-        {/* Department Name - Clean & Floating */}
+      <div className="relative z-30 text-center px-4 w-full max-w-7xl mx-auto flex flex-col items-center justify-center h-full">
+
+        {/* Mobile: Department Name (Top) */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="mb-6 relative"
+          className="md:hidden mb-6 relative z-20"
         >
-          <p className="font-script text-2xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-uiverse-sky via-white to-uiverse-purple neon-script-glow tracking-wide">
+          <p className="font-script text-2xl text-white neon-script-glow tracking-wide drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
             {siteConfig.departmentName}
           </p>
         </motion.div>
 
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.2, ease: "anticipate" }}
-          className="relative"
-        >
-          {/* Main Title with Letter Reveal */}
-          <h1
-            className="font-display text-5xl sm:text-7xl md:text-[8rem] lg:text-[10rem] font-black tracking-tighter text-white mix-blend-screen glitch-text"
-            data-text={siteConfig.eventName}
-          >
-            <TextReveal
-              text={siteConfig.eventName}
-              delay={0.3}
-              staggerChildren={0.08}
-            />
-          </h1>
+        {/* Main Hero Container */}
+        <div className="relative w-full flex justify-center items-center">
 
-          {/* Glowing underline effect */}
+          {/* Logo Image */}
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.2, ease: "anticipate" }}
+            className="w-full max-w-xs sm:max-w-md md:max-w-3xl lg:max-w-5xl relative z-10"
+          >
+            <img
+              src="/images/vyuga-logo.png"
+              alt={siteConfig.eventName}
+              className="w-full h-auto object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+            />
+          </motion.div>
+
+          {/* Desktop Overlay Content Container */}
+          <div className="hidden md:flex absolute inset-0 z-20 flex-col items-center justify-center pointer-events-none">
+
+            {/* Top: Department Name */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
+              className="absolute top-[28%] w-full"
+            >
+              <p className="font-script text-3xl lg:text-4xl text-white neon-script-glow tracking-wide drop-shadow-[0_0_25px_rgba(255,255,255,1)]">
+                {siteConfig.departmentName}
+              </p>
+            </motion.div>
+
+            {/* Glowing underline effect */}
+            <motion.div
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              transition={{ delay: 1.5, duration: 0.8, ease: "easeOut" }}
+              className="absolute left-1/2 -translate-x-1/2 top-[65%] h-1 w-1/3 rounded-full"
+              style={{
+                background: 'linear-gradient(90deg, transparent, hsl(270, 80%, 60%), hsl(180, 100%, 50%), hsl(270, 80%, 60%), transparent)',
+                boxShadow: '0 0 20px hsla(270, 80%, 60%, 0.8)',
+              }}
+            />
+
+            {/* Bottom: Date Display */}
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.8 }}
+              className="absolute bottom-[12%] flex flex-col items-center"
+            >
+              <div className="flex items-center gap-6">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: 40 }}
+                  transition={{ delay: 1.2, duration: 0.6 }}
+                  className="h-[2px] bg-gradient-to-r from-transparent to-primary"
+                />
+                <p className="text-5xl font-bold text-white font-display tracking-widest drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] text-shadow-lg">
+                  {siteConfig.eventDate}
+                </p>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: 40 }}
+                  transition={{ delay: 1.2, duration: 0.6 }}
+                  className="h-[2px] bg-gradient-to-l from-transparent to-accent"
+                />
+              </div>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.4, duration: 0.6 }}
+                className="text-uiverse-sky/90 font-tech uppercase tracking-[0.3em] text-sm mt-2 font-bold drop-shadow-md"
+              >
+                Mark the Date
+              </motion.p>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Mobile: Date Display (Bottom) */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          className="md:hidden mt-6 relative z-20 flex flex-col items-center"
+        >
+          <p className="text-3xl font-bold text-white font-display tracking-widest drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] text-shadow-lg">
+            {siteConfig.eventDate}
+          </p>
+
           <motion.div
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
             transition={{ delay: 1.5, duration: 0.8, ease: "easeOut" }}
-            className="h-1 mx-auto mt-4 rounded-full"
+            className="h-1 w-32 rounded-full my-3"
             style={{
-              width: '60%',
               background: 'linear-gradient(90deg, transparent, hsl(270, 80%, 60%), hsl(180, 100%, 50%), hsl(270, 80%, 60%), transparent)',
-              boxShadow: '0 0 20px hsla(270, 80%, 60%, 0.5)',
+              boxShadow: '0 0 20px hsla(270, 80%, 60%, 0.8)',
             }}
           />
-        </motion.div>
 
-        {/* Grand Date Display */}
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="flex flex-col items-center justify-center relative mt-8"
-        >
-          {/* Decorative Side Lines */}
-          <motion.div
-            className="flex items-center gap-6"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: 60 }}
-              transition={{ delay: 1.2, duration: 0.6 }}
-              className="h-[2px] bg-gradient-to-r from-transparent to-primary hidden md:block"
-            />
-            <p className="text-2xl sm:text-4xl md:text-6xl font-bold text-white font-display tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
-              {siteConfig.eventDate}
-            </p>
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: 60 }}
-              transition={{ delay: 1.2, duration: 0.6 }}
-              className="h-[2px] bg-gradient-to-l from-transparent to-accent hidden md:block"
-            />
-          </motion.div>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.4, duration: 0.6 }}
-            className="text-uiverse-sky/80 font-tech uppercase tracking-[0.5em] text-sm mt-3"
-          >
+          <p className="text-uiverse-sky/90 font-tech uppercase tracking-[0.3em] text-[10px] font-bold drop-shadow-md">
             Mark the Date
-          </motion.p>
+          </p>
         </motion.div>
 
       </div>

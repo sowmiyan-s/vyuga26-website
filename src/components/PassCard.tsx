@@ -146,7 +146,7 @@ const PassCard = () => {
             <SinglePassCard
               type="dept"
               price="FREE"
-              label="AI&DS DEPT (Intra College)"
+              label="AI&DS DEPT (Intra)"
               linkTo="/register-department"
             />
           </motion.div>
