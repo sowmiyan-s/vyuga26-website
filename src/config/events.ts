@@ -34,6 +34,7 @@ export const events: Event[] = [
     image: "/images/IDEATHON.png",
     rules: [
       "Open to all departments. Team size: Exactly 3 members",
+      "All team members must be registered for the event",
       "Domains allowed: AI, Machine Learning, Data Science, IoT, Cyber Security, Recommendation Systems, Educational Systems",
       "Presentation language: English",
       "Equal participation from all team members is mandatory",
@@ -60,6 +61,7 @@ export const events: Event[] = [
     image: "/images/PROJECT-EXPO.png",
     rules: [
       "Open to all departments. Team size: Exactly 3 members",
+      "All team members must be registered for the event",
       "Project domains: IoT or Software-based solutions",
       "Offline presentation must be in English",
       "Equal contribution from all team members is mandatory",
@@ -113,6 +115,7 @@ export const events: Event[] = [
     image: "/images/UXPLORE-UIUX.png",
     rules: [
       "Open to all departments. Team size: 1 – 3 members",
+      "All team members must be registered for the event",
       "Designs must be original. Plagiarism or copying direct disqualification",
       "No pre-made templates allowed",
       "The use of AI tools for creating designs is strictly prohibited",
@@ -140,6 +143,7 @@ export const events: Event[] = [
     rules: [
       "Open to students from all departments.",
       "Team Size: 1–3 members per team.",
+      "All team members must be registered for the event",
       "Requirements: Participants must bring their own laptops and chargers.",
       "Duration: The total duration of the event is 3 hours.",
       "Rounds: This is a single-round event.",
@@ -163,6 +167,7 @@ export const events: Event[] = [
     image: "/images/TECH-ARCHITECTURE.png",
     rules: [
       "Open to all departments. Team size: 2 – 3 members",
+      "All team members must be registered for the event",
       "A specific application/problem statement will be provided on the spot",
       "The architecture design must be original and created during the event",
       "Any form of plagiarism or copying existing architectures will lead to immediate disqualification",
@@ -190,6 +195,7 @@ export const events: Event[] = [
     image: "/images/QUIZ.png",
     rules: [
       "Open to all departments. Team size: 1-2 members",
+      "All team members must be registered for the event",
       "Quizmaster’s decision is final",
       "No electronic devices allowed except during buzzer round",
       "Malpractice results in disqualification",
@@ -209,7 +215,8 @@ export const events: Event[] = [
     category: "non-technical",
     image: "/images/CONNECTIONS.png",
     rules: [
-      "Open to all departments. Team size: 2 to 3 members",
+      "Open to all departments. Team size: Compulsory 2 members",
+      "All team members must be registered for the event",
       "No discussion between teams",
       "No mobile or internet usage",
       "Answers once submitted cannot be changed",
@@ -232,6 +239,7 @@ export const events: Event[] = [
       "Game Title: Free Fire",
       "Map: Bermuda (Full Map)",
       "Match Format: Squad",
+      "All team members must be registered for the event",
       "Solo and Duo players are allowed to participate in the Squad match (must play vs Squads)",
       "Players must use their own mobile devices and stable internet connection",
       "Only in-game voice chat is allowed during matches",
@@ -291,6 +299,7 @@ export const events: Event[] = [
     image: "/images/STARTUP.png",
     rules: [
       "Open to all departments. Team size: 1 to 3 members",
+      "All team members must be registered for the event",
       "Preliminary: Online PPT submission(7 slides)",
       "Final: Offline presentation before judges",
       "Duration: 7 minutes per team (presentation and Q&A)",
