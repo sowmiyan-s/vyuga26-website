@@ -121,6 +121,17 @@ const RegisterDepartment = () => {
   };
 
   const onSubmit = async (data: DepartmentRegistrationForm) => {
+    // Re-check limit
+    const { count } = await supabase
+      .from("department_registrations")
+      .select("*", { count: "exact", head: true });
+
+    if ((count || 0) >= settings.department_limit) {
+      setDeptCount(count || 0);
+      toast.error("Department registration is full!");
+      return;
+    }
+
     if (isDeptFull) {
       toast.error("Department registration is full!");
       return;

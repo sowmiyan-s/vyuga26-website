@@ -125,6 +125,17 @@ const RegisterInterCollege = () => {
   };
 
   const onSubmitForm = async (data: InterCollegeForm) => {
+    // Re-check limit
+    const { count } = await supabase
+      .from("intercollege_registrations")
+      .select("*", { count: "exact", head: true });
+
+    if ((count || 0) >= settings.inter_college_limit) {
+      setInterCount(count || 0);
+      toast.error("Intra college registration is full!");
+      return;
+    }
+
     if (isInterFull) {
       toast.error("Intra college registration is full!");
       return;

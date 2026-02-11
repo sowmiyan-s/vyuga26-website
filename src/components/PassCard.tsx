@@ -1,4 +1,7 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useSettings } from "@/hooks/useSettings";
 import { siteConfig } from "@/config/config";
 import { motion } from "framer-motion";
 import "./PassCard.css";
@@ -9,64 +12,119 @@ interface SinglePassCardProps {
   price: number | string;
   label: string;
   linkTo: string;
+  isFull?: boolean;
 }
 
-const SinglePassCard = ({ type, price, label, linkTo }: SinglePassCardProps) => {
+const SinglePassCard = ({ type, price, label, linkTo, isFull }: SinglePassCardProps) => {
   const isInter = type === "inter";
   const isDept = type === "dept";
 
-  return (
-    <Link to={linkTo}>
-      <div className="pass-card-container noselect">
-        <div className="canvas">
-          {[...Array(25)].map((_, i) => (
-            <div key={i} className={`tracker tr-${i + 1}`} />
-          ))}
+  const CardContent = (
+    <div className={`pass-card-container noselect ${isFull ? 'cursor-not-allowed' : ''}`}>
+      <div className="canvas">
+        {[...Array(25)].map((_, i) => (
+          <div key={i} className={`tracker tr-${i + 1}`} />
+        ))}
 
-          <div id="card" className={isInter ? "inter-college-card" : isDept ? "dept-college-card" : ""}>
-            <div className="card-content">
-              <div className="card-glare" />
-              <div className="cyber-lines">
-                <span /><span /><span /><span />
-              </div>
-
-              {/* College Type Badge */}
-              <div className={`college-type-badge ${isInter ? 'inter' : isDept ? 'dept' : 'outer'}`}>
-                {label}
-              </div>
-
-              <div className="price-top">{typeof price === 'number' ? `₹${price}` : price}</div>
-              <p id="prompt">CLICK TO REGISTER</p>
-              <div className={`title font-sync ${isInter ? 'inter-title' : isDept ? 'dept-title' : ''}`}>
-                ONE DAY<br />PASS
-              </div>
-              <div className="glowing-elements">
-                <div className={`glow-1 ${isInter ? 'glow-inter' : isDept ? 'glow-dept' : ''}`} />
-                <div className={`glow-2 ${isInter ? 'glow-inter' : isDept ? 'glow-dept' : ''}`} />
-                <div className={`glow-3 ${isInter ? 'glow-inter' : isDept ? 'glow-dept' : ''}`} />
-              </div>
-              <div className="subtitle">
-                <span className="font-bold text-white tracking-widest uppercase mb-1">Includes</span>
-                <span className="text-gray-300">Food & Hydrations</span>
-                <span className="text-gray-300">{isDept ? "No Payment Required" : "Access to All Events"}</span>
-                <span className="text-[10px] text-white/50 mt-1">*One Pass Per Person</span>
-              </div>
-              <div className="card-particles">
-                <span /><span /><span /> <span /><span /><span />
-              </div>
-              <div className="corner-elements">
-                <span /><span /><span /><span />
-              </div>
-              <div className="scan-line" />
+        <div id="card" className={`${isInter ? "inter-college-card" : isDept ? "dept-college-card" : ""}`}
+          style={isFull ? {
+            borderColor: 'rgba(220, 38, 38, 0.6)',
+            boxShadow: '0 0 30px rgba(220, 38, 38, 0.4)'
+          } : {}}
+        >
+          <div className="card-content">
+            <div className="card-glare" />
+            <div className="cyber-lines">
+              <span /><span /><span /><span />
             </div>
+
+            {isFull && (
+              <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-600 text-white text-xs font-bold shadow-[0_0_15px_rgba(220,38,38,0.6)] z-20 border border-red-400">
+                FULL
+              </div>
+            )}
+
+            {/* College Type Badge */}
+            <div className={`college-type-badge ${isInter ? 'inter' : isDept ? 'dept' : 'outer'}`}>
+              {label}
+            </div>
+
+            <div className="price-top">{typeof price === 'number' ? `₹${price}` : price}</div>
+
+            {isFull ? (
+              <p id="prompt" className="text-red-500 drop-shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-pulse" style={{ color: '#ef4444', fontWeight: 'bold' }}>
+                REGISTRATION FULL
+              </p>
+            ) : (
+              <p id="prompt">CLICK TO REGISTER</p>
+            )}
+
+            <div className={`title font-sync ${isInter ? 'inter-title' : isDept ? 'dept-title' : ''}`}>
+              ONE DAY<br />PASS
+            </div>
+            <div className="glowing-elements">
+              <div className={`glow-1 ${isInter ? 'glow-inter' : isDept ? 'glow-dept' : ''}`} />
+              <div className={`glow-2 ${isInter ? 'glow-inter' : isDept ? 'glow-dept' : ''}`} />
+              <div className={`glow-3 ${isInter ? 'glow-inter' : isDept ? 'glow-dept' : ''}`} />
+            </div>
+            <div className="subtitle">
+              <span className="font-bold text-white tracking-widest uppercase mb-1">Includes</span>
+              <span className="text-gray-300">Food & Hydrations</span>
+              <span className="text-gray-300">{isDept ? "No Payment Required" : "Access to All Events"}</span>
+              <span className="text-[10px] text-white/50 mt-1">*One Pass Per Person</span>
+            </div>
+            <div className="card-particles">
+              <span /><span /><span /> <span /><span /><span />
+            </div>
+            <div className="corner-elements">
+              <span /><span /><span /><span />
+            </div>
+            <div className="scan-line" />
           </div>
         </div>
       </div>
+    </div>
+  );
+
+  return isFull ? (
+    <div className="cursor-not-allowed" onClick={(e) => e.preventDefault()}>
+      {CardContent}
+    </div>
+  ) : (
+    <Link to={linkTo}>
+      {CardContent}
     </Link>
   );
 };
 
 const PassCard = () => {
+  const { settings } = useSettings();
+  const [counts, setCounts] = useState({ outer: 0, inter: 0, dept: 0 });
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      const { count: outer } = await supabase
+        .from("registrations")
+        .select("*", { count: "exact", head: true });
+      const { count: inter } = await supabase
+        .from("intercollege_registrations")
+        .select("*", { count: "exact", head: true });
+      const { count: dept } = await supabase
+        .from("department_registrations")
+        .select("*", { count: "exact", head: true });
+
+      setCounts({
+        outer: outer || 0,
+        inter: inter || 0,
+        dept: dept || 0
+      });
+    };
+    fetchCounts();
+  }, []);
+
+  const isOuterFull = counts.outer >= settings.outer_college_limit;
+  const isInterFull = counts.inter >= settings.inter_college_limit;
+  const isDeptFull = counts.dept >= settings.department_limit;
   return (
     <section className="py-24 px-4 relative overflow-hidden">
       {/* Background Glow */}
@@ -104,6 +162,7 @@ const PassCard = () => {
               price={siteConfig.passPrice}
               label="OUTER COLLEGE"
               linkTo="/register"
+              isFull={isOuterFull}
             />
           </motion.div>
 
@@ -126,6 +185,7 @@ const PassCard = () => {
               price="FREE"
               label="OTHER DEPTS (Intra)"
               linkTo="/register-intercollege"
+              isFull={isInterFull}
             />
           </motion.div>
 
@@ -148,6 +208,7 @@ const PassCard = () => {
               price="FREE"
               label="AI&DS DEPT (Intra)"
               linkTo="/register-department"
+              isFull={isDeptFull}
             />
           </motion.div>
         </div>

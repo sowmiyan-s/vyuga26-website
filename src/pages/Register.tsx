@@ -103,6 +103,20 @@ const Register = () => {
   }, [step]);
 
   const onSubmitForm = async (data: RegistrationForm) => {
+    // Re-check limit before proceeding
+    const { count } = await supabase
+      .from("registrations")
+      .select("*", { count: "exact", head: true });
+
+    // Check if limit is reached
+    // Note: settings might be stale if the user had the tab open for a long time, but the count is the most critical part that changes.
+    // Ideally we should also refetch settings, but the count is the main issue.
+    if ((count || 0) >= settings.outer_college_limit) {
+      setOuterCount(count || 0); // Update local state to reflect the full status UI
+      toast.error("Outer college registration is full!");
+      return;
+    }
+
     if (isOuterFull) {
       toast.error("Outer college registration is full!");
       return;
@@ -137,6 +151,16 @@ const Register = () => {
 
   const handleCreateOrUpdateRegistration = async (urlData: { publicUrl: string }) => {
     if (!formData) return;
+
+    // Final check for limit before insertion
+    const { count } = await supabase
+      .from("registrations")
+      .select("*", { count: "exact", head: true });
+
+    if ((count || 0) >= settings.outer_college_limit) {
+      setOuterCount(count || 0);
+      throw new Error("Registration limit reached just now! Please contact support.");
+    }
 
     if (existingId) {
       const { error: deleteError } = await supabase
@@ -298,7 +322,7 @@ const Register = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
                 onClick={() => !isOuterFull && !isRegistrationClosed && setSelectedType("outer")}
-                className={`group ${isOuterFull || isRegistrationClosed ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                className={`group ${isOuterFull || isRegistrationClosed ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 role="button"
                 tabIndex={!isOuterFull && !isRegistrationClosed ? 0 : -1}
                 onKeyDown={(e) => {
@@ -308,16 +332,18 @@ const Register = () => {
                   }
                 }}
               >
-                <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-6 transition-all duration-300 h-full ${isOuterFull || isRegistrationClosed
-                  ? 'border-gray-600/30'
-                  : 'border-uiverse-green/30 hover:border-uiverse-green/60 hover:shadow-[0_0_40px_rgba(1,220,3,0.2)]'
+                <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-6 transition-all duration-300 h-full ${isOuterFull
+                  ? 'border-red-500/50 shadow-[0_0_20px_rgba(220,38,38,0.2)]'
+                  : isRegistrationClosed
+                    ? 'border-gray-600/30'
+                    : 'border-uiverse-green/30 hover:border-uiverse-green/60 hover:shadow-[0_0_40px_rgba(1,220,3,0.2)]'
                   }`}>
                   <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-uiverse-green/20 border border-uiverse-green/40 text-uiverse-green text-xs font-bold">
                     ₹{siteConfig.passPrice}
                   </div>
 
                   {isOuterFull && (
-                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-bold">
+                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-600 text-white text-xs font-bold shadow-[0_0_10px_rgba(220,38,38,0.5)] z-10">
                       FULL
                     </div>
                   )}
@@ -347,10 +373,18 @@ const Register = () => {
                     </li>
                   </ul>
 
-                  <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${isOuterFull || isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-green group-hover:translate-x-2'
+                  <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${isOuterFull ? 'justify-center' : isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-green group-hover:translate-x-2'
                     }`}>
-                    <span>{isOuterFull ? 'Full' : 'Register'}</span>
-                    <span>→</span>
+                    {isOuterFull ? (
+                      <span className="text-red-500 font-extrabold text-xl uppercase tracking-wider drop-shadow-[0_0_15px_rgba(239,68,68,0.6)] animate-pulse">
+                        REGISTRATION FULL
+                      </span>
+                    ) : (
+                      <>
+                        <span>{isRegistrationClosed ? 'Closed' : 'Register'}</span>
+                        <span>→</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -360,7 +394,7 @@ const Register = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className={`group ${isInterFull || isRegistrationClosed ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                className={`group ${isInterFull || isRegistrationClosed ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 role="button"
                 tabIndex={!isInterFull && !isRegistrationClosed ? 0 : -1}
                 onKeyDown={(e) => {
@@ -385,16 +419,18 @@ const Register = () => {
                 }}
               >
                 <Link to={isInterFull || isRegistrationClosed ? "#" : "/register-intercollege"} onClick={(e) => (isInterFull || isRegistrationClosed) && e.preventDefault()}>
-                  <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-6 transition-all duration-300 h-full ${isInterFull || isRegistrationClosed
-                    ? 'border-gray-600/30'
-                    : 'border-uiverse-purple/30 hover:border-uiverse-purple/60 hover:shadow-[0_0_40px_rgba(223,25,251,0.2)]'
+                  <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-6 transition-all duration-300 h-full ${isInterFull
+                    ? 'border-red-500/50 shadow-[0_0_20px_rgba(220,38,38,0.2)]'
+                    : isRegistrationClosed
+                      ? 'border-gray-600/30'
+                      : 'border-uiverse-purple/30 hover:border-uiverse-purple/60 hover:shadow-[0_0_40px_rgba(223,25,251,0.2)]'
                     }`}>
                     <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-uiverse-purple/20 border border-uiverse-purple/40 text-uiverse-purple text-xs font-bold">
                       FREE
                     </div>
 
                     {isInterFull && (
-                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-bold">
+                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-600 text-white text-xs font-bold shadow-[0_0_10px_rgba(220,38,38,0.5)] z-10">
                         FULL
                       </div>
                     )}
@@ -424,10 +460,18 @@ const Register = () => {
                       </li>
                     </ul>
 
-                    <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${isInterFull || isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-purple group-hover:translate-x-2'
+                    <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${isInterFull ? 'justify-center' : isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-purple group-hover:translate-x-2'
                       }`}>
-                      <span>{isInterFull ? 'Full' : 'Register'}</span>
-                      <span>→</span>
+                      {isInterFull ? (
+                        <span className="text-red-500 font-extrabold text-xl uppercase tracking-wider drop-shadow-[0_0_15px_rgba(239,68,68,0.6)] animate-pulse">
+                          REGISTRATION FULL
+                        </span>
+                      ) : (
+                        <>
+                          <span>{isRegistrationClosed ? 'Closed' : 'Register'}</span>
+                          <span>→</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </Link>
@@ -438,19 +482,21 @@ const Register = () => {
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
-                className={`group ${isDeptFull || isRegistrationClosed ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                className={`group ${isDeptFull || isRegistrationClosed ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <Link to={isDeptFull || isRegistrationClosed ? "#" : "/register-department"} onClick={(e) => (isDeptFull || isRegistrationClosed) && e.preventDefault()}>
-                  <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-6 transition-all duration-300 h-full ${isDeptFull || isRegistrationClosed
-                    ? 'border-gray-600/30'
-                    : 'border-uiverse-sky/30 hover:border-uiverse-sky/60 hover:shadow-[0_0_40px_rgba(18,184,255,0.2)]'
+                  <div className={`relative bg-black/40 backdrop-blur-xl border-2 rounded-3xl p-6 transition-all duration-300 h-full ${isDeptFull
+                    ? 'border-red-500/50 shadow-[0_0_20px_rgba(220,38,38,0.2)]'
+                    : isRegistrationClosed
+                      ? 'border-gray-600/30'
+                      : 'border-uiverse-sky/30 hover:border-uiverse-sky/60 hover:shadow-[0_0_40px_rgba(18,184,255,0.2)]'
                     }`}>
                     <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-uiverse-sky/20 border border-uiverse-sky/40 text-uiverse-sky text-xs font-bold">
                       FREE
                     </div>
 
                     {isDeptFull && (
-                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-bold">
+                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-red-600 text-white text-xs font-bold shadow-[0_0_10px_rgba(220,38,38,0.5)] z-10">
                         FULL
                       </div>
                     )}
@@ -480,10 +526,18 @@ const Register = () => {
                       </li>
                     </ul>
 
-                    <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${isDeptFull || isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-sky group-hover:translate-x-2'
+                    <div className={`flex items-center justify-between font-medium transition-transform duration-300 ${isDeptFull ? 'justify-center' : isRegistrationClosed ? 'text-gray-500' : 'text-uiverse-sky group-hover:translate-x-2'
                       }`}>
-                      <span>{isDeptFull ? 'Full' : 'Register'}</span>
-                      <span>→</span>
+                      {isDeptFull ? (
+                        <span className="text-red-500 font-extrabold text-xl uppercase tracking-wider drop-shadow-[0_0_15px_rgba(239,68,68,0.6)] animate-pulse">
+                          REGISTRATION FULL
+                        </span>
+                      ) : (
+                        <>
+                          <span>{isRegistrationClosed ? 'Closed' : 'Register'}</span>
+                          <span>→</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </Link>
