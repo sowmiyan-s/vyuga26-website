@@ -49,6 +49,8 @@ type TabType = "pending" | "verified" | "entered" | "all";
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCoordinator, setIsCoordinator] = useState(false);
+  const [isEntryAdmin, setIsEntryAdmin] = useState(false);
   const [adminPassword, setAdminPassword] = useState("");
   const [collegeType, setCollegeType] = useState<CollegeType>("outer");
   const [activeTab, setActiveTab] = useState<TabType>("pending");
@@ -136,7 +138,19 @@ const Admin = () => {
   const handleLogin = () => {
     if (adminPassword === siteConfig.adminPassword) {
       setIsAuthenticated(true);
+      setIsCoordinator(false);
+      setIsEntryAdmin(false);
       toast.success("Welcome, Admin!");
+    } else if (adminPassword === "coord@26") {
+      setIsAuthenticated(true);
+      setIsCoordinator(true);
+      setIsEntryAdmin(false);
+      toast.success("Welcome, Coordinator!");
+    } else if (adminPassword === "entry@26") {
+      setIsAuthenticated(true);
+      setIsCoordinator(false);
+      setIsEntryAdmin(true);
+      toast.success("Welcome, Entry Admin!");
     } else {
       toast.error("Invalid password");
     }
@@ -875,10 +889,12 @@ const Admin = () => {
                 </DialogContent>
               </Dialog>
             </div>
-            <Button variant="outline" onClick={() => setShowSettings(!showSettings)}>
-              <Settings className="w-4 h-4 mr-2" />
-              Settings
-            </Button>
+            {!isCoordinator && !isEntryAdmin && (
+              <Button variant="outline" onClick={() => setShowSettings(!showSettings)}>
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </Button>
+            )}
             <Button variant="outline" onClick={() => setIsAuthenticated(false)}>
               Logout
             </Button>
@@ -1076,185 +1092,189 @@ const Admin = () => {
                 </div>
               </div>
 
-              <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-between gap-4">
-                <div>
-                  <p className="font-bold text-red-400 text-sm">Data Maintenance</p>
-                  <p className="text-xs text-red-300/70">Fix duplicate event entries</p>
+              {!isCoordinator && !isEntryAdmin && (
+                <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-between gap-4">
+                  <div>
+                    <p className="font-bold text-red-400 text-sm">Data Maintenance</p>
+                    <p className="text-xs text-red-300/70">Fix duplicate event entries</p>
+                  </div>
+                  <Button
+                    onClick={handleFixDuplicates}
+                    size="sm"
+                    variant="destructive"
+                    disabled={loading}
+                  >
+                    Fix Duplicates
+                  </Button>
                 </div>
-                <Button
-                  onClick={handleFixDuplicates}
-                  size="sm"
-                  variant="destructive"
-                  disabled={loading}
-                >
-                  Fix Duplicates
-                </Button>
-              </div>
+              )}
             </div>
           </div>
         )}
 
         {/* Enhanced Analytics Dashboard */}
-        <div className="glass-card rounded-xl p-6 mb-8">
-          <div className="flex items-center gap-2 mb-6">
-            <BarChart3 className="w-5 h-5 text-primary" />
-            <h2 className="font-display text-xl font-bold text-foreground">Event Analytics</h2>
-          </div>
+        {!isCoordinator && !isEntryAdmin && (
+          <div className="glass-card rounded-xl p-6 mb-8">
+            <div className="flex items-center gap-2 mb-6">
+              <BarChart3 className="w-5 h-5 text-primary" />
+              <h2 className="font-display text-xl font-bold text-foreground">Event Analytics</h2>
+            </div>
 
-          {/* Summary Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl p-4 border border-primary/30">
-              <div className="flex items-center justify-between mb-2">
-                <Users className="w-5 h-5 text-primary" />
-                <span className="text-xs text-muted-foreground">Total</span>
+            {/* Summary Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl p-4 border border-primary/30">
+                <div className="flex items-center justify-between mb-2">
+                  <Users className="w-5 h-5 text-primary" />
+                  <span className="text-xs text-muted-foreground">Total</span>
+                </div>
+                <p className="text-3xl font-display font-bold text-foreground">
+                  {stats.combined.total}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">All Registrations</p>
               </div>
-              <p className="text-3xl font-display font-bold text-foreground">
-                {stats.combined.total}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">All Registrations</p>
-            </div>
-            <div className="bg-gradient-to-br from-green-500/20 to-green-500/5 rounded-xl p-4 border border-green-500/30">
-              <div className="flex items-center justify-between mb-2">
-                <Check className="w-5 h-5 text-green-400" />
-                <span className="text-xs text-muted-foreground">Verified</span>
+              <div className="bg-gradient-to-br from-green-500/20 to-green-500/5 rounded-xl p-4 border border-green-500/30">
+                <div className="flex items-center justify-between mb-2">
+                  <Check className="w-5 h-5 text-green-400" />
+                  <span className="text-xs text-muted-foreground">Verified</span>
+                </div>
+                <p className="text-3xl font-display font-bold text-green-400">
+                  {stats.combined.verified}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stats.combined.total > 0 ? Math.round((stats.combined.verified / stats.combined.total) * 100) : 0}% verified
+                </p>
               </div>
-              <p className="text-3xl font-display font-bold text-green-400">
-                {stats.combined.verified}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {stats.combined.total > 0 ? Math.round((stats.combined.verified / stats.combined.total) * 100) : 0}% verified
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-neon-cyan/20 to-neon-cyan/5 rounded-xl p-4 border border-neon-cyan/30">
-              <div className="flex items-center justify-between mb-2">
-                <TrendingUp className="w-5 h-5 text-neon-cyan" />
-                <span className="text-xs text-muted-foreground">Attended</span>
+              <div className="bg-gradient-to-br from-neon-cyan/20 to-neon-cyan/5 rounded-xl p-4 border border-neon-cyan/30">
+                <div className="flex items-center justify-between mb-2">
+                  <TrendingUp className="w-5 h-5 text-neon-cyan" />
+                  <span className="text-xs text-muted-foreground">Attended</span>
+                </div>
+                <p className="text-3xl font-display font-bold text-neon-cyan">
+                  {stats.combined.entered}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stats.combined.verified > 0 ? Math.round((stats.combined.entered / stats.combined.verified) * 100) : 0}% attendance
+                </p>
               </div>
-              <p className="text-3xl font-display font-bold text-neon-cyan">
-                {stats.combined.entered}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {stats.combined.verified > 0 ? Math.round((stats.combined.entered / stats.combined.verified) * 100) : 0}% attendance
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 rounded-xl p-4 border border-yellow-500/30">
-              <div className="flex items-center justify-between mb-2">
-                <PieChart className="w-5 h-5 text-yellow-400" />
-                <span className="text-xs text-muted-foreground">Revenue</span>
+              <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 rounded-xl p-4 border border-yellow-500/30">
+                <div className="flex items-center justify-between mb-2">
+                  <PieChart className="w-5 h-5 text-yellow-400" />
+                  <span className="text-xs text-muted-foreground">Revenue</span>
+                </div>
+                <p className="text-3xl font-display font-bold text-yellow-400">
+                  ₹{stats.combined.revenue.toLocaleString("en-IN")}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">Total collected</p>
               </div>
-              <p className="text-3xl font-display font-bold text-yellow-400">
-                ₹{stats.combined.revenue.toLocaleString("en-IN")}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">Total collected</p>
             </div>
-          </div>
 
-          {/* Category Breakdown */}
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-muted/20 rounded-xl p-4 border border-uiverse-green/20">
-              <div className="flex items-center gap-2 mb-3">
-                <Building2 className="w-4 h-4 text-uiverse-green" />
-                <span className="font-medium text-foreground">Outer College</span>
-                <span className="ml-auto text-xs bg-uiverse-green/20 text-uiverse-green px-2 py-0.5 rounded-full">
-                  ₹300/pass
+            {/* Category Breakdown */}
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="bg-muted/20 rounded-xl p-4 border border-uiverse-green/20">
+                <div className="flex items-center gap-2 mb-3">
+                  <Building2 className="w-4 h-4 text-uiverse-green" />
+                  <span className="font-medium text-foreground">Outer College</span>
+                  <span className="ml-auto text-xs bg-uiverse-green/20 text-uiverse-green px-2 py-0.5 rounded-full">
+                    ₹300/pass
+                  </span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Registered</span>
+                    <span className="font-medium">{stats.outer.total}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Verified</span>
+                    <span className="font-medium text-green-400">{stats.outer.verified}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Attended</span>
+                    <span className="font-medium text-neon-cyan">{stats.outer.entered}</span>
+                  </div>
+                  <div className="flex justify-between border-t border-border pt-2 mt-2">
+                    <span className="text-muted-foreground">Revenue</span>
+                    <span className="font-bold text-uiverse-green">₹{stats.outer.revenue.toLocaleString("en-IN")}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-muted/20 rounded-xl p-4 border border-uiverse-purple/20">
+                <div className="flex items-center gap-2 mb-3">
+                  <Users className="w-4 h-4 text-uiverse-purple" />
+                  <span className="font-medium text-foreground">Intra College</span>
+                  <span className="ml-auto text-xs bg-uiverse-purple/20 text-uiverse-purple px-2 py-0.5 rounded-full">
+                    Free
+                  </span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Registered</span>
+                    <span className="font-medium">{stats.inter.total}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Verified</span>
+                    <span className="font-medium text-green-400">{stats.inter.verified}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Attended</span>
+                    <span className="font-medium text-neon-cyan">{stats.inter.entered}</span>
+                  </div>
+                  <div className="flex justify-between border-t border-border pt-2 mt-2">
+                    <span className="text-muted-foreground">Revenue</span>
+                    <span className="font-bold text-uiverse-purple">No Payment</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-muted/20 rounded-xl p-4 border border-uiverse-sky/20">
+                <div className="flex items-center gap-2 mb-3">
+                  <GraduationCap className="w-4 h-4 text-uiverse-sky" />
+                  <span className="font-medium text-foreground">AI&DS Dept</span>
+                  <span className="ml-auto text-xs bg-uiverse-sky/20 text-uiverse-sky px-2 py-0.5 rounded-full">
+                    Free
+                  </span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Registered</span>
+                    <span className="font-medium">{stats.dept.total}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Confirmed</span>
+                    <span className="font-medium text-green-400">{stats.dept.total}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Attended</span>
+                    <span className="font-medium text-neon-cyan">{stats.dept.entered}</span>
+                  </div>
+                  <div className="flex justify-between border-t border-border pt-2 mt-2">
+                    <span className="text-muted-foreground">Status</span>
+                    <span className="font-bold text-uiverse-sky">No Payment</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Event Info */}
+            <div className="mt-6 p-4 bg-muted/10 rounded-xl border border-border flex flex-wrap items-center gap-6">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Event Date:</span>
+                <span className="text-sm font-medium">{siteConfig.eventDate}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                <span className="text-sm text-muted-foreground">Reg Deadline:</span>
+                <span className="text-sm font-medium text-yellow-400">{siteConfig.registrationCloseDate}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-green-400" />
+                <span className="text-sm text-muted-foreground">Capacity:</span>
+                <span className="text-sm font-medium">
+                  {stats.combined.total}/{settings.outer_college_limit + settings.inter_college_limit + settings.department_limit}
                 </span>
               </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Registered</span>
-                  <span className="font-medium">{stats.outer.total}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Verified</span>
-                  <span className="font-medium text-green-400">{stats.outer.verified}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Attended</span>
-                  <span className="font-medium text-neon-cyan">{stats.outer.entered}</span>
-                </div>
-                <div className="flex justify-between border-t border-border pt-2 mt-2">
-                  <span className="text-muted-foreground">Revenue</span>
-                  <span className="font-bold text-uiverse-green">₹{stats.outer.revenue.toLocaleString("en-IN")}</span>
-                </div>
-              </div>
-            </div>
-            <div className="bg-muted/20 rounded-xl p-4 border border-uiverse-purple/20">
-              <div className="flex items-center gap-2 mb-3">
-                <Users className="w-4 h-4 text-uiverse-purple" />
-                <span className="font-medium text-foreground">Inter College</span>
-                <span className="ml-auto text-xs bg-uiverse-purple/20 text-uiverse-purple px-2 py-0.5 rounded-full">
-                  Free
-                </span>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Registered</span>
-                  <span className="font-medium">{stats.inter.total}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Verified</span>
-                  <span className="font-medium text-green-400">{stats.inter.verified}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Attended</span>
-                  <span className="font-medium text-neon-cyan">{stats.inter.entered}</span>
-                </div>
-                <div className="flex justify-between border-t border-border pt-2 mt-2">
-                  <span className="text-muted-foreground">Revenue</span>
-                  <span className="font-bold text-uiverse-purple">No Payment</span>
-                </div>
-              </div>
-            </div>
-            <div className="bg-muted/20 rounded-xl p-4 border border-uiverse-sky/20">
-              <div className="flex items-center gap-2 mb-3">
-                <GraduationCap className="w-4 h-4 text-uiverse-sky" />
-                <span className="font-medium text-foreground">AI&DS Dept</span>
-                <span className="ml-auto text-xs bg-uiverse-sky/20 text-uiverse-sky px-2 py-0.5 rounded-full">
-                  Free
-                </span>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Registered</span>
-                  <span className="font-medium">{stats.dept.total}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Confirmed</span>
-                  <span className="font-medium text-green-400">{stats.dept.total}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Attended</span>
-                  <span className="font-medium text-neon-cyan">{stats.dept.entered}</span>
-                </div>
-                <div className="flex justify-between border-t border-border pt-2 mt-2">
-                  <span className="text-muted-foreground">Status</span>
-                  <span className="font-bold text-uiverse-sky">No Payment</span>
-                </div>
-              </div>
             </div>
           </div>
-
-          {/* Event Info */}
-          <div className="mt-6 p-4 bg-muted/10 rounded-xl border border-border flex flex-wrap items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Event Date:</span>
-              <span className="text-sm font-medium">{siteConfig.eventDate}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-yellow-500" />
-              <span className="text-sm text-muted-foreground">Reg Deadline:</span>
-              <span className="text-sm font-medium text-yellow-400">{siteConfig.registrationCloseDate}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-green-400" />
-              <span className="text-sm text-muted-foreground">Capacity:</span>
-              <span className="text-sm font-medium">
-                {stats.combined.total}/{settings.outer_college_limit + settings.inter_college_limit + settings.department_limit}
-              </span>
-            </div>
-          </div>
-        </div>
+        )}
 
         {/* Event-wise Counts */}
         <div className="glass-card rounded-xl p-6 mb-8">
@@ -1314,7 +1334,7 @@ const Admin = () => {
               }`}
           >
             <Users className="w-5 h-5" />
-            Inter College ({stats.inter.total}/{settings.inter_college_limit})
+            Intra College ({stats.inter.total}/{settings.inter_college_limit})
           </button>
           <button
             onClick={() => { setCollegeType("dept"); setActiveTab("pending"); }}
@@ -1344,7 +1364,7 @@ const Admin = () => {
             <p className="text-3xl font-display font-bold text-green-400">
               {collegeType === "inter" ? stats.inter.verified : collegeType === "dept" ? stats.dept.total : stats.outer.verified}
             </p>
-            <p className="text-sm text-muted-foreground mt-1">{isDept ? "Confirmed" : "Verified Payments"}</p>
+            <p className="text-sm text-muted-foreground mt-1">{isDept || collegeType === "inter" ? "Confirmed" : "Verified Payments"}</p>
           </div>
           <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
             collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
@@ -1354,23 +1374,25 @@ const Admin = () => {
             </p>
             <p className="text-sm text-muted-foreground mt-1">Entry Confirmed</p>
           </div>
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
-            collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
-            }`}>
-            <p className={`text-3xl font-display font-bold ${collegeType === "inter" ? 'text-uiverse-purple' :
-              collegeType === "dept" ? 'text-uiverse-sky' : 'text-uiverse-green'
+          {!isCoordinator && !isEntryAdmin && (
+            <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
+              collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
               }`}>
-              {isDept || collegeType === "inter" ? "Free" : `₹${stats.outer.revenue.toLocaleString("en-IN")}`}
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              {isDept || collegeType === "inter" ? 'No Payment Required' : `Revenue (₹300/pass)`}
-            </p>
-          </div>
+              <p className={`text-3xl font-display font-bold ${collegeType === "inter" ? 'text-uiverse-purple' :
+                collegeType === "dept" ? 'text-uiverse-sky' : 'text-uiverse-green'
+                }`}>
+                {isDept || collegeType === "inter" ? "Free" : `₹${stats.outer.revenue.toLocaleString("en-IN")}`}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {isDept || collegeType === "inter" ? 'No Payment Required' : `Revenue (₹300/pass)`}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
-          {isDept ? (
+          {(isDept || collegeType === "inter") ? (
             <>
               {[
                 { id: "pending", label: "Pending Entry" },
@@ -1466,7 +1488,7 @@ const Admin = () => {
                     {collegeType === "outer" && (
                       <th className="px-4 py-3 text-left text-sm font-medium">Screenshot</th>
                     )}
-                    <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>
+                    {!isCoordinator && <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -1521,128 +1543,154 @@ const Admin = () => {
                           )}
                         </td>
                       )}
-                      <td className="px-4 py-3">
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setEditingUser({
-                              id: reg.id,
-                              type: collegeType,
-                              name: reg.name,
-                              events: [...new Set(reg.selected_events || [])]
-                            })}
-                            className="text-blue-400 border-blue-400/20 hover:bg-blue-400/10"
-                            title="Edit Events"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
+                      {!isCoordinator && (
+                        <td className="px-4 py-3">
+                          <div className="flex gap-2">
+                            {!isEntryAdmin && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingUser({
+                                  id: reg.id,
+                                  type: collegeType,
+                                  name: reg.name,
+                                  events: [...new Set(reg.selected_events || [])]
+                                })}
+                                className="text-blue-400 border-blue-400/20 hover:bg-blue-400/10"
+                                title="Edit Events"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                            )}
 
-                          {/* Dept and Inter: Only entry confirmation (no payment verification) */}
-                          {(isDept || collegeType === "inter") ? (
-                            !reg.entry_confirmed ? (
-                              <>
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleConfirmEntry(reg.id, true, collegeType)}
-                                  className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
-                                >
-                                  <Check className="w-4 h-4 mr-1" />
-                                  Entry
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </>
+                            {/* Dept and Inter: Only entry confirmation (no payment verification) */}
+                            {(isDept || collegeType === "inter") ? (
+                              !reg.entry_confirmed ? (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleConfirmEntry(reg.id, true, collegeType)}
+                                    className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
+                                  >
+                                    <Check className="w-4 h-4 mr-1" />
+                                    Entry
+                                  </Button>
+                                  {!isEntryAdmin && (
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <span className="text-green-400 flex items-center gap-1">
+                                    <Check className="w-4 h-4" />
+                                    Entered
+                                  </span>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleConfirmEntry(reg.id, false, collegeType)}
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                  {!isEntryAdmin && (
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  )}
+                                </>
+                              )
                             ) : (
-                              <>
-                                <span className="text-green-400 flex items-center gap-1">
-                                  <Check className="w-4 h-4" />
-                                  Entered
-                                </span>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleConfirmEntry(reg.id, false, collegeType)}
-                                >
-                                  <X className="w-4 h-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </>
-                            )
-                          ) : (
-                            // Outer/Inter: Payment verification + entry confirmation
-                            !reg.payment_verified ? (
-                              <>
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleVerifyPayment(reg.id, true, collegeType)}
-                                  className="bg-green-600 hover:bg-green-700"
-                                >
-                                  <Check className="w-4 h-4 mr-1" />
-                                  Verify
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </>
-                            ) : !reg.entry_confirmed ? (
-                              <>
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleConfirmEntry(reg.id, true, collegeType)}
-                                  className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
-                                >
-                                  <Check className="w-4 h-4 mr-1" />
-                                  Entry
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleVerifyPayment(reg.id, false, collegeType)}
-                                >
-                                  <X className="w-4 h-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </>
-                            ) : (
-                              <>
-                                <span className="text-green-400 flex items-center gap-1">
-                                  <Check className="w-4 h-4" />
-                                  Completed
-                                </span>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </>
-                            )
-                          )}
-                        </div>
-                      </td>
+                              // Outer: Payment verification + entry confirmation
+                              !reg.payment_verified ? (
+                                <>
+                                  {!isEntryAdmin && (
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleVerifyPayment(reg.id, true, collegeType)}
+                                      className="bg-green-600 hover:bg-green-700"
+                                    >
+                                      <Check className="w-4 h-4 mr-1" />
+                                      Verify
+                                    </Button>
+                                  )}
+                                  {!isEntryAdmin && (
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  )}
+                                </>
+                              ) : !reg.entry_confirmed ? (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleConfirmEntry(reg.id, true, collegeType)}
+                                    className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
+                                  >
+                                    <Check className="w-4 h-4 mr-1" />
+                                    Entry
+                                  </Button>
+                                  {!isEntryAdmin && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => handleVerifyPayment(reg.id, false, collegeType)}
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </Button>
+                                  )}
+                                  {!isEntryAdmin && (
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <span className="text-green-400 flex items-center gap-1">
+                                    <Check className="w-4 h-4" />
+                                    Completed
+                                  </span>
+                                  {/* Allow cancel entry for Outer College too */}
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleConfirmEntry(reg.id, false, collegeType)}
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                  {!isEntryAdmin && (
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  )}
+                                </>
+                              )
+                            )}
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
