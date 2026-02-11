@@ -1349,46 +1349,48 @@ const Admin = () => {
         </div>
 
         {/* Section Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
-            collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
-            }`}>
-            <p className="text-3xl font-display font-bold text-foreground">
-              {collegeType === "inter" ? stats.inter.total : collegeType === "dept" ? stats.dept.total : stats.outer.total}
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">Total Registrations</p>
-          </div>
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
-            collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
-            }`}>
-            <p className="text-3xl font-display font-bold text-green-400">
-              {collegeType === "inter" ? stats.inter.verified : collegeType === "dept" ? stats.dept.total : stats.outer.verified}
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">{isDept || collegeType === "inter" ? "Confirmed" : "Verified Payments"}</p>
-          </div>
-          <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
-            collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
-            }`}>
-            <p className="text-3xl font-display font-bold text-neon-cyan">
-              {collegeType === "inter" ? stats.inter.entered : collegeType === "dept" ? stats.dept.entered : stats.outer.entered}
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">Entry Confirmed</p>
-          </div>
-          {!isCoordinator && !isEntryAdmin && (
+        {!isCoordinator && !isEntryAdmin && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
               collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
               }`}>
-              <p className={`text-3xl font-display font-bold ${collegeType === "inter" ? 'text-uiverse-purple' :
-                collegeType === "dept" ? 'text-uiverse-sky' : 'text-uiverse-green'
-                }`}>
-                {isDept || collegeType === "inter" ? "Free" : `₹${stats.outer.revenue.toLocaleString("en-IN")}`}
+              <p className="text-3xl font-display font-bold text-foreground">
+                {collegeType === "inter" ? stats.inter.total : collegeType === "dept" ? stats.dept.total : stats.outer.total}
               </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                {isDept || collegeType === "inter" ? 'No Payment Required' : `Revenue (₹300/pass)`}
-              </p>
+              <p className="text-sm text-muted-foreground mt-1">Total Registrations</p>
             </div>
-          )}
-        </div>
+            <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
+              collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
+              }`}>
+              <p className="text-3xl font-display font-bold text-green-400">
+                {collegeType === "inter" ? stats.inter.verified : collegeType === "dept" ? stats.dept.total : stats.outer.verified}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">{isDept || collegeType === "inter" ? "Confirmed" : "Verified Payments"}</p>
+            </div>
+            <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
+              collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
+              }`}>
+              <p className="text-3xl font-display font-bold text-neon-cyan">
+                {collegeType === "inter" ? stats.inter.entered : collegeType === "dept" ? stats.dept.entered : stats.outer.entered}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">Entry Confirmed</p>
+            </div>
+            {!isEntryAdmin && (
+              <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
+                collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
+                }`}>
+                <p className={`text-3xl font-display font-bold ${collegeType === "inter" ? 'text-uiverse-purple' :
+                  collegeType === "dept" ? 'text-uiverse-sky' : 'text-uiverse-green'
+                  }`}>
+                  {isDept || collegeType === "inter" ? "Free" : `₹${stats.outer.revenue.toLocaleString("en-IN")}`}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {isDept || collegeType === "inter" ? 'No Payment Required' : `Revenue (₹300/pass)`}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
