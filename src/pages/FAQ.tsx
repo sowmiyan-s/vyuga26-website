@@ -30,7 +30,7 @@ const faqs = [
     },
     {
         question: "Is food provided during the event?",
-        answer: "Yes. Food will be provided to all valid registered participants."
+        answer: "Food is provided for Outer College participants only."
     },
     {
         question: "Is on-spot registration available?",

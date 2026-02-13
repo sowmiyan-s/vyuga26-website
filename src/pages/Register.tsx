@@ -452,9 +452,7 @@ const Register = () => {
                       <li className="flex items-center gap-2">
                         <Check className="w-4 h-4 text-uiverse-purple" /> Full event access
                       </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-uiverse-purple">✓</span> Food & Hydrations
-                      </li>
+
                       <li className="flex items-center gap-2">
                         <span className="text-uiverse-purple">✓</span> Certificate
                       </li>
@@ -518,9 +516,7 @@ const Register = () => {
                       <li className="flex items-center gap-2">
                         <Check className="w-4 h-4 text-uiverse-sky" /> Full event access
                       </li>
-                      <li className="flex items-center gap-2">
-                        <span className="text-uiverse-sky">✓</span> Food & Hydrations
-                      </li>
+
                       <li className="flex items-center gap-2">
                         <span className="text-uiverse-sky">✓</span> Certificate
                       </li>

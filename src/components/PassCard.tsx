@@ -69,7 +69,6 @@ const SinglePassCard = ({ type, price, label, linkTo, isFull }: SinglePassCardPr
             </div>
             <div className="subtitle">
               <span className="font-bold text-white tracking-widest uppercase mb-1">Includes</span>
-              <span className="text-gray-300">Food & Hydrations</span>
               <span className="text-gray-300">{isDept ? "No Payment Required" : "Access to All Events"}</span>
               <span className="text-[10px] text-white/50 mt-1">*One Pass Per Person</span>
             </div>
