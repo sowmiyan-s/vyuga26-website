@@ -51,7 +51,7 @@ const EventSelector = ({
 
   const EventCard = ({ event }: { event: typeof events[0] }) => {
     const isSelected = selectedEvents.includes(event.id);
-    const isDisabled = !isSelected && isMaxReached;
+    const isDisabled = !isSelected && (isMaxReached || event.isRegistrationClosed);
     const isConflict = !isSelected && hasTimeConflict(event);
     const isPreRegistration = event.isPreRegistration;
 
@@ -92,8 +92,15 @@ const EventSelector = ({
                   Pre-Reg
                 </span>
               )}
+
+              {event.isRegistrationClosed && (
+                <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 flex items-center gap-1">
+                  Closed
+                </span>
+              )}
             </div>
           </div>
+
 
           {/* Explicit Checkbox Selection UI */}
           <div className={`flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all ${isSelected
@@ -149,8 +156,8 @@ const EventSelector = ({
           <div className="flex items-center gap-2 overflow-x-auto">
             <button
               onClick={() => {
-                const allVisibleIds = filteredEvents.map(e => e.id);
-                const isAllSelected = allVisibleIds.every(id => selectedEvents.includes(id));
+                const allVisibleIds = filteredEvents.filter(e => !e.isRegistrationClosed).map(e => e.id);
+                const isAllSelected = allVisibleIds.length > 0 && allVisibleIds.every(id => selectedEvents.includes(id));
 
                 if (isAllSelected) {
                   onChange(selectedEvents.filter(id => !allVisibleIds.includes(id)));
@@ -161,7 +168,10 @@ const EventSelector = ({
               }}
               className="px-3 py-1.5 rounded-md text-xs font-medium bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-white transition-all whitespace-nowrap"
             >
-              {filteredEvents.every(e => selectedEvents.includes(e.id)) && filteredEvents.length > 0 ? "Deselect All" : "Select All"}
+              {filteredEvents.filter(e => !e.isRegistrationClosed).length > 0 &&
+                filteredEvents.filter(e => !e.isRegistrationClosed).every(e => selectedEvents.includes(e.id))
+                ? "Deselect All"
+                : "Select All"}
             </button>
 
             <div className="flex p-1 bg-black/40 rounded-lg border border-white/5 overflow-x-auto custom-scrollbar">

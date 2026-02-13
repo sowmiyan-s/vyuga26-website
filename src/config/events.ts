@@ -21,6 +21,7 @@ export interface Event {
   submissionLink?: string;
   registrationButtonLabel?: string;
   showParticipationProcess?: boolean;
+  isRegistrationClosed?: boolean;
 }
 
 export const events: Event[] = [
