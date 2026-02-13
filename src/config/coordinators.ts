@@ -122,9 +122,9 @@ export const coordinators: Coordinator[] = [
   // Digital Team
   { id: "digital-1", name: "Varshith R", role: "digital-team", department: "IV AI & DS", year: 4, phone: "", eventIds: [] },
   { id: "digital-2", name: "Rahul R", role: "digital-team", department: "IV AI & DS", year: 4, phone: "", eventIds: [] },
-  { id: "digital-3", name: "Sajin Kumar R", role: "digital-team", department: "IV AI & DS", year: 4, phone: "", eventIds: [] },
-  { id: "digital-4", name: "Sarin Manoj A", role: "digital-team", department: "IV AI & DS", year: 4, phone: "", eventIds: [] },
-  { id: "digital-5", name: "Mohamed Shahed B", role: "digital-team", department: "III AI & DS", year: 3, phone: "", eventIds: [] },
+  { id: "digital-3", name: "Sanjay Kumar R", role: "digital-team", department: "IV AI & DS", year: 4, phone: "", eventIds: [] },
+  { id: "digital-4", name: "Sacin Manova A", role: "digital-team", department: "IV AI & DS", year: 4, phone: "", eventIds: [] },
+  { id: "digital-5", name: "Mohamed Shaheedh B", role: "digital-team", department: "III AI & DS", year: 3, phone: "", eventIds: [] },
   { id: "digital-6", name: "Ashwin S", role: "digital-team", department: "III AI & DS", year: 3, phone: "", eventIds: [] },
   { id: "digital-7", name: "Nirmal Kishore B.S", role: "digital-team", department: "II AI & DS", year: 2, phone: "", eventIds: [] },
   { id: "digital-8", name: "Ashwin S", role: "digital-team", department: "II AI & DS", year: 2, phone: "", eventIds: [] },
