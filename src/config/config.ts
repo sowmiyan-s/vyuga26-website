@@ -9,8 +9,8 @@ export const siteConfig = {
   eventDateFull: new Date("2026-02-17T09:00:00"),
 
   // Registration Limits
-  registrationCloseDate: "13/02/2026",
-  registrationCloseDateFull: new Date("2026-02-13T23:59:59"),
+  registrationCloseDate: "14/02/2026",
+  registrationCloseDateFull: new Date("2026-02-14T23:59:59"),
   outerCollegeLimit: 300,
   interCollegeLimit: 100,
 

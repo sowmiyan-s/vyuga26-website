@@ -1,4 +1,4 @@
-import { getHODs, getDepartmentChairPersons, getStaffCoordinators, getChiefCoordinators, getAssociateCoordinators, getCoordinatorsByEventId } from "@/config/coordinators";
+import { getHODs, getDepartmentChairPersons, getStaffCoordinators, getChiefCoordinators, getAssociateCoordinators, getTechnicalHeads, getNonTechnicalHeads, getDigitalTeam, getCoordinatorsByEventId } from "@/config/coordinators";
 import { events } from "@/config/events";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -13,6 +13,9 @@ const Coordinators = () => {
   const staffCoordinators = getStaffCoordinators();
   const chiefCoordinators = getChiefCoordinators();
   const associateCoordinators = getAssociateCoordinators();
+  const technicalHeads = getTechnicalHeads();
+  const nonTechnicalHeads = getNonTechnicalHeads();
+  const digitalTeam = getDigitalTeam();
 
 
   return (
@@ -236,6 +239,106 @@ const Coordinators = () => {
                           {coordinator.department}
                         </p>
                       </div>
+                    </div>
+                  </UiverseCard>
+                ))}
+              </div>
+            </section>
+          )}
+
+
+          {/* Technical Heads */}
+          {technicalHeads.length > 0 && (
+            <section className="mb-20">
+              <div className="flex items-center gap-4 mb-6 md:mb-10 justify-center">
+                <span className="h-px w-8 md:w-12 bg-gradient-to-r from-transparent to-uiverse-pink/50" />
+                <h2 className="text-lg md:text-2xl font-bold text-white uppercase tracking-wider whitespace-nowrap">Technical Heads</h2>
+                <span className="h-px w-8 md:w-12 bg-gradient-to-l from-transparent to-uiverse-pink/50" />
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                {technicalHeads.map((coordinator, index) => (
+                  <UiverseCard
+                    key={coordinator.id}
+                    delay={index * 0.1}
+                    className="p-4 md:p-4 border-white/5 hover:border-uiverse-pink/30 group"
+                  >
+                    <div className="flex flex-col items-center text-center gap-2">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-uiverse-pink/10 to-pink-500/10 flex items-center justify-center border border-uiverse-pink/20 group-hover:border-uiverse-pink/50 transition-colors mb-2">
+                        <Users className="w-6 h-6 text-uiverse-pink group-hover:scale-110 transition-transform duration-300" />
+                      </div>
+                      <h3 className="font-display text-lg font-bold text-white mb-1 group-hover:text-uiverse-pink transition-colors truncate w-full">
+                        {coordinator.name}
+                      </h3>
+                      <p className="text-xs text-gray-400 font-medium">
+                        {coordinator.year && `Year ${coordinator.year} - `}{coordinator.department}
+                      </p>
+                    </div>
+                  </UiverseCard>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Non-Technical Heads */}
+          {nonTechnicalHeads.length > 0 && (
+            <section className="mb-20">
+              <div className="flex items-center gap-4 mb-6 md:mb-10 justify-center">
+                <span className="h-px w-8 md:w-12 bg-gradient-to-r from-transparent to-uiverse-purple/50" />
+                <h2 className="text-lg md:text-2xl font-bold text-white uppercase tracking-wider whitespace-nowrap">Non-Technical Heads</h2>
+                <span className="h-px w-8 md:w-12 bg-gradient-to-l from-transparent to-uiverse-purple/50" />
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                {nonTechnicalHeads.map((coordinator, index) => (
+                  <UiverseCard
+                    key={coordinator.id}
+                    delay={index * 0.1}
+                    className="p-4 md:p-4 border-white/5 hover:border-uiverse-purple/30 group"
+                  >
+                    <div className="flex flex-col items-center text-center gap-2">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-uiverse-purple/10 to-purple-500/10 flex items-center justify-center border border-uiverse-purple/20 group-hover:border-uiverse-purple/50 transition-colors mb-2">
+                        <Award className="w-6 h-6 text-uiverse-purple group-hover:scale-110 transition-transform duration-300" />
+                      </div>
+                      <h3 className="font-display text-lg font-bold text-white mb-1 group-hover:text-uiverse-purple transition-colors truncate w-full">
+                        {coordinator.name}
+                      </h3>
+                      <p className="text-xs text-gray-400 font-medium">
+                        {coordinator.year && `Year ${coordinator.year} - `}{coordinator.department}
+                      </p>
+                    </div>
+                  </UiverseCard>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Digital Team */}
+          {digitalTeam.length > 0 && (
+            <section className="mb-20">
+              <div className="flex items-center gap-4 mb-6 md:mb-10 justify-center">
+                <span className="h-px w-8 md:w-12 bg-gradient-to-r from-transparent to-uiverse-sky/50" />
+                <h2 className="text-lg md:text-2xl font-bold text-white uppercase tracking-wider whitespace-nowrap">Digital Team</h2>
+                <span className="h-px w-8 md:w-12 bg-gradient-to-l from-transparent to-uiverse-sky/50" />
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                {digitalTeam.map((coordinator, index) => (
+                  <UiverseCard
+                    key={coordinator.id}
+                    delay={index * 0.1}
+                    className="p-4 md:p-4 border-white/5 hover:border-uiverse-sky/30 group"
+                  >
+                    <div className="flex flex-col items-center text-center gap-2">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-uiverse-sky/10 to-sky-500/10 flex items-center justify-center border border-uiverse-sky/20 group-hover:border-uiverse-sky/50 transition-colors mb-2">
+                        <CheckCircle2 className="w-6 h-6 text-uiverse-sky group-hover:scale-110 transition-transform duration-300" />
+                      </div>
+                      <h3 className="font-display text-lg font-bold text-white mb-1 group-hover:text-uiverse-sky transition-colors truncate w-full">
+                        {coordinator.name}
+                      </h3>
+                      <p className="text-xs text-gray-400 font-medium">
+                        {coordinator.year && `Year ${coordinator.year} - `}{coordinator.department}
+                      </p>
                     </div>
                   </UiverseCard>
                 ))}

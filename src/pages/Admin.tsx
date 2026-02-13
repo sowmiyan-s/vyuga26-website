@@ -62,6 +62,9 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
   const [statsFilter, setStatsFilter] = useState<"all" | "outer" | "inter" | "dept">("all");
+  const [yearFilter, setYearFilter] = useState<string>("all");
+  const [deptFilter, setDeptFilter] = useState<string>("");
+  const [sectionFilter, setSectionFilter] = useState<string>("all");
 
   // Edit Events State
   const [editingUser, setEditingUser] = useState<{ id: string; type: CollegeType; name: string; events: string[] } | null>(null);
@@ -643,20 +646,31 @@ const Admin = () => {
     const matchesEvent = eventFilter === "all" ||
       (r.selected_events && r.selected_events.includes(eventFilter));
 
+    // Year filter (Apply to all types if needed, but mostly relevant for student data)
+    const matchesYear = yearFilter === "all" || r.year.toString() === yearFilter;
+
+    // Department Filter (For Inter/Outer mostly, but logically consistent)
+    const matchesDept = deptFilter === "" || (r.department && r.department.toLowerCase().includes(deptFilter.toLowerCase()));
+
+    // Section Filter (For Dept only)
+    const matchesSection = sectionFilter === "all" || (r.section && r.section.toLowerCase() === sectionFilter.toLowerCase());
+
+    const matchesFilters = matchesEvent && matchesYear && matchesDept && matchesSection;
+
     // For dept AND inter (both are free now - no payment verification)
     if (isDept || collegeType === "inter") {
-      if (activeTab === "pending") return !r.entry_confirmed && matchesSearch && matchesEvent;
-      if (activeTab === "entered") return r.entry_confirmed && matchesSearch && matchesEvent;
-      if (activeTab === "all") return matchesSearch && matchesEvent;
-      return !r.entry_confirmed && matchesSearch && matchesEvent; // Default to pending
+      if (activeTab === "pending") return !r.entry_confirmed && matchesSearch && matchesFilters;
+      if (activeTab === "entered") return r.entry_confirmed && matchesSearch && matchesFilters;
+      if (activeTab === "all") return matchesSearch && matchesFilters;
+      return !r.entry_confirmed && matchesSearch && matchesFilters; // Default to pending
     }
 
     // Only outer college has payment verification
-    if (activeTab === "pending") return !r.payment_verified && matchesSearch && matchesEvent;
-    if (activeTab === "verified") return r.payment_verified && !r.entry_confirmed && matchesSearch && matchesEvent;
-    if (activeTab === "entered") return r.entry_confirmed && matchesSearch && matchesEvent;
-    if (activeTab === "all") return matchesSearch && matchesEvent;
-    return matchesSearch && matchesEvent;
+    if (activeTab === "pending") return !r.payment_verified && matchesSearch && matchesFilters;
+    if (activeTab === "verified") return r.payment_verified && !r.entry_confirmed && matchesSearch && matchesFilters;
+    if (activeTab === "entered") return r.entry_confirmed && matchesSearch && matchesFilters;
+    if (activeTab === "all") return matchesSearch && matchesFilters;
+    return matchesSearch && matchesFilters;
   });
 
   if (!isAuthenticated) {
@@ -1459,6 +1473,46 @@ const Admin = () => {
                 <option key={event.id} value={event.id}>{event.title}</option>
               ))}
             </select>
+          </div>
+
+          {/* Additional Filters */}
+          <div className="flex gap-4">
+            {/* Year Filter */}
+            <select
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+              className="h-10 px-3 rounded-md bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="all">All Years</option>
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+              <option value="4">4th Year</option>
+            </select>
+
+            {/* Department Filter (Only for Intra/Outer) */}
+            {(collegeType === "inter" || collegeType === "outer") && (
+              <Input
+                placeholder="Filter Dept..."
+                value={deptFilter}
+                onChange={(e) => setDeptFilter(e.target.value)}
+                className="w-[150px]"
+              />
+            )}
+
+            {/* Section Filter (Only for Dept) */}
+            {isDept && (
+              <select
+                value={sectionFilter}
+                onChange={(e) => setSectionFilter(e.target.value)}
+                className="h-10 px-3 rounded-md bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="all">All Sections</option>
+                <option value="A">Section A</option>
+                <option value="B">Section B</option>
+                <option value="C">Section C</option>
+              </select>
+            )}
           </div>
         </div>
 
