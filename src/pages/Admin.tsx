@@ -1776,6 +1776,7 @@ const Admin = () => {
                   selectedEvents={editingUser.events}
                   onChange={(newEvents) => setEditingUser(prev => prev ? { ...prev, events: newEvents } : null)}
                   maxEvents={20} // Admin override limit
+                  ignoreClosed={true}
                 />
                 <div className="mt-4">
                   <label className="text-sm text-gray-400 mb-1 block">Update Password</label>

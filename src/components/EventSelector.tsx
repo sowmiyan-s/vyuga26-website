@@ -1,21 +1,25 @@
 import { useState } from "react";
 import { events } from "@/config/events";
 import { AlertTriangle, Calendar, MapPin, Check } from "lucide-react";
+import { useSettings } from "@/hooks/useSettings";
 
 interface EventSelectorProps {
   selectedEvents: string[];
   onChange: (events: string[]) => void;
   maxEvents?: number;
   error?: string;
+  ignoreClosed?: boolean;
 }
 
 const EventSelector = ({
   selectedEvents,
   onChange,
   maxEvents = 4,
-  error
+  error,
+  ignoreClosed = false
 }: EventSelectorProps) => {
   const [activeCategory, setActiveCategory] = useState<"all" | "technical" | "non-technical">("all");
+  const { settings } = useSettings();
 
   const getEventTimeState = (time: string) => {
     if (time.includes("10:00 AM")) return "morning";
@@ -51,7 +55,9 @@ const EventSelector = ({
 
   const EventCard = ({ event }: { event: typeof events[0] }) => {
     const isSelected = selectedEvents.includes(event.id);
-    const isDisabled = !isSelected && (isMaxReached || event.isRegistrationClosed);
+    // If ignoreClosed is true, we treat the event as NOT closed for selection purposes
+    const isClosed = !ignoreClosed && (event.isRegistrationClosed || settings.registration_closed_events?.[event.id]);
+    const isDisabled = !isSelected && (isMaxReached || isClosed);
     const isConflict = !isSelected && hasTimeConflict(event);
     const isPreRegistration = event.isPreRegistration;
 
@@ -93,7 +99,7 @@ const EventSelector = ({
                 </span>
               )}
 
-              {event.isRegistrationClosed && (
+              {isClosed && (
                 <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 flex items-center gap-1">
                   Closed
                 </span>
@@ -156,7 +162,9 @@ const EventSelector = ({
           <div className="flex items-center gap-2 overflow-x-auto">
             <button
               onClick={() => {
-                const allVisibleIds = filteredEvents.filter(e => !e.isRegistrationClosed).map(e => e.id);
+                const allVisibleIds = filteredEvents
+                  .filter(e => ignoreClosed || (!e.isRegistrationClosed && !settings.registration_closed_events?.[e.id]))
+                  .map(e => e.id);
                 const isAllSelected = allVisibleIds.length > 0 && allVisibleIds.every(id => selectedEvents.includes(id));
 
                 if (isAllSelected) {
@@ -168,8 +176,8 @@ const EventSelector = ({
               }}
               className="px-3 py-1.5 rounded-md text-xs font-medium bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-white transition-all whitespace-nowrap"
             >
-              {filteredEvents.filter(e => !e.isRegistrationClosed).length > 0 &&
-                filteredEvents.filter(e => !e.isRegistrationClosed).every(e => selectedEvents.includes(e.id))
+              {filteredEvents.filter(e => ignoreClosed || (!e.isRegistrationClosed && !settings.registration_closed_events?.[e.id])).length > 0 &&
+                filteredEvents.filter(e => ignoreClosed || (!e.isRegistrationClosed && !settings.registration_closed_events?.[e.id])).every(e => selectedEvents.includes(e.id))
                 ? "Deselect All"
                 : "Select All"}
             </button>
