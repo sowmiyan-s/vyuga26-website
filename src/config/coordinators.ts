@@ -134,7 +134,6 @@ export const coordinators: Coordinator[] = [
   { id: "esports-2", name: "Mohan Kumar S", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["e-sports"] },
   { id: "esports-3", name: "Sanju P G", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["e-sports"] },
   { id: "esports-4", name: "Aruna Nishanth T", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["e-sports"] },
-  { id: "esports-5", name: "Susenther E", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["e-sports"] },
   { id: "esports-6", name: "Vaishnav Dinesh", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["e-sports"] },
 
   // STARTUP ARENA
@@ -175,7 +174,7 @@ export const coordinators: Coordinator[] = [
   { id: "connection-2", name: "Divyapriya B", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["connections"] },
 
   // QUIZ
-  { id: "quiz-1", name: "Srihariharan S", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["quiz"] },
+  { id: "quiz-1", name: "Susenther E", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["quiz"] },
   { id: "quiz-2", name: "Madhushree R.M", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["quiz"] },
 
   // --- RESTORED III YEAR COORDINATORS ---
