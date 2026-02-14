@@ -14,7 +14,7 @@ import { UiverseButton } from "@/components/ui/UiverseButton";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Megaphone, AlertTriangle, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Megaphone, AlertTriangle, ArrowRight, CheckCircle2, Upload } from "lucide-react";
 import "@/components/RegistrationForm.css";
 import {
   AlertDialog,
@@ -41,7 +41,8 @@ type InterCollegeForm = z.infer<typeof interCollegeSchema>;
 const departments = siteConfig.interCollegeDepartments || ["AGRI", "AIDS", "CIVIL", "CSE", "ECE", "EEE", "MECH", "IT", "AIML"];
 
 const RegisterInterCollege = () => {
-  const [step, setStep] = useState<"form" | "success">("form");
+  const [step, setStep] = useState<"form" | "payment" | "success">("form");
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState<InterCollegeForm | null>(null);
   const [interCount, setInterCount] = useState(0);
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
@@ -90,37 +91,82 @@ const RegisterInterCollege = () => {
     }
   }, [step]);
 
-  const handleRegistration = async (data: InterCollegeForm) => {
+
+  const handleCreateOrUpdateRegistration = async (urlData: { publicUrl: string }) => {
+    if (!formData) return;
+
+    // Final check for limit before insertion
+    const { count } = await supabase
+      .from("intercollege_registrations")
+      .select("*", { count: "exact", head: true });
+
+    if ((count || 0) >= settings.inter_college_limit) {
+      setInterCount(count || 0);
+      throw new Error("Registration limit reached just now! Please contact support.");
+    }
+
+    if (existingId) {
+      const { error: deleteError } = await supabase
+        .from("intercollege_registrations")
+        .delete()
+        .eq("id", existingId);
+
+      if (deleteError) throw deleteError;
+    }
+
+    const { error: dbError } = await supabase.from("intercollege_registrations").insert({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      register_number: formData.registerNumber,
+      year: parseInt(formData.year),
+      department: formData.department,
+      payment_screenshot_url: urlData.publicUrl,
+      selected_events: selectedEvents,
+    });
+
+    if (dbError) throw dbError;
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !formData) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    setUploading(true);
+
     try {
-      if (existingId) {
-        // Delete existing registration to replace it
-        const { error: deleteError } = await supabase
-          .from("intercollege_registrations")
-          .delete()
-          .eq("id", existingId);
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-        if (deleteError) throw deleteError;
-      }
+      const { error: uploadError } = await supabase.storage
+        .from("payment-screenshots")
+        .upload(fileName, file);
 
-      // Insert new registration
-      const { error: dbError } = await supabase.from("intercollege_registrations").insert({
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        register_number: data.registerNumber,
-        year: parseInt(data.year),
-        department: data.department,
-        selected_events: selectedEvents,
-      });
+      if (uploadError) throw uploadError;
 
-      if (dbError) throw dbError;
+      const { data: urlData } = supabase.storage
+        .from("payment-screenshots")
+        .getPublicUrl(fileName);
 
-      setFormData(data);
+      await handleCreateOrUpdateRegistration(urlData);
+
       toast.success("Registration successful!");
       setStep("success");
     } catch (error: any) {
       console.error("Error:", error);
-      toast.error(error.message || "Failed to register");
+      toast.error(error.message || "Failed to upload screenshot");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -151,6 +197,7 @@ const RegisterInterCollege = () => {
       return;
     }
     setEventError("");
+    setFormData(data);
 
     // Check for duplicates
     try {
@@ -162,7 +209,6 @@ const RegisterInterCollege = () => {
 
       if (existing) {
         setExistingId(existing.id);
-        setFormData(data);
         setShowReplaceDialog(true);
         return;
       }
@@ -170,7 +216,7 @@ const RegisterInterCollege = () => {
       console.error("Error checking duplicates:", error);
     }
 
-    handleRegistration(data);
+    setStep("payment");
   };
 
   // Determine why registration is closed
@@ -232,7 +278,7 @@ const RegisterInterCollege = () => {
           <div className="flex justify-center mb-6">
             <div className="px-4 py-1.5 rounded-full bg-uiverse-purple/20 border border-uiverse-purple/40 text-uiverse-purple text-sm font-bold tracking-wider flex items-center gap-2">
               <span>OTHER DEPARTMENTS</span>
-              <span className="px-2 py-0.5 rounded-full bg-uiverse-green/20 text-uiverse-green text-xs">FREE</span>
+              <span className="px-2 py-0.5 rounded-full bg-uiverse-purple/20 text-uiverse-purple text-xs">₹{siteConfig.passPrice}</span>
             </div>
           </div>
 
@@ -281,8 +327,8 @@ const RegisterInterCollege = () => {
 
           {/* Progress Steps */}
           <div className="flex items-center justify-center gap-4 mb-8">
-            {["Details", "Done"].map((label, index) => {
-              const stepIndex = step === "form" ? 0 : 1;
+            {["Details", "Payment", "Done"].map((label, index) => {
+              const stepIndex = step === "form" ? 0 : step === "payment" ? 1 : 2;
               return (
                 <div key={label} className="flex items-center gap-2">
                   <motion.div
@@ -300,7 +346,7 @@ const RegisterInterCollege = () => {
                   >
                     {label}
                   </span>
-                  {index < 1 && (
+                  {index < 2 && (
                     <div className="w-8 h-0.5 bg-white/10 mx-2" />
                   )}
                 </div>
@@ -414,14 +460,82 @@ const RegisterInterCollege = () => {
                     </div>
 
                     <button className="submit-btn mt-6 inter-college-btn" type="submit" disabled={isSubmitting}>
-                      <span className="sign-text">{isSubmitting ? "Registering..." : "Complete Registration"}</span>
+                      <span className="sign-text">Continue to Payment</span>
                     </button>
                   </form>
                 </div>
               </motion.div>
             )}
 
-            {/* Step 2: Success */}
+            {/* Step 2: Payment */}
+            {step === "payment" && (
+              <motion.div
+                key="payment"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+              >
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-uiverse-purple/10 text-uiverse-purple mb-4 border border-uiverse-purple/20 shadow-[0_0_15px_rgba(223,25,251,0.2)]">
+                    <span className="font-display font-bold text-xl">₹{siteConfig.passPrice}</span>
+                    <span className="text-sm opacity-80">per person</span>
+                  </div>
+                  <p className="text-gray-400">
+                    Scan the QR code or use UPI to make payment
+                  </p>
+                </div>
+
+                <div className="bg-white rounded-2xl p-6 mb-6 mx-auto w-fit shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                  <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden relative">
+                    <img
+                      src={siteConfig.paymentQR || "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"}
+                      alt="Payment QR Code"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </div>
+
+
+                <div className="space-y-4">
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+                    <p className="text-yellow-300 text-sm">
+                      <strong>Important:</strong> After payment, upload a screenshot of the transaction for verification.
+                    </p>
+                  </div>
+
+                  <label className="block">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      disabled={uploading}
+                      className="hidden"
+                      id="payment-screenshot"
+                    />
+                    <div className="cursor-pointer bg-uiverse-purple/10 hover:bg-uiverse-purple/20 border-2 border-dashed border-uiverse-purple/40 hover:border-uiverse-purple/60 rounded-xl p-8 text-center transition-all">
+                      <Upload className="w-12 h-12 text-uiverse-purple mx-auto mb-4" />
+                      <p className="text-white font-semibold mb-1">
+                        {uploading ? "Uploading..." : "Upload Payment Screenshot"}
+                      </p>
+                      <p className="text-gray-400 text-sm">
+                        Click to select an image (Max 5MB)
+                      </p>
+                    </div>
+                  </label>
+
+                  <button
+                    onClick={() => setStep("form")}
+                    className="w-full py-3 rounded-xl border border-white/20 text-white hover:bg-white/5 transition-colors"
+                    disabled={uploading}
+                  >
+                    Back to Form
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Step 3: Success */}
             {step === "success" && (
               <motion.div
                 key="success"
@@ -503,9 +617,7 @@ const RegisterInterCollege = () => {
             <AlertDialogAction
               onClick={() => {
                 setShowReplaceDialog(false);
-                if (formData) {
-                  handleRegistration(formData);
-                }
+                setStep("payment");
               }}
               className="bg-red-600 text-white hover:bg-red-700 border-none"
             >
