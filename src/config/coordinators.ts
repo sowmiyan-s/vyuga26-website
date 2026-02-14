@@ -130,6 +130,7 @@ export const coordinators: Coordinator[] = [
   { id: "digital-8", name: "Ashwin S", role: "digital-team", department: "II AI & DS", year: 2, phone: "", eventIds: [] },
 
   // E-SPORTS
+  { id: "esports-5", name: "Susenther E", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["e-sports"] },
   { id: "esports-1", name: "Poorna Ferdin J", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["e-sports"] },
   { id: "esports-2", name: "Mohan Kumar S", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["e-sports"] },
   { id: "esports-3", name: "Sanju P G", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["e-sports"] },
@@ -174,7 +175,8 @@ export const coordinators: Coordinator[] = [
   { id: "connection-2", name: "Divyapriya B", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["connections"] },
 
   // QUIZ
-  { id: "quiz-1", name: "Susenther E", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["quiz"] },
+  { id: "quiz-1", name: "Sreehariharan S", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["quiz"] },
+  { id: "quiz-3", name: "Nidhish Saravana R", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["quiz"] },
   { id: "quiz-2", name: "Madhushree R.M", role: "coordinator", department: "IV AI & DS", phone: "", eventIds: ["quiz"] },
 
   // --- RESTORED III YEAR COORDINATORS ---
