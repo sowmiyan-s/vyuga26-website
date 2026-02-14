@@ -213,6 +213,7 @@ const Admin = () => {
       const outerVerified = processedOuter.filter((r) => r.payment_verified).length;
       const outerEntered = processedOuter.filter((r) => r.entry_confirmed).length;
       const interEntered = processedInter.filter((r) => r.entry_confirmed).length;
+      const interVerified = processedInter.filter((r) => r.payment_verified).length;
       const deptEntered = processedDept.filter((r) => r.entry_confirmed).length;
 
       setStats({
@@ -224,21 +225,21 @@ const Admin = () => {
         },
         inter: {
           total: processedInter.length,
-          verified: processedInter.length, // All inter registrations are "verified" (free)
+          verified: interVerified,
           entered: interEntered,
-          revenue: 0, // Free registration
+          revenue: interVerified * 300,
         },
         dept: {
           total: processedDept.length,
-          verified: processedDept.length, // All dept registrations are "verified" (no payment)
+          verified: processedDept.length,
           entered: deptEntered,
           revenue: 0,
         },
         combined: {
           total: processedOuter.length + processedInter.length + processedDept.length,
-          verified: outerVerified + processedInter.length + processedDept.length,
+          verified: outerVerified + interVerified + processedDept.length,
           entered: outerEntered + interEntered + deptEntered,
-          revenue: (outerVerified * 300), // Only outer college pays
+          revenue: (outerVerified * 300) + (interVerified * 300),
         },
       });
     } catch (error: any) {
@@ -398,16 +399,14 @@ const Admin = () => {
         }
 
         // For dept, 'verified' effectively means registered as they are free
-        // 'pending' for dept might mean nothing or just 'not entered'
         if (type === 'dept') {
           if (status.entered && isEntered) return true;
           if (status.pending && !isEntered) return true;
-          // If verified is checked, we include all dept students as they are technically 'verified'/accepted
           if (status.verified) return true;
           return false;
         }
 
-        // Logic for paid categories (Outer/Inter)
+        // Logic for paid categories (Outer/Inter - both ₹300)
         if (status.pending && !isVerified) return true;
         if (status.verified && isVerified) return true;
         if (status.entered && isEntered) return true;
@@ -538,6 +537,7 @@ const Admin = () => {
           Year: r.year,
           Department: r.department,
           "Selected Events": getEventTitles(r.selected_events),
+          "Payment Status": r.payment_verified ? "Verified" : "Pending",
           "Entry Status": r.entry_confirmed ? "Confirmed" : "Pending",
           "Registration Date": new Date(r.created_at).toLocaleDateString(),
         }));
@@ -580,8 +580,8 @@ const Admin = () => {
           break;
 
         case "inter":
-          // Inter is now free - no payment verification, just entry status
-          addSheetIfData(processInterData(interRegistrations.filter(r => !r.entry_confirmed)), "Intra - Pending Entry");
+          addSheetIfData(processInterData(interRegistrations.filter(r => !r.payment_verified)), "Intra - Pending");
+          addSheetIfData(processInterData(interRegistrations.filter(r => r.payment_verified && !r.entry_confirmed)), "Intra - Verified");
           addSheetIfData(processInterData(interRegistrations.filter(r => r.entry_confirmed)), "Intra - Entered");
           break;
 
@@ -591,9 +591,8 @@ const Admin = () => {
           break;
 
         case "verified":
-          // Only outer college has payment verification now
           addSheetIfData(processOuterData(registrations.filter(r => r.payment_verified)), "Outer - Verified");
-          addSheetIfData(processInterData(interRegistrations), "Intra - All (Free)");
+          addSheetIfData(processInterData(interRegistrations.filter(r => r.payment_verified)), "Intra - Verified");
           addSheetIfData(processDeptData(deptRegistrations), "Dept - All (Free)");
           break;
 
@@ -657,15 +656,15 @@ const Admin = () => {
 
     const matchesFilters = matchesEvent && matchesYear && matchesDept && matchesSection;
 
-    // For dept AND inter (both are free now - no payment verification)
-    if (isDept || collegeType === "inter") {
+    // Dept is free - no payment verification
+    if (isDept) {
       if (activeTab === "pending") return !r.entry_confirmed && matchesSearch && matchesFilters;
       if (activeTab === "entered") return r.entry_confirmed && matchesSearch && matchesFilters;
       if (activeTab === "all") return matchesSearch && matchesFilters;
-      return !r.entry_confirmed && matchesSearch && matchesFilters; // Default to pending
+      return !r.entry_confirmed && matchesSearch && matchesFilters;
     }
 
-    // Only outer college has payment verification
+    // Outer and Inter both have payment verification (₹300)
     if (activeTab === "pending") return !r.payment_verified && matchesSearch && matchesFilters;
     if (activeTab === "verified") return r.payment_verified && !r.entry_confirmed && matchesSearch && matchesFilters;
     if (activeTab === "entered") return r.entry_confirmed && matchesSearch && matchesFilters;
@@ -1216,7 +1215,7 @@ const Admin = () => {
                   <Users className="w-4 h-4 text-uiverse-purple" />
                   <span className="font-medium text-foreground">Intra College</span>
                   <span className="ml-auto text-xs bg-uiverse-purple/20 text-uiverse-purple px-2 py-0.5 rounded-full">
-                    Free
+                    ₹300/pass
                   </span>
                 </div>
                 <div className="space-y-2 text-sm">
@@ -1234,7 +1233,7 @@ const Admin = () => {
                   </div>
                   <div className="flex justify-between border-t border-border pt-2 mt-2">
                     <span className="text-muted-foreground">Revenue</span>
-                    <span className="font-bold text-uiverse-purple">No Payment</span>
+                    <span className="font-bold text-uiverse-purple">₹{stats.inter.revenue.toLocaleString("en-IN")}</span>
                   </div>
                 </div>
               </div>
@@ -1379,7 +1378,7 @@ const Admin = () => {
               <p className="text-3xl font-display font-bold text-green-400">
                 {collegeType === "inter" ? stats.inter.verified : collegeType === "dept" ? stats.dept.total : stats.outer.verified}
               </p>
-              <p className="text-sm text-muted-foreground mt-1">{isDept || collegeType === "inter" ? "Confirmed" : "Verified Payments"}</p>
+              <p className="text-sm text-muted-foreground mt-1">{isDept ? "Confirmed" : "Verified Payments"}</p>
             </div>
             <div className={`glass-card rounded-xl p-6 text-center border-2 ${collegeType === "inter" ? 'border-uiverse-purple/30' :
               collegeType === "dept" ? 'border-uiverse-sky/30' : 'border-uiverse-green/30'
@@ -1396,10 +1395,10 @@ const Admin = () => {
                 <p className={`text-3xl font-display font-bold ${collegeType === "inter" ? 'text-uiverse-purple' :
                   collegeType === "dept" ? 'text-uiverse-sky' : 'text-uiverse-green'
                   }`}>
-                  {isDept || collegeType === "inter" ? "Free" : `₹${stats.outer.revenue.toLocaleString("en-IN")}`}
+                  {isDept ? "Free" : collegeType === "inter" ? `₹${stats.inter.revenue.toLocaleString("en-IN")}` : `₹${stats.outer.revenue.toLocaleString("en-IN")}`}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {isDept || collegeType === "inter" ? 'No Payment Required' : `Revenue (₹300/pass)`}
+                  {isDept ? 'No Payment Required' : `Revenue (₹300/pass)`}
                 </p>
               </div>
             )}
@@ -1408,7 +1407,7 @@ const Admin = () => {
 
         {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
-          {(isDept || collegeType === "inter") ? (
+          {isDept ? (
             <>
               {[
                 { id: "pending", label: "Pending Entry" },
@@ -1540,8 +1539,8 @@ const Admin = () => {
                       {isDept ? "Year/Section" : "Year/Dept"}
                     </th>
                     <th className="px-4 py-3 text-left text-sm font-medium">Events</th>
-                    {/* Only outer college has payment screenshots */}
-                    {collegeType === "outer" && (
+                    {/* Payment screenshots for outer and inter college */}
+                    {(collegeType === "outer" || collegeType === "inter") && (
                       <th className="px-4 py-3 text-left text-sm font-medium">Screenshot</th>
                     )}
                     {!isCoordinator && <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>}
@@ -1583,8 +1582,8 @@ const Admin = () => {
                           )}
                         </div>
                       </td>
-                      {/* Only show payment screenshot for outer college */}
-                      {collegeType === "outer" && (
+                    {/* Show payment screenshot for outer and inter college */}
+                      {(collegeType === "outer" || collegeType === "inter") && (
                         <td className="px-4 py-3">
                           {reg.payment_screenshot_url ? (
                             <button
@@ -1619,8 +1618,8 @@ const Admin = () => {
                               </Button>
                             )}
 
-                            {/* Dept and Inter: Only entry confirmation (no payment verification) */}
-                            {(isDept || collegeType === "inter") ? (
+                            {/* Dept: Only entry confirmation (no payment verification) */}
+                            {isDept ? (
                               !reg.entry_confirmed ? (
                                 <>
                                   <Button

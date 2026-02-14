@@ -82,6 +82,8 @@ export type Database = {
           entry_confirmed: boolean | null
           id: string
           name: string
+          payment_screenshot_url: string | null
+          payment_verified: boolean | null
           phone: string
           register_number: string
           selected_events: string[] | null
@@ -95,6 +97,8 @@ export type Database = {
           entry_confirmed?: boolean | null
           id?: string
           name: string
+          payment_screenshot_url?: string | null
+          payment_verified?: boolean | null
           phone: string
           register_number: string
           selected_events?: string[] | null
@@ -108,6 +112,56 @@ export type Database = {
           entry_confirmed?: boolean | null
           id?: string
           name?: string
+          payment_screenshot_url?: string | null
+          payment_verified?: boolean | null
+          phone?: string
+          register_number?: string
+          selected_events?: string[] | null
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      intercollege_registrations_old: {
+        Row: {
+          created_at: string
+          department: string
+          email: string
+          entry_confirmed: boolean | null
+          id: string
+          name: string
+          payment_screenshot_url: string | null
+          payment_verified: boolean | null
+          phone: string
+          register_number: string
+          selected_events: string[] | null
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          email: string
+          entry_confirmed?: boolean | null
+          id?: string
+          name: string
+          payment_screenshot_url?: string | null
+          payment_verified?: boolean | null
+          phone: string
+          register_number: string
+          selected_events?: string[] | null
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          email?: string
+          entry_confirmed?: boolean | null
+          id?: string
+          name?: string
+          payment_screenshot_url?: string | null
+          payment_verified?: boolean | null
           phone?: string
           register_number?: string
           selected_events?: string[] | null
