@@ -24,6 +24,7 @@ const Admin = lazy(() => import("./pages/Admin"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Terms = lazy(() => import("./pages/Terms"));
+const UpdateEvents = lazy(() => import("./pages/UpdateEvents"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Maintenance = lazy(() => import("./pages/Maintenance"));
 
@@ -68,6 +69,7 @@ const AppContent = () => {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/update-events" element={<UpdateEvents />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

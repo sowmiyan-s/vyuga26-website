@@ -9,7 +9,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import RegistrationClosed from "@/components/RegistrationClosed";
-import EventSelector from "@/components/EventSelector";
+import UpdateEventSelector from "@/components/UpdateEventSelector";
 import { UiverseButton } from "@/components/ui/UiverseButton";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -406,10 +406,9 @@ const RegisterInterCollege = () => {
 
                     {/* Event Selection */}
                     <div className="mt-4 p-4 bg-black/30 rounded-xl border border-white/10">
-                      <EventSelector
+                      <UpdateEventSelector
                         selectedEvents={selectedEvents}
                         onChange={setSelectedEvents}
-                        maxEvents={4}
                         error={eventError}
                       />
                     </div>
