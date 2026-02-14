@@ -426,7 +426,7 @@ const Register = () => {
                       : 'border-uiverse-purple/30 hover:border-uiverse-purple/60 hover:shadow-[0_0_40px_rgba(223,25,251,0.2)]'
                     }`}>
                     <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-uiverse-purple/20 border border-uiverse-purple/40 text-uiverse-purple text-xs font-bold">
-                      FREE
+                      ₹{siteConfig.passPrice}
                     </div>
 
                     {isInterFull && (

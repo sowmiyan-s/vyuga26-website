@@ -27,7 +27,7 @@ export const siteConfig = {
 
   // Pass Details
   passPrice: 300, // Outer college price in INR
-  interCollegePassPrice: 0, // Intra college - FREE for other departments
+  interCollegePassPrice: 300, // Intra college - same as outer college
   passIncludes: ["Food", "Participate in all events", "Certificate"],
 
   // Intra College Departments
