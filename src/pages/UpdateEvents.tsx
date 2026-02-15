@@ -299,10 +299,10 @@ const UpdateEvents = () => {
                         <div className="flex justify-center">
                             <button
                                 onClick={handleSubmitSelection}
-                                disabled={isLoading || selectedEvents.length === 0}
-                                className="px-8 py-3 bg-gradient-to-r from-uiverse-purple to-uiverse-sky text-white font-bold rounded-xl shadow-lg shadow-uiverse-purple/20 hover:shadow-uiverse-purple/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                disabled={isLoading}
+                                className="px-8 py-3 bg-gradient-to-r from-uiverse-purple to-uiverse-sky text-white font-bold rounded-xl shadow-lg shadow-uiverse-purple/20 hover:shadow-uiverse-purple/40 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {isLoading ? "Updating..." : "Update Events"}
+                                {isLoading ? "Updating..." : `Update Events ${selectedEvents.length > 0 ? `(${selectedEvents.length})` : ''}`}
                             </button>
                         </div>
                     </div>
