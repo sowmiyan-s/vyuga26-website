@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { siteConfig } from "@/config/config";
+import { events } from "@/config/events";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -43,11 +44,17 @@ const UpdateEvents = () => {
                 .maybeSingle();
 
             if (deptData) {
+                console.log('Department registration found:', {
+                    email: deptData.email,
+                    old_selected_events: deptData.selected_events,
+                    id: deptData.id
+                });
                 setRegistrationData(deptData);
                 setRegistrationType("department");
-                setSelectedEvents([]); // Start with empty selection
+                // Start fresh - don't load old events (new rule: 1 tech + 1 non-tech)
+                setSelectedEvents([]);
                 setStep("select");
-                toast.success("Registration found!");
+                toast.success("Registration found! Please select 1 technical and 1 non-technical event.");
                 setIsLoading(false);
                 return;
             }
@@ -60,11 +67,17 @@ const UpdateEvents = () => {
                 .maybeSingle();
 
             if (interData) {
+                console.log('Inter-college registration found:', {
+                    email: interData.email,
+                    old_selected_events: interData.selected_events,
+                    id: interData.id
+                });
                 setRegistrationData(interData);
                 setRegistrationType("intercollege");
-                setSelectedEvents([]); // Start with empty selection
+                // Start fresh - don't load old events (new rule: 1 tech + 1 non-tech)
+                setSelectedEvents([]);
                 setStep("select");
-                toast.success("Registration found!");
+                toast.success("Registration found! Please select 1 technical and 1 non-technical event.");
                 setIsLoading(false);
                 return;
             }
@@ -77,11 +90,17 @@ const UpdateEvents = () => {
                 .maybeSingle();
 
             if (outerData) {
+                console.log('Outer college registration found:', {
+                    email: outerData.email,
+                    old_selected_events: outerData.selected_events,
+                    id: outerData.id
+                });
                 setRegistrationData(outerData);
                 setRegistrationType("outer");
-                setSelectedEvents([]); // Start with empty selection
+                // Start fresh - don't load old events (new rule: 1 tech + 1 non-tech)
+                setSelectedEvents([]);
                 setStep("select");
-                toast.success("Registration found!");
+                toast.success("Registration found! Please select 1 technical and 1 non-technical event.");
                 setIsLoading(false);
                 return;
             }
@@ -97,7 +116,11 @@ const UpdateEvents = () => {
     };
 
     const handleUpdateEvents = async () => {
-        if (!registrationData || !registrationType) return;
+        if (!registrationData || !registrationType) {
+            console.error('Missing registration data or type:', { registrationData, registrationType });
+            toast.error('Missing registration information');
+            return;
+        }
 
         setIsLoading(true);
         try {
@@ -108,17 +131,29 @@ const UpdateEvents = () => {
                         ? "intercollege_registrations"
                         : "registrations";
 
-            const { error } = await supabase
+            console.log('Updating events:', {
+                tableName,
+                registrationId: registrationData.id,
+                selectedEvents,
+                email: registrationData.email
+            });
+
+            const { error, data } = await supabase
                 .from(tableName)
                 .update({ selected_events: selectedEvents })
-                .eq("id", registrationData.id);
+                .eq("id", registrationData.id)
+                .select();
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase update error:', error);
+                throw error;
+            }
 
+            console.log('Update successful:', data);
             toast.success("Events updated successfully!");
             setStep("success");
         } catch (error: any) {
-            console.error("Error:", error);
+            console.error("Error updating events:", error);
             toast.error(error.message || "Failed to update events");
         } finally {
             setIsLoading(false);
@@ -132,6 +167,11 @@ const UpdateEvents = () => {
     };
 
     const handleSubmitSelection = () => {
+        console.log('handleSubmitSelection called with:', {
+            selectedEventsCount: selectedEvents.length,
+            selectedEvents
+        });
+
         if (selectedEvents.length === 0) {
             setEventError("Please select at least 1 event");
             toast.error("Please select at least 1 event");
@@ -140,13 +180,20 @@ const UpdateEvents = () => {
 
         // Check if exactly one technical and one non-technical event is selected
         const technicalEvents = selectedEvents.filter(id => {
-            const event = require("@/config/events").events.find((e: any) => e.id === id);
+            const event = events.find((e) => e.id === id);
             return event?.category === "technical";
         });
 
         const nonTechnicalEvents = selectedEvents.filter(id => {
-            const event = require("@/config/events").events.find((e: any) => e.id === id);
+            const event = events.find((e) => e.id === id);
             return event?.category === "non-technical";
+        });
+
+        console.log('Event validation:', {
+            technicalCount: technicalEvents.length,
+            nonTechnicalCount: nonTechnicalEvents.length,
+            technicalEvents,
+            nonTechnicalEvents
         });
 
         if (technicalEvents.length !== 1 || nonTechnicalEvents.length !== 1) {
@@ -156,6 +203,7 @@ const UpdateEvents = () => {
         }
 
         setEventError("");
+        console.log('Validation passed, showing confirmation dialog');
         setShowConfirmDialog(true);
     };
 
@@ -281,6 +329,18 @@ const UpdateEvents = () => {
                                 <Mail className="w-4 h-4 text-uiverse-sky" />
                                 <span className="text-sm text-gray-300">{email}</span>
                             </div>
+
+                            {/* Show old events if any */}
+                            {registrationData?.selected_events && registrationData.selected_events.length > 0 && (
+                                <div className="mt-4 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl max-w-md mx-auto">
+                                    <p className="text-amber-400 text-sm font-medium mb-2">
+                                        ⚠️ You previously had {registrationData.selected_events.length} event(s) selected
+                                    </p>
+                                    <p className="text-amber-300/80 text-xs">
+                                        Due to new event rules, please select 1 technical and 1 non-technical event. Your old selections will be replaced.
+                                    </p>
+                                </div>
+                            )}
                         </motion.div>
 
                         <motion.div
@@ -298,7 +358,11 @@ const UpdateEvents = () => {
 
                         <div className="flex justify-center">
                             <button
-                                onClick={handleSubmitSelection}
+                                type="button"
+                                onClick={() => {
+                                    console.log('Button clicked!', { selectedEvents, isLoading });
+                                    handleSubmitSelection();
+                                }}
                                 disabled={isLoading}
                                 className="px-8 py-3 bg-gradient-to-r from-uiverse-purple to-uiverse-sky text-white font-bold rounded-xl shadow-lg shadow-uiverse-purple/20 hover:shadow-uiverse-purple/40 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
