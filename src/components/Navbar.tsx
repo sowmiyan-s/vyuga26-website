@@ -66,69 +66,72 @@ const Navbar = () => {
               I will stick to the previous layout but enhanced.
           */}
 
-          <div className="flex items-center justify-center w-full relative">
-            {/* Small Brand on Left if scrolled could be cool, keeping it simple for now */}
+          <div className="flex items-center justify-between w-full gap-2">
+            {/* Navigation Links */}
+            <div className="flex items-center gap-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  title={link.name}
+                  className="relative px-4 py-2 rounded-full transition-colors group"
+                >
+                  {location.pathname === link.path && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-gradient-to-r from-uiverse-purple/40 to-uiverse-sky/40 rounded-full box-border"
+                      style={{
+                        boxShadow: "0 0 20px rgba(139, 92, 246, 0.3)"
+                      }}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                  <span className={`relative z-10 text-sm font-medium transition-colors duration-300 whitespace-nowrap ${location.pathname === link.path ? "text-white" : "text-gray-400 group-hover:text-white"
+                    }`}>
+                    {link.name}
+                  </span>
 
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                title={link.name}
-                className="relative px-6 py-2 rounded-full transition-colors group"
-              >
-                {location.pathname === link.path && (
+                  {/* Hover Scale & Glow Effect */}
                   <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-uiverse-purple/40 to-uiverse-sky/40 rounded-full box-border"
-                    style={{
-                      boxShadow: "0 0 20px rgba(139, 92, 246, 0.3)"
-                    }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    className="absolute inset-0 rounded-full bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    layoutId="hoverTab"
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
-                )}
-                <span className={`relative z-10 text-sm font-medium transition-colors duration-300 ${location.pathname === link.path ? "text-white" : "text-gray-400 group-hover:text-white"
-                  }`}>
-                  {link.name}
-                </span>
+                </Link>
+              ))}
+            </div>
 
-                {/* Hover Scale & Glow Effect */}
-                <motion.div
-                  className="absolute inset-0 rounded-full bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  layoutId="hoverTab"
-                  initial={false}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                />
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2 ml-2">
+              {/* Download Brochure Button */}
+              <a
+                href={siteConfig.brochureLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Download Event Brochure"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative overflow-hidden px-5 py-2 bg-transparent text-white border border-uiverse-green/30 rounded-full font-bold text-sm group whitespace-nowrap"
+                >
+                  <span className="absolute inset-0 bg-uiverse-green/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
+                  <span className="relative z-10 text-uiverse-green group-hover:text-white transition-colors duration-300">Brochure</span>
+                </motion.button>
+              </a>
+
+              <Link to="/register" title="Register for VYUGA 26">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative overflow-hidden px-6 py-2 bg-transparent text-white border border-uiverse-sky/30 rounded-full font-bold text-sm group whitespace-nowrap"
+                >
+                  <span className="absolute inset-0 bg-uiverse-sky/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
+                  <span className="relative z-10 text-uiverse-sky group-hover:text-white transition-colors duration-300 shadow-[0_0_15px_rgba(18,184,255,0.2)]">Register</span>
+                </motion.button>
               </Link>
-            ))}
-
-            {/* Download Brochure Button */}
-            <a
-              href={siteConfig.brochureLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ml-4"
-              title="Download Event Brochure"
-            >
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative overflow-hidden px-5 py-2 bg-transparent text-white border border-uiverse-green/30 rounded-full font-bold text-sm group"
-              >
-                <span className="absolute inset-0 bg-uiverse-green/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
-                <span className="relative z-10 text-uiverse-green group-hover:text-white transition-colors duration-300">Brochure</span>
-              </motion.button>
-            </a>
-
-            <Link to="/register" className="ml-2" title="Register for VYUGA 26">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative overflow-hidden px-6 py-2 bg-transparent text-white border border-uiverse-sky/30 rounded-full font-bold text-sm group"
-              >
-                <span className="absolute inset-0 bg-uiverse-sky/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
-                <span className="relative z-10 text-uiverse-sky group-hover:text-white transition-colors duration-300 shadow-[0_0_15px_rgba(18,184,255,0.2)]">Register</span>
-              </motion.button>
-            </Link>
+            </div>
           </div>
         </motion.div>
 
