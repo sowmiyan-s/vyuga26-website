@@ -537,7 +537,7 @@ const Register = () => {
   }
 
   // Show closed screen if outer college registration is closed or full
-  if (isRegistrationClosed || isOuterFull) {
+  if (isRegistrationClosed || isOuterFull || isOuterClosed) {
     return (
       <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
@@ -546,7 +546,7 @@ const Register = () => {
         </div>
         <Navbar />
         <main className="pt-32 pb-20 px-4 relative z-10">
-          <RegistrationClosed reason={isOuterFull ? "full" : getClosedReason()} type="outer" />
+          <RegistrationClosed reason={isOuterFull ? "full" : isOuterClosed ? "closed" : getClosedReason()} type="outer" />
         </main>
         <Footer />
         <WhatsAppButton />
