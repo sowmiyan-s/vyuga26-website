@@ -359,6 +359,67 @@ const Admin = () => {
     });
   };
 
+  const exportEventAttendance = () => {
+    if (!selectedEventId || selectedEventId === "all") return;
+    const event = events.find(e => e.id === selectedEventId);
+    if (!event) return;
+
+    const attendedIds = eventAttendance[selectedEventId] || [];
+
+    // Get all potential participants
+    const allParticipants = [
+      ...registrations,
+      ...interRegistrations,
+      ...deptRegistrations
+    ];
+
+    // Filter those who attended
+    const attendedParticipants = allParticipants.filter(p => attendedIds.includes(p.id));
+
+    if (attendedParticipants.length === 0) {
+      toast.error("No attended participants to export");
+      return;
+    }
+
+    // Format data
+    const data = attendedParticipants.map((p, index) => ({
+      "S.No": index + 1,
+      "Name": p.name,
+      "Email": p.email,
+      "Phone": p.phone,
+      "College Type": registrations.includes(p) ? "Outer College" : interRegistrations.includes(p) ? "Intra College" : "Department",
+      "College Name": p.college_name || "VSB Engineering College",
+      "Register Number": p.register_number || "N/A",
+      "Department": p.department || "N/A",
+      "Year": p.year,
+      "Section": p.section || "N/A",
+      "Attendance Status": "Present"
+    }));
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(data);
+
+    // Auto-width columns
+    const wscols = [
+      { wch: 6 }, // S.No
+      { wch: 20 }, // Name
+      { wch: 30 }, // Email
+      { wch: 15 }, // Phone
+      { wch: 15 }, // Type
+      { wch: 30 }, // College Name
+      { wch: 15 }, // Reg No
+      { wch: 10 }, // Dept
+      { wch: 6 }, // Year
+      { wch: 6 }, // Section
+      { wch: 10 } // Status
+    ];
+    ws['!cols'] = wscols;
+
+    XLSX.utils.book_append_sheet(wb, ws, "Attendance Sheet");
+    XLSX.writeFile(wb, `${event.title}_Attendance_Report.xlsx`);
+    toast.success(`Exported list of ${attendedParticipants.length} attendees`);
+  };
+
   const handleDeleteRegistration = async () => {
     if (!deleteConfirm) return;
 
@@ -1684,79 +1745,29 @@ const Admin = () => {
         {/* Events Attendance Section */}
         {collegeType === "events" ? (
           <div className="space-y-6">
-            {/* Analytics Summary */}
-            <div className="glass-card rounded-xl p-6 border-2 border-uiverse-pink/30">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <Calendar className="w-6 h-6 text-uiverse-pink" />
-                Event Attendance Analytics
+            {/* Simple Event Selector */}
+            <div className="glass-card rounded-xl p-8">
+              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <Calendar className="w-8 h-8 text-uiverse-pink" />
+                Select Event to Manage
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {events.map(event => {
-                  const eventParticipants = [
-                    ...registrations.filter(r => r.entry_confirmed && r.selected_events?.includes(event.id)),
-                    ...interRegistrations.filter(r => r.entry_confirmed && r.selected_events?.includes(event.id)),
-                    ...deptRegistrations.filter(r => r.entry_confirmed && r.selected_events?.includes(event.id))
-                  ];
-                  const attendedCount = (eventAttendance[event.id] || []).length;
-                  const attendanceRate = eventParticipants.length > 0
-                    ? Math.round((attendedCount / eventParticipants.length) * 100)
-                    : 0;
-
-                  return (
-                    <div key={event.id} className="p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-                      <p className="text-xs text-gray-400 mb-1 truncate" title={event.title}>{event.title}</p>
-                      <div className="flex items-baseline gap-2">
-                        <p className="text-2xl font-bold text-uiverse-green">{attendedCount}</p>
-                        <p className="text-sm text-gray-400">/ {eventParticipants.length}</p>
-                      </div>
-                      <div className="mt-2 flex items-center gap-2">
-                        <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-uiverse-pink to-uiverse-green transition-all"
-                            style={{ width: `${attendanceRate}%` }}
-                          />
-                        </div>
-                        <p className="text-xs font-medium text-uiverse-pink">{attendanceRate}%</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              <select
+                value={selectedEventId}
+                onChange={(e) => { setSelectedEventId(e.target.value); setEventSearchQuery(""); }}
+                className="w-full h-14 px-6 rounded-xl bg-black/50 border-2 border-uiverse-pink/30 text-white text-xl font-medium focus:outline-none focus:ring-2 focus:ring-uiverse-pink focus:border-uiverse-pink"
+              >
+                <option value="">-- Choose an Event --</option>
+                {events.map(event => (
+                  <option key={event.id} value={event.id}>{event.title}</option>
+                ))}
+              </select>
             </div>
 
-            {/* Event Selector & Search */}
-            <div className="glass-card rounded-xl p-6">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-400 mb-2">Select Event</h3>
-                  <select
-                    value={selectedEventId}
-                    onChange={(e) => { setSelectedEventId(e.target.value); setEventSearchQuery(""); }}
-                    className="w-full h-12 px-4 rounded-lg bg-black/50 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-uiverse-pink"
-                  >
-                    <option value="all">All Events</option>
-                    {events.map(event => (
-                      <option key={event.id} value={event.id}>{event.title}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-400 mb-2">Search Participants</h3>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <Input
-                      placeholder="Search by name, email, phone..."
-                      value={eventSearchQuery}
-                      onChange={(e) => setEventSearchQuery(e.target.value)}
-                      className="pl-10 h-12 bg-black/50 border-white/20 text-white"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Show event details only when an event is selected */}
+            {selectedEventId && selectedEventId !== "" && (() => {
+              const event = events.find(e => e.id === selectedEventId);
+              if (!event) return null;
 
-            {/* Events List */}
-            {(selectedEventId === "all" ? events : events.filter(e => e.id === selectedEventId)).map(event => {
               // Get all users who have entry_confirmed=true AND selected this event
               let eventParticipants = [
                 ...registrations.filter(r => r.entry_confirmed && r.selected_events?.includes(event.id)),
@@ -1774,98 +1785,125 @@ const Admin = () => {
                   (p.department && p.department.toLowerCase().includes(query))
                 );
               }
+
               const attendedCount = (eventAttendance[event.id] || []).length;
 
               return (
-                <div key={event.id} className="glass-card rounded-xl overflow-hidden border-2 border-uiverse-pink/30">
-                  {/* Event Header */}
-                  <div className="bg-gradient-to-r from-uiverse-pink/20 to-uiverse-purple/20 p-6 border-b border-white/10">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-2xl font-bold text-white mb-2">{event.title}</h3>
-                        <p className="text-gray-300 text-sm">{event.category === "technical" ? "Technical Event" : "Non-Technical Event"}</p>
-                        <p className="text-gray-400 text-sm mt-1">
-                          <span className="font-medium">Time:</span> {event.time} | <span className="font-medium">Venue:</span> {event.venue}
-                        </p>
-                      </div>
-                      <div className="text-right space-y-2">
-                        <div>
-                          <p className="text-4xl font-bold text-uiverse-pink">{eventParticipants.length}</p>
-                          <p className="text-sm text-gray-400">Registered & Entered</p>
-                        </div>
-                        <div className="pt-2 border-t border-white/10">
-                          <p className="text-2xl font-bold text-uiverse-green">{attendedCount}</p>
-                          <p className="text-xs text-gray-400">Attended Event</p>
-                        </div>
-                      </div>
+                <div className="space-y-6">
+                  {/* Search Bar */}
+                  <div className="glass-card rounded-xl p-6">
+                    <div className="relative">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400" />
+                      <Input
+                        placeholder="🔍 Search by name, email, or phone..."
+                        value={eventSearchQuery}
+                        onChange={(e) => setEventSearchQuery(e.target.value)}
+                        className="pl-14 h-14 text-lg bg-black/50 border-white/20 text-white"
+                      />
                     </div>
                   </div>
 
-                  {/* Participants Table */}
-                  {eventParticipants.length === 0 ? (
-                    <div className="p-8 text-center text-gray-400">
-                      {eventSearchQuery.trim()
-                        ? `No participants found matching "${eventSearchQuery}"`
-                        : "No participants have entered for this event yet"
-                      }
+                  {/* Event Card */}
+                  <div className="glass-card rounded-xl overflow-hidden border-2 border-uiverse-pink/30">
+                    {/* Event Header */}
+                    <div className="bg-gradient-to-r from-uiverse-pink/20 to-uiverse-purple/20 p-6 border-b border-white/10">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-2xl font-bold text-white">{event.title}</h3>
+                            <button
+                              onClick={exportEventAttendance}
+                              className="px-3 py-1 bg-uiverse-green/20 text-uiverse-green border border-uiverse-green/30 rounded-lg text-xs hover:bg-uiverse-green/30 transition-colors flex items-center gap-2"
+                              title="Download Excel list of attended participants"
+                            >
+                              <FileDown className="w-3 h-3" />
+                              Export Attendance List
+                            </button>
+                          </div>
+                          <p className="text-gray-300 text-sm">{event.category === "technical" ? "Technical Event" : "Non-Technical Event"}</p>
+                          <p className="text-gray-400 text-sm mt-1">
+                            <span className="font-medium">Time:</span> {event.time} | <span className="font-medium">Venue:</span> {event.venue}
+                          </p>
+                        </div>
+                        <div className="text-right space-y-2">
+                          <div>
+                            <p className="text-4xl font-bold text-uiverse-pink">{eventParticipants.length}</p>
+                            <p className="text-sm text-gray-400">Registered & Entered</p>
+                          </div>
+                          <div className="pt-2 border-t border-white/10">
+                            <p className="text-2xl font-bold text-uiverse-green">{attendedCount}</p>
+                            <p className="text-xs text-gray-400">Attended Event</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead className="bg-white/5">
-                          <tr>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Name</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Email</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Phone</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Year</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Department</th>
-                            <th className="px-6 py-4 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Event Entry</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-white/5">
-                          {eventParticipants.map((participant, idx) => {
-                            const participantType = registrations.includes(participant) ? "Outer" :
-                              interRegistrations.includes(participant) ? "Intra" : "Dept";
-                            const hasAttended = (eventAttendance[event.id] || []).includes(participant.id);
-                            return (
-                              <tr key={participant.id} className="hover:bg-white/5 transition-colors">
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{idx + 1}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{participant.name}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.email}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.phone}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${participantType === "Outer" ? "bg-uiverse-green/20 text-uiverse-green" :
-                                    participantType === "Intra" ? "bg-uiverse-purple/20 text-uiverse-purple" :
-                                      "bg-uiverse-sky/20 text-uiverse-sky"
-                                    }`}>
-                                    {participantType}
-                                  </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.year}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.department || "N/A"}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-center">
-                                  <button
-                                    onClick={() => toggleEventAttendance(event.id, participant.id)}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-all ${hasAttended
-                                      ? "bg-uiverse-pink text-white hover:bg-uiverse-pink/80"
-                                      : "bg-white/10 text-gray-400 hover:bg-white/20"
-                                      }`}
-                                  >
-                                    {hasAttended ? "✓ Attended" : "Mark Entry"}
-                                  </button>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+
+                    {/* Participants Table */}
+                    {eventParticipants.length === 0 ? (
+                      <div className="p-8 text-center text-gray-400">
+                        {eventSearchQuery.trim()
+                          ? `No participants found matching "${eventSearchQuery}"`
+                          : "No participants have entered for this event yet"
+                        }
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead className="bg-white/5">
+                            <tr>
+                              <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Name</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Email</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Phone</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Year</th>
+                              <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Department</th>
+                              <th className="px-6 py-4 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Event Entry</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-white/5">
+                            {eventParticipants.map((participant, idx) => {
+                              const participantType = registrations.includes(participant) ? "Outer" :
+                                interRegistrations.includes(participant) ? "Intra" : "Dept";
+                              const hasAttended = (eventAttendance[event.id] || []).includes(participant.id);
+                              return (
+                                <tr key={participant.id} className="hover:bg-white/5 transition-colors">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{idx + 1}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{participant.name}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.email}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.phone}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap">
+                                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${participantType === "Outer" ? "bg-uiverse-green/20 text-uiverse-green" :
+                                      participantType === "Intra" ? "bg-uiverse-purple/20 text-uiverse-purple" :
+                                        "bg-uiverse-sky/20 text-uiverse-sky"
+                                      }`}>
+                                      {participantType}
+                                    </span>
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.year}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.department || "N/A"}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                                    <button
+                                      onClick={() => toggleEventAttendance(event.id, participant.id)}
+                                      className={`px-4 py-2 rounded-lg font-medium transition-all ${hasAttended
+                                        ? "bg-uiverse-pink text-white hover:bg-uiverse-pink/80"
+                                        : "bg-white/10 text-gray-400 hover:bg-white/20"
+                                        }`}
+                                    >
+                                      {hasAttended ? "✓ Attended" : "Mark Entry"}
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
-            })}
+            })()}
           </div>
         ) : (
           /* Registrations List */
