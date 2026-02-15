@@ -44,7 +44,7 @@ interface Registration {
   selected_events?: string[];
 }
 
-type CollegeType = "outer" | "inter" | "dept";
+type CollegeType = "outer" | "inter" | "dept" | "events";
 type TabType = "pending" | "verified" | "entered" | "all";
 
 const Admin = () => {
@@ -65,6 +65,9 @@ const Admin = () => {
   const [yearFilter, setYearFilter] = useState<string>("all");
   const [deptFilter, setDeptFilter] = useState<string>("");
   const [sectionFilter, setSectionFilter] = useState<string>("all");
+  const [selectedEventId, setSelectedEventId] = useState<string>("all");
+  const [eventAttendance, setEventAttendance] = useState<Record<string, string[]>>({});
+  const [eventSearchQuery, setEventSearchQuery] = useState<string>("");
 
   // Edit Events State
   const [editingUser, setEditingUser] = useState<{ id: string; type: CollegeType; name: string; events: string[] } | null>(null);
@@ -85,6 +88,9 @@ const Admin = () => {
     sources: { outer: true, inter: true, dept: true },
     status: { pending: true, verified: true, entered: true },
     eventFilter: "all" as string,
+    yearFilter: "all" as string,
+    deptFilter: "" as string,
+    sectionFilter: "all" as string,
     fields: {
       serialNumber: true,
       name: true,
@@ -252,6 +258,7 @@ const Admin = () => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchRegistrations();
+      loadEventAttendance();
     }
   }, [isAuthenticated]);
 
@@ -320,6 +327,38 @@ const Admin = () => {
     }
   };
 
+  // Event Attendance Functions
+  const loadEventAttendance = () => {
+    try {
+      const stored = localStorage.getItem('event_attendance');
+      if (stored) {
+        setEventAttendance(JSON.parse(stored));
+      }
+    } catch (error) {
+      console.error('Failed to load event attendance:', error);
+    }
+  };
+
+  const toggleEventAttendance = (eventId: string, participantId: string) => {
+    setEventAttendance(prev => {
+      const eventAttendees = prev[eventId] || [];
+      const isAttending = eventAttendees.includes(participantId);
+
+      const updated = {
+        ...prev,
+        [eventId]: isAttending
+          ? eventAttendees.filter(id => id !== participantId)
+          : [...eventAttendees, participantId]
+      };
+
+      // Save to localStorage
+      localStorage.setItem('event_attendance', JSON.stringify(updated));
+
+      toast.success(isAttending ? 'Event attendance removed' : 'Marked as attended event');
+      return updated;
+    });
+  };
+
   const handleDeleteRegistration = async () => {
     if (!deleteConfirm) return;
 
@@ -385,7 +424,7 @@ const Admin = () => {
   const handleAdvancedExportLogic = () => {
     try {
       const wb = XLSX.utils.book_new();
-      const { sources, status, fields, eventFilter: exportEventFilter } = exportConfig;
+      const { sources, status, fields, eventFilter: exportEventFilter, yearFilter: exportYearFilter, deptFilter: exportDeptFilter, sectionFilter: exportSectionFilter } = exportConfig;
 
       const shouldInclude = (r: Registration, type: CollegeType) => {
         const isVerified = r.payment_verified;
@@ -396,6 +435,21 @@ const Admin = () => {
           if (!r.selected_events || !r.selected_events.includes(exportEventFilter)) {
             return false;
           }
+        }
+
+        // Year filter check
+        if (exportYearFilter !== "all" && r.year.toString() !== exportYearFilter) {
+          return false;
+        }
+
+        // Department filter check
+        if (exportDeptFilter !== "" && r.department && !r.department.toLowerCase().includes(exportDeptFilter.toLowerCase())) {
+          return false;
+        }
+
+        // Section filter check
+        if (exportSectionFilter !== "all" && r.section && r.section.toLowerCase() !== exportSectionFilter.toLowerCase()) {
+          return false;
         }
 
         // For dept, 'verified' effectively means registered as they are free
@@ -714,7 +768,7 @@ const Admin = () => {
                     Advanced Export
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-3xl bg-black/95 border border-white/10 backdrop-blur-xl text-white shadow-2xl">
+                <DialogContent className="max-w-5xl bg-black/95 border border-white/10 backdrop-blur-xl text-white shadow-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-uiverse-purple to-uiverse-sky">
                       Advanced Data Export
@@ -724,7 +778,7 @@ const Admin = () => {
                     </DialogDescription>
                   </DialogHeader>
 
-                  <div className="grid md:grid-cols-3 gap-8 py-6">
+                  <div className="grid md:grid-cols-3 gap-6 py-6">
                     {/* Source Selection */}
                     <div className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10">
                       <h3 className="font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
@@ -853,6 +907,57 @@ const Admin = () => {
                         {events.map(event => (
                           <option key={event.id} value={event.id}>{event.title}</option>
                         ))}
+                      </select>
+                    </div>
+
+                    {/* Year Filter */}
+                    <div className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                      <h3 className="font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
+                        <GraduationCap className="w-4 h-4 text-uiverse-green" /> Filter by Year
+                      </h3>
+                      <select
+                        value={exportConfig.yearFilter}
+                        onChange={(e) => setExportConfig(prev => ({ ...prev, yearFilter: e.target.value }))}
+                        className="w-full h-10 px-3 rounded-md bg-black/50 border border-white/20 text-sm text-white focus:outline-none focus:ring-2 focus:ring-uiverse-purple"
+                      >
+                        <option value="all">All Years</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                      </select>
+                    </div>
+
+                    {/* Department Filter */}
+                    <div className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                      <h3 className="font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
+                        <Building2 className="w-4 h-4 text-uiverse-sky" /> Filter by Department
+                      </h3>
+                      <input
+                        type="text"
+                        placeholder="e.g., CSE, AI&DS, ECE"
+                        value={exportConfig.deptFilter}
+                        onChange={(e) => setExportConfig(prev => ({ ...prev, deptFilter: e.target.value }))}
+                        className="w-full h-10 px-3 rounded-md bg-black/50 border border-white/20 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-uiverse-purple"
+                      />
+                      <p className="text-xs text-gray-400">Leave empty for all departments</p>
+                    </div>
+
+                    {/* Section Filter */}
+                    <div className="space-y-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                      <h3 className="font-bold text-white flex items-center gap-2 border-b border-white/10 pb-2">
+                        <Users className="w-4 h-4 text-uiverse-pink" /> Filter by Section
+                      </h3>
+                      <select
+                        value={exportConfig.sectionFilter}
+                        onChange={(e) => setExportConfig(prev => ({ ...prev, sectionFilter: e.target.value }))}
+                        className="w-full h-10 px-3 rounded-md bg-black/50 border border-white/20 text-sm text-white focus:outline-none focus:ring-2 focus:ring-uiverse-purple"
+                      >
+                        <option value="all">All Sections</option>
+                        <option value="a">Section A</option>
+                        <option value="b">Section B</option>
+                        <option value="c">Section C</option>
+                        <option value="d">Section D</option>
                       </select>
                     </div>
 
@@ -1408,6 +1513,16 @@ const Admin = () => {
             <GraduationCap className="w-5 h-5" />
             AI&DS Dept ({stats.dept.total}/{settings.department_limit})
           </button>
+          <button
+            onClick={() => { setCollegeType("events"); setSelectedEventId("all"); }}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${collegeType === "events"
+              ? "bg-uiverse-pink/20 text-uiverse-pink border-2 border-uiverse-pink/50"
+              : "bg-muted text-muted-foreground hover:bg-muted/80 border-2 border-transparent"
+              }`}
+          >
+            <Calendar className="w-5 h-5" />
+            Events Attendance
+          </button>
         </div>
 
         {/* Section Stats */}
@@ -1499,434 +1614,624 @@ const Admin = () => {
         </div>
 
         {/* Search and Event Filter */}
-        <div className="flex flex-wrap gap-4 mb-6">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              placeholder={isDept ? "Search by name, email, phone, or register number..." :
-                collegeType === "inter" ? "Search by email, phone, name, or register number..." : "Search by email, phone, or name..."}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <div className="w-[200px]">
-            <select
-              value={eventFilter}
-              onChange={(e) => setEventFilter(e.target.value)}
-              className="w-full h-10 px-3 rounded-md bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="all">All Events</option>
-              {events.map(event => (
-                <option key={event.id} value={event.id}>{event.title}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Additional Filters */}
-          <div className="flex gap-4">
-            {/* Year Filter */}
-            <select
-              value={yearFilter}
-              onChange={(e) => setYearFilter(e.target.value)}
-              className="h-10 px-3 rounded-md bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="all">All Years</option>
-              <option value="1">1st Year</option>
-              <option value="2">2nd Year</option>
-              <option value="3">3rd Year</option>
-              <option value="4">4th Year</option>
-            </select>
-
-            {/* Department Filter (Only for Intra/Outer) */}
-            {(collegeType === "inter" || collegeType === "outer") && (
+        {collegeType !== "events" && (
+          <div className="flex flex-wrap gap-4 mb-6">
+            <div className="relative flex-1 min-w-[200px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
-                placeholder="Filter Dept..."
-                value={deptFilter}
-                onChange={(e) => setDeptFilter(e.target.value)}
-                className="w-[150px]"
+                placeholder={isDept ? "Search by name, email, phone, or register number..." :
+                  collegeType === "inter" ? "Search by email, phone, name, or register number..." : "Search by email, phone, or name..."}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
               />
-            )}
-
-            {/* Section Filter (Only for Dept) */}
-            {isDept && (
+            </div>
+            <div className="w-[200px]">
               <select
-                value={sectionFilter}
-                onChange={(e) => setSectionFilter(e.target.value)}
+                value={eventFilter}
+                onChange={(e) => setEventFilter(e.target.value)}
+                className="w-full h-10 px-3 rounded-md bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="all">All Events</option>
+                {events.map(event => (
+                  <option key={event.id} value={event.id}>{event.title}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Additional Filters */}
+            <div className="flex gap-4">
+              {/* Year Filter */}
+              <select
+                value={yearFilter}
+                onChange={(e) => setYearFilter(e.target.value)}
                 className="h-10 px-3 rounded-md bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                <option value="all">All Sections</option>
-                <option value="A">Section A</option>
-                <option value="B">Section B</option>
-                <option value="C">Section C</option>
+                <option value="all">All Years</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year</option>
               </select>
-            )}
+
+              {/* Department Filter (Only for Intra/Outer) */}
+              {(collegeType === "inter" || collegeType === "outer") && (
+                <Input
+                  placeholder="Filter Dept..."
+                  value={deptFilter}
+                  onChange={(e) => setDeptFilter(e.target.value)}
+                  className="w-[150px]"
+                />
+              )}
+
+              {/* Section Filter (Only for Dept) */}
+              {isDept && (
+                <select
+                  value={sectionFilter}
+                  onChange={(e) => setSectionFilter(e.target.value)}
+                  className="h-10 px-3 rounded-md bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="all">All Sections</option>
+                  <option value="A">Section A</option>
+                  <option value="B">Section B</option>
+                  <option value="C">Section C</option>
+                </select>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Registrations List */}
-        <div className="glass-card rounded-xl overflow-hidden">
-          {loading ? (
-            <div className="p-8 text-center">
-              <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-            </div>
-          ) : filteredRegistrations.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground">
-              No registrations found
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-muted/30">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Contact</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">
-                      {isDept ? "Register No." : collegeType === "inter" ? "Register No." : "College"}
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">
-                      {isDept ? "Year/Section" : "Year/Dept"}
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Events</th>
-                    {/* Payment screenshots for outer and inter college */}
-                    {(collegeType === "outer" || collegeType === "inter") && (
-                      <th className="px-4 py-3 text-left text-sm font-medium">Screenshot</th>
-                    )}
-                    {!isCoordinator && <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {filteredRegistrations.map((reg) => (
-                    <tr key={reg.id} className="hover:bg-muted/20">
-                      <td className="px-4 py-3">
-                        <p className="font-medium">{reg.name}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <p className="text-sm">{reg.email}</p>
-                        <p className="text-sm text-muted-foreground">{reg.phone}</p>
-                      </td>
-                      <td className="px-4 py-3 text-sm">
-                        {isDept || collegeType === "inter" ? reg.register_number : reg.college_name}
-                      </td>
-                      <td className="px-4 py-3 text-sm">
-                        {isDept ? `Year ${reg.year} - ${reg.section}` : `Year ${reg.year} - ${reg.department}`}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex flex-col gap-1.5 max-w-[250px]">
-                          {reg.selected_events && reg.selected_events.length > 0 ? (
-                            Array.from(new Set(reg.selected_events)).map(eventId => {
-                              const event = events.find(e => e.id === eventId);
-                              return event ? (
-                                <span key={eventId} className="text-xs px-2 py-1 rounded bg-primary/20 text-primary w-fit" title={event.title}>
-                                  {event.title}
-                                </span>
-                              ) : (
-                                <span key={eventId} className="text-xs px-2 py-1 rounded bg-muted text-muted-foreground w-fit">
-                                  {eventId}
-                                </span>
-                              );
-                            })
-                          ) : (
-                            <span className="text-muted-foreground text-xs">None</span>
-                          )}
+        {/* Events Attendance Section */}
+        {collegeType === "events" ? (
+          <div className="space-y-6">
+            {/* Analytics Summary */}
+            <div className="glass-card rounded-xl p-6 border-2 border-uiverse-pink/30">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <Calendar className="w-6 h-6 text-uiverse-pink" />
+                Event Attendance Analytics
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {events.map(event => {
+                  const eventParticipants = [
+                    ...registrations.filter(r => r.entry_confirmed && r.selected_events?.includes(event.id)),
+                    ...interRegistrations.filter(r => r.entry_confirmed && r.selected_events?.includes(event.id)),
+                    ...deptRegistrations.filter(r => r.entry_confirmed && r.selected_events?.includes(event.id))
+                  ];
+                  const attendedCount = (eventAttendance[event.id] || []).length;
+                  const attendanceRate = eventParticipants.length > 0
+                    ? Math.round((attendedCount / eventParticipants.length) * 100)
+                    : 0;
+
+                  return (
+                    <div key={event.id} className="p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                      <p className="text-xs text-gray-400 mb-1 truncate" title={event.title}>{event.title}</p>
+                      <div className="flex items-baseline gap-2">
+                        <p className="text-2xl font-bold text-uiverse-green">{attendedCount}</p>
+                        <p className="text-sm text-gray-400">/ {eventParticipants.length}</p>
+                      </div>
+                      <div className="mt-2 flex items-center gap-2">
+                        <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-uiverse-pink to-uiverse-green transition-all"
+                            style={{ width: `${attendanceRate}%` }}
+                          />
                         </div>
-                      </td>
-                      {/* Show payment screenshot for outer and inter college */}
-                      {(collegeType === "outer" || collegeType === "inter") && (
-                        <td className="px-4 py-3">
-                          {reg.payment_screenshot_url ? (
-                            <button
-                              onClick={() => setSelectedScreenshot(reg.payment_screenshot_url!)}
-                              className="hover:underline flex items-center gap-1 text-primary"
-                            >
-                              <Eye className="w-4 h-4" />
-                              View
-                            </button>
-                          ) : (
-                            <span className="text-muted-foreground text-sm">No screenshot</span>
-                          )}
-                        </td>
-                      )}
-                      {!isCoordinator && (
-                        <td className="px-4 py-3">
-                          <div className="flex gap-2">
-                            {!isEntryAdmin && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => setEditingUser({
-                                  id: reg.id,
-                                  type: collegeType,
-                                  name: reg.name,
-                                  events: [...new Set(reg.selected_events || [])]
-                                })}
-                                className="text-blue-400 border-blue-400/20 hover:bg-blue-400/10"
-                                title="Edit Events"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                            )}
+                        <p className="text-xs font-medium text-uiverse-pink">{attendanceRate}%</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
 
-                            {/* Dept: Only entry confirmation (no payment verification) */}
-                            {isDept ? (
-                              !reg.entry_confirmed ? (
-                                <>
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleConfirmEntry(reg.id, true, collegeType)}
-                                    className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
-                                  >
-                                    <Check className="w-4 h-4 mr-1" />
-                                    Entry
-                                  </Button>
-                                  {!isEntryAdmin && (
-                                    <Button
-                                      size="sm"
-                                      variant="destructive"
-                                      onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                  )}
-                                </>
-                              ) : (
-                                <>
-                                  <span className="text-green-400 flex items-center gap-1">
-                                    <Check className="w-4 h-4" />
-                                    Entered
+            {/* Event Selector & Search */}
+            <div className="glass-card rounded-xl p-6">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-400 mb-2">Select Event</h3>
+                  <select
+                    value={selectedEventId}
+                    onChange={(e) => { setSelectedEventId(e.target.value); setEventSearchQuery(""); }}
+                    className="w-full h-12 px-4 rounded-lg bg-black/50 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-uiverse-pink"
+                  >
+                    <option value="all">All Events</option>
+                    {events.map(event => (
+                      <option key={event.id} value={event.id}>{event.title}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-400 mb-2">Search Participants</h3>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      placeholder="Search by name, email, phone..."
+                      value={eventSearchQuery}
+                      onChange={(e) => setEventSearchQuery(e.target.value)}
+                      className="pl-10 h-12 bg-black/50 border-white/20 text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Events List */}
+            {(selectedEventId === "all" ? events : events.filter(e => e.id === selectedEventId)).map(event => {
+              // Get all users who have entry_confirmed=true AND selected this event
+              let eventParticipants = [
+                ...registrations.filter(r => r.entry_confirmed && r.selected_events?.includes(event.id)),
+                ...interRegistrations.filter(r => r.entry_confirmed && r.selected_events?.includes(event.id)),
+                ...deptRegistrations.filter(r => r.entry_confirmed && r.selected_events?.includes(event.id))
+              ];
+
+              // Apply search filter
+              if (eventSearchQuery.trim()) {
+                const query = eventSearchQuery.toLowerCase();
+                eventParticipants = eventParticipants.filter(p =>
+                  p.name.toLowerCase().includes(query) ||
+                  p.email.toLowerCase().includes(query) ||
+                  p.phone.includes(query) ||
+                  (p.department && p.department.toLowerCase().includes(query))
+                );
+              }
+              const attendedCount = (eventAttendance[event.id] || []).length;
+
+              return (
+                <div key={event.id} className="glass-card rounded-xl overflow-hidden border-2 border-uiverse-pink/30">
+                  {/* Event Header */}
+                  <div className="bg-gradient-to-r from-uiverse-pink/20 to-uiverse-purple/20 p-6 border-b border-white/10">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-2xl font-bold text-white mb-2">{event.title}</h3>
+                        <p className="text-gray-300 text-sm">{event.category === "technical" ? "Technical Event" : "Non-Technical Event"}</p>
+                        <p className="text-gray-400 text-sm mt-1">
+                          <span className="font-medium">Time:</span> {event.time} | <span className="font-medium">Venue:</span> {event.venue}
+                        </p>
+                      </div>
+                      <div className="text-right space-y-2">
+                        <div>
+                          <p className="text-4xl font-bold text-uiverse-pink">{eventParticipants.length}</p>
+                          <p className="text-sm text-gray-400">Registered & Entered</p>
+                        </div>
+                        <div className="pt-2 border-t border-white/10">
+                          <p className="text-2xl font-bold text-uiverse-green">{attendedCount}</p>
+                          <p className="text-xs text-gray-400">Attended Event</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Participants Table */}
+                  {eventParticipants.length === 0 ? (
+                    <div className="p-8 text-center text-gray-400">
+                      {eventSearchQuery.trim()
+                        ? `No participants found matching "${eventSearchQuery}"`
+                        : "No participants have entered for this event yet"
+                      }
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-white/5">
+                          <tr>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Name</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Email</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Phone</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Year</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Department</th>
+                            <th className="px-6 py-4 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Event Entry</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {eventParticipants.map((participant, idx) => {
+                            const participantType = registrations.includes(participant) ? "Outer" :
+                              interRegistrations.includes(participant) ? "Intra" : "Dept";
+                            const hasAttended = (eventAttendance[event.id] || []).includes(participant.id);
+                            return (
+                              <tr key={participant.id} className="hover:bg-white/5 transition-colors">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{idx + 1}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{participant.name}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.email}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.phone}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${participantType === "Outer" ? "bg-uiverse-green/20 text-uiverse-green" :
+                                    participantType === "Intra" ? "bg-uiverse-purple/20 text-uiverse-purple" :
+                                      "bg-uiverse-sky/20 text-uiverse-sky"
+                                    }`}>
+                                    {participantType}
                                   </span>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => handleConfirmEntry(reg.id, false, collegeType)}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.year}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{participant.department || "N/A"}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-center">
+                                  <button
+                                    onClick={() => toggleEventAttendance(event.id, participant.id)}
+                                    className={`px-4 py-2 rounded-lg font-medium transition-all ${hasAttended
+                                      ? "bg-uiverse-pink text-white hover:bg-uiverse-pink/80"
+                                      : "bg-white/10 text-gray-400 hover:bg-white/20"
+                                      }`}
                                   >
-                                    <X className="w-4 h-4" />
-                                  </Button>
-                                  {!isEntryAdmin && (
-                                    <Button
-                                      size="sm"
-                                      variant="destructive"
-                                      onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                  )}
-                                </>
-                              )
+                                    {hasAttended ? "✓ Attended" : "Mark Entry"}
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          /* Registrations List */
+          <div className="glass-card rounded-xl overflow-hidden">
+            {loading ? (
+              <div className="p-8 text-center">
+                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+              </div>
+            ) : filteredRegistrations.length === 0 ? (
+              <div className="p-8 text-center text-muted-foreground">
+                No registrations found
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/30">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-medium">Name</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium">Contact</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium">
+                        {isDept ? "Register No." : collegeType === "inter" ? "Register No." : "College"}
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium">
+                        {isDept ? "Year/Section" : "Year/Dept"}
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium">Events</th>
+                      {/* Payment screenshots for outer and inter college */}
+                      {(collegeType === "outer" || collegeType === "inter") && (
+                        <th className="px-4 py-3 text-left text-sm font-medium">Screenshot</th>
+                      )}
+                      {!isCoordinator && <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {filteredRegistrations.map((reg) => (
+                      <tr key={reg.id} className="hover:bg-muted/20">
+                        <td className="px-4 py-3">
+                          <p className="font-medium">{reg.name}</p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <p className="text-sm">{reg.email}</p>
+                          <p className="text-sm text-muted-foreground">{reg.phone}</p>
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          {isDept || collegeType === "inter" ? reg.register_number : reg.college_name}
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          {isDept ? `Year ${reg.year} - ${reg.section}` : `Year ${reg.year} - ${reg.department}`}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col gap-1.5 max-w-[250px]">
+                            {reg.selected_events && reg.selected_events.length > 0 ? (
+                              Array.from(new Set(reg.selected_events)).map(eventId => {
+                                const event = events.find(e => e.id === eventId);
+                                return event ? (
+                                  <span key={eventId} className="text-xs px-2 py-1 rounded bg-primary/20 text-primary w-fit" title={event.title}>
+                                    {event.title}
+                                  </span>
+                                ) : (
+                                  <span key={eventId} className="text-xs px-2 py-1 rounded bg-muted text-muted-foreground w-fit">
+                                    {eventId}
+                                  </span>
+                                );
+                              })
                             ) : (
-                              // Outer: Payment verification + entry confirmation
-                              !reg.payment_verified ? (
-                                <>
-                                  {!isEntryAdmin && (
-                                    <Button
-                                      size="sm"
-                                      onClick={() => handleVerifyPayment(reg.id, true, collegeType)}
-                                      className="bg-green-600 hover:bg-green-700"
-                                    >
-                                      <Check className="w-4 h-4 mr-1" />
-                                      Verify
-                                    </Button>
-                                  )}
-                                  {!isEntryAdmin && (
-                                    <Button
-                                      size="sm"
-                                      variant="destructive"
-                                      onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                  )}
-                                </>
-                              ) : !reg.entry_confirmed ? (
-                                <>
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleConfirmEntry(reg.id, true, collegeType)}
-                                    className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
-                                  >
-                                    <Check className="w-4 h-4 mr-1" />
-                                    Entry
-                                  </Button>
-                                  {!isEntryAdmin && (
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() => handleVerifyPayment(reg.id, false, collegeType)}
-                                    >
-                                      <X className="w-4 h-4" />
-                                    </Button>
-                                  )}
-                                  {!isEntryAdmin && (
-                                    <Button
-                                      size="sm"
-                                      variant="destructive"
-                                      onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                  )}
-                                </>
-                              ) : (
-                                <>
-                                  <span className="text-green-400 flex items-center gap-1">
-                                    <Check className="w-4 h-4" />
-                                    Completed
-                                  </span>
-                                  {/* Allow cancel entry for Outer College too */}
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => handleConfirmEntry(reg.id, false, collegeType)}
-                                  >
-                                    <X className="w-4 h-4" />
-                                  </Button>
-                                  {!isEntryAdmin && (
-                                    <Button
-                                      size="sm"
-                                      variant="destructive"
-                                      onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                  )}
-                                </>
-                              )
+                              <span className="text-muted-foreground text-xs">None</span>
                             )}
                           </div>
                         </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
+                        {/* Show payment screenshot for outer and inter college */}
+                        {(collegeType === "outer" || collegeType === "inter") && (
+                          <td className="px-4 py-3">
+                            {reg.payment_screenshot_url ? (
+                              <button
+                                onClick={() => setSelectedScreenshot(reg.payment_screenshot_url!)}
+                                className="hover:underline flex items-center gap-1 text-primary"
+                              >
+                                <Eye className="w-4 h-4" />
+                                View
+                              </button>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">No screenshot</span>
+                            )}
+                          </td>
+                        )}
+                        {!isCoordinator && (
+                          <td className="px-4 py-3">
+                            <div className="flex gap-2">
+                              {!isEntryAdmin && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => setEditingUser({
+                                    id: reg.id,
+                                    type: collegeType,
+                                    name: reg.name,
+                                    events: [...new Set(reg.selected_events || [])]
+                                  })}
+                                  className="text-blue-400 border-blue-400/20 hover:bg-blue-400/10"
+                                  title="Edit Events"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                              )}
+
+                              {/* Dept: Only entry confirmation (no payment verification) */}
+                              {isDept ? (
+                                !reg.entry_confirmed ? (
+                                  <>
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleConfirmEntry(reg.id, true, collegeType)}
+                                      className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
+                                    >
+                                      <Check className="w-4 h-4 mr-1" />
+                                      Entry
+                                    </Button>
+                                    {!isEntryAdmin && (
+                                      <Button
+                                        size="sm"
+                                        variant="destructive"
+                                        onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </Button>
+                                    )}
+                                  </>
+                                ) : (
+                                  <>
+                                    <span className="text-green-400 flex items-center gap-1">
+                                      <Check className="w-4 h-4" />
+                                      Entered
+                                    </span>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => handleConfirmEntry(reg.id, false, collegeType)}
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </Button>
+                                    {!isEntryAdmin && (
+                                      <Button
+                                        size="sm"
+                                        variant="destructive"
+                                        onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </Button>
+                                    )}
+                                  </>
+                                )
+                              ) : (
+                                // Outer: Payment verification + entry confirmation
+                                !reg.payment_verified ? (
+                                  <>
+                                    {!isEntryAdmin && (
+                                      <Button
+                                        size="sm"
+                                        onClick={() => handleVerifyPayment(reg.id, true, collegeType)}
+                                        className="bg-green-600 hover:bg-green-700"
+                                      >
+                                        <Check className="w-4 h-4 mr-1" />
+                                        Verify
+                                      </Button>
+                                    )}
+                                    {!isEntryAdmin && (
+                                      <Button
+                                        size="sm"
+                                        variant="destructive"
+                                        onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </Button>
+                                    )}
+                                  </>
+                                ) : !reg.entry_confirmed ? (
+                                  <>
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleConfirmEntry(reg.id, true, collegeType)}
+                                      className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
+                                    >
+                                      <Check className="w-4 h-4 mr-1" />
+                                      Entry
+                                    </Button>
+                                    {!isEntryAdmin && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handleVerifyPayment(reg.id, false, collegeType)}
+                                      >
+                                        <X className="w-4 h-4" />
+                                      </Button>
+                                    )}
+                                    {!isEntryAdmin && (
+                                      <Button
+                                        size="sm"
+                                        variant="destructive"
+                                        onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </Button>
+                                    )}
+                                  </>
+                                ) : (
+                                  <>
+                                    <span className="text-green-400 flex items-center gap-1">
+                                      <Check className="w-4 h-4" />
+                                      Completed
+                                    </span>
+                                    {/* Allow cancel entry for Outer College too */}
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => handleConfirmEntry(reg.id, false, collegeType)}
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </Button>
+                                    {!isEntryAdmin && (
+                                      <Button
+                                        size="sm"
+                                        variant="destructive"
+                                        onClick={() => setDeleteConfirm({ id: reg.id, type: collegeType })}
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </Button>
+                                    )}
+                                  </>
+                                )
+                              )}
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
 
 
-      {/* Edit Events Modal */}
-      {
-        editingUser && (
-          <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
-            <DialogContent className="max-w-4xl bg-black/95 border border-white/10 backdrop-blur-xl text-white shadow-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-uiverse-sky">
-                  Edit Events for {editingUser.name}
-                </DialogTitle>
-                <DialogDescription className="text-gray-400">
-                  Select or deselect events. Admin override allows selecting unlimited events.
-                </DialogDescription>
-              </DialogHeader>
+        {/* Edit Events Modal */}
+        {
+          editingUser && (
+            <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
+              <DialogContent className="max-w-4xl bg-black/95 border border-white/10 backdrop-blur-xl text-white shadow-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-uiverse-sky">
+                    Edit Events for {editingUser.name}
+                  </DialogTitle>
+                  <DialogDescription className="text-gray-400">
+                    Select or deselect events. Admin override allows selecting unlimited events.
+                  </DialogDescription>
+                </DialogHeader>
 
-              <div className="py-4">
-                <EventSelector
-                  selectedEvents={editingUser.events}
-                  onChange={(newEvents) => setEditingUser(prev => prev ? { ...prev, events: newEvents } : null)}
-                  maxEvents={20} // Admin override limit
-                  ignoreClosed={true}
-                />
-                <div className="mt-4">
-                  <label className="text-sm text-gray-400 mb-1 block">Update Password</label>
-                  <Input
-                    type="password"
-                    placeholder="Enter password to update"
-                    value={updatePassword}
-                    onChange={(e) => setUpdatePassword(e.target.value)}
+                <div className="py-4">
+                  <EventSelector
+                    selectedEvents={editingUser.events}
+                    onChange={(newEvents) => setEditingUser(prev => prev ? { ...prev, events: newEvents } : null)}
+                    maxEvents={20} // Admin override limit
+                    ignoreClosed={true}
                   />
+                  <div className="mt-4">
+                    <label className="text-sm text-gray-400 mb-1 block">Update Password</label>
+                    <Input
+                      type="password"
+                      placeholder="Enter password to update"
+                      value={updatePassword}
+                      onChange={(e) => setUpdatePassword(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <DialogFooter className="gap-2">
+                  <Button variant="outline" onClick={() => setEditingUser(null)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleUpdateUserEvents} disabled={loading} className="bg-blue-600 hover:bg-blue-700">
+                    {loading ? "Saving..." : "Save Changes"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )
+        }
+
+        {/* Screenshot Modal */}
+        {
+          selectedScreenshot && (
+            <div
+              className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+              onClick={() => setSelectedScreenshot(null)}
+            >
+              <div className="relative max-w-2xl max-h-[80vh]">
+                <button
+                  onClick={() => setSelectedScreenshot(null)}
+                  className="absolute -top-10 right-0 text-white hover:text-red-400"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+                <img
+                  src={selectedScreenshot}
+                  alt="Payment Screenshot"
+                  className="max-w-full max-h-[80vh] rounded-lg"
+                />
+              </div>
+            </div>
+          )
+        }
+
+        {/* Delete Confirmation Modal */}
+        {
+          deleteConfirm && (
+            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+              <div className="glass-card rounded-2xl p-6 max-w-md w-full">
+                <h3 className="font-display text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                  <Trash2 className="w-5 h-5 text-red-500" />
+                  Confirm Delete
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Enter the delete password to remove this registration permanently.
+                </p>
+                <Input
+                  type="password"
+                  placeholder="Enter delete password"
+                  value={deletePassword}
+                  onChange={(e) => setDeletePassword(e.target.value)}
+                  className="mb-4"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeleteRegistration}
+                    className="flex-1"
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setDeleteConfirm(null);
+                      setDeletePassword("");
+                    }}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
                 </div>
               </div>
-
-              <DialogFooter className="gap-2">
-                <Button variant="outline" onClick={() => setEditingUser(null)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleUpdateUserEvents} disabled={loading} className="bg-blue-600 hover:bg-blue-700">
-                  {loading ? "Saving..." : "Save Changes"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )
-      }
-
-      {/* Screenshot Modal */}
-      {
-        selectedScreenshot && (
-          <div
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-            onClick={() => setSelectedScreenshot(null)}
-          >
-            <div className="relative max-w-2xl max-h-[80vh]">
-              <button
-                onClick={() => setSelectedScreenshot(null)}
-                className="absolute -top-10 right-0 text-white hover:text-red-400"
-              >
-                <X className="w-6 h-6" />
-              </button>
-              <img
-                src={selectedScreenshot}
-                alt="Payment Screenshot"
-                className="max-w-full max-h-[80vh] rounded-lg"
-              />
             </div>
-          </div>
-        )
-      }
+          )
+        }
 
-      {/* Delete Confirmation Modal */}
-      {
-        deleteConfirm && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-            <div className="glass-card rounded-2xl p-6 max-w-md w-full">
-              <h3 className="font-display text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-                <Trash2 className="w-5 h-5 text-red-500" />
-                Confirm Delete
-              </h3>
-              <p className="text-muted-foreground mb-4">
-                Enter the delete password to remove this registration permanently.
-              </p>
-              <Input
-                type="password"
-                placeholder="Enter delete password"
-                value={deletePassword}
-                onChange={(e) => setDeletePassword(e.target.value)}
-                className="mb-4"
-              />
-              <div className="flex gap-2">
-                <Button
-                  variant="destructive"
-                  onClick={handleDeleteRegistration}
-                  className="flex-1"
-                >
-                  Delete
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setDeleteConfirm(null);
-                    setDeletePassword("");
-                  }}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </div>
-        )
-      }
-
-      {/* Click outside to close export dropdown */}
-      {
-        showExportOptions && (
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setShowExportOptions(false)}
-          />
-        )
-      }
-    </div >
+        {/* Click outside to close export dropdown */}
+        {
+          showExportOptions && (
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setShowExportOptions(false)}
+            />
+          )
+        }
+      </div>
+    </div>
   );
 };
 
