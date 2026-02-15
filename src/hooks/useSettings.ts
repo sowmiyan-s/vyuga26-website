@@ -5,6 +5,9 @@ import { toast } from "sonner";
 export interface SystemSettings {
     maintenance_mode: boolean;
     registration_open: boolean;
+    outer_registration_open: boolean;
+    intra_registration_open: boolean;
+    dept_registration_open: boolean;
     outer_college_limit: number;
     inter_college_limit: number;
     department_limit: number;
@@ -19,6 +22,9 @@ export const useSettings = () => {
     const [settings, setSettings] = useState<SystemSettings>({
         maintenance_mode: false,
         registration_open: true,
+        outer_registration_open: true,
+        intra_registration_open: true,
+        dept_registration_open: true,
         outer_college_limit: DEFAULT_OUTER_LIMIT,
         inter_college_limit: DEFAULT_INTER_LIMIT,
         department_limit: DEFAULT_DEPT_LIMIT,
@@ -41,6 +47,9 @@ export const useSettings = () => {
                 const newSettings: SystemSettings = {
                     maintenance_mode: false,
                     registration_open: true,
+                    outer_registration_open: true,
+                    intra_registration_open: true,
+                    dept_registration_open: true,
                     outer_college_limit: DEFAULT_OUTER_LIMIT,
                     inter_college_limit: DEFAULT_INTER_LIMIT,
                     department_limit: DEFAULT_DEPT_LIMIT,
@@ -53,6 +62,15 @@ export const useSettings = () => {
                     }
                     if (item.key === "registration_open") {
                         newSettings.registration_open = item.value === true || item.value === "true";
+                    }
+                    if (item.key === "outer_registration_open") {
+                        newSettings.outer_registration_open = item.value === true || item.value === "true";
+                    }
+                    if (item.key === "intra_registration_open") {
+                        newSettings.intra_registration_open = item.value === true || item.value === "true";
+                    }
+                    if (item.key === "dept_registration_open") {
+                        newSettings.dept_registration_open = item.value === true || item.value === "true";
                     }
                     if (item.key === "outer_college_limit") {
                         newSettings.outer_college_limit = typeof item.value === "number" ? item.value : parseInt(String(item.value)) || DEFAULT_OUTER_LIMIT;
@@ -119,6 +137,9 @@ export const useSettings = () => {
             const labels: Record<string, string> = {
                 maintenance_mode: "Maintenance mode",
                 registration_open: "Registration status",
+                outer_registration_open: "Outer college registration",
+                intra_registration_open: "Intra college registration",
+                dept_registration_open: "Department registration",
                 outer_college_limit: "Outer college limit",
                 inter_college_limit: "Inter college limit",
                 department_limit: "Department limit",

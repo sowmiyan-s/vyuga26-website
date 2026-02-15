@@ -936,7 +936,7 @@ const Admin = () => {
               </div>
               <div className="flex items-center justify-between p-4 bg-muted/30 rounded-xl">
                 <div>
-                  <p className="font-medium text-foreground">Registration Status</p>
+                  <p className="font-medium text-foreground">Global Registration Status</p>
                   <p className="text-sm text-muted-foreground">
                     {settings.registration_open ? "Open for registration" : "Registration closed"}
                   </p>
@@ -945,6 +945,55 @@ const Admin = () => {
                   checked={settings.registration_open}
                   onCheckedChange={(checked) => updateSetting("registration_open", checked)}
                 />
+              </div>
+            </div>
+
+            {/* Individual Registration Type Controls */}
+            <div className="mb-6">
+              <h3 className="font-bold text-lg mb-4 text-white flex items-center gap-2">
+                <Settings className="w-5 h-5 text-uiverse-purple" />
+                Registration Type Controls
+              </h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="flex items-center justify-between p-4 bg-uiverse-green/10 border border-uiverse-green/30 rounded-xl">
+                  <div>
+                    <p className="font-medium text-white">Outer College</p>
+                    <p className="text-sm text-gray-400">
+                      {settings.outer_registration_open ? "Open" : "Closed"}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={settings.outer_registration_open}
+                    onCheckedChange={(checked) => updateSetting("outer_registration_open", checked)}
+                    className="data-[state=checked]:bg-uiverse-green"
+                  />
+                </div>
+                <div className="flex items-center justify-between p-4 bg-uiverse-purple/10 border border-uiverse-purple/30 rounded-xl">
+                  <div>
+                    <p className="font-medium text-white">Intra College</p>
+                    <p className="text-sm text-gray-400">
+                      {settings.intra_registration_open ? "Open" : "Closed"}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={settings.intra_registration_open}
+                    onCheckedChange={(checked) => updateSetting("intra_registration_open", checked)}
+                    className="data-[state=checked]:bg-uiverse-purple"
+                  />
+                </div>
+                <div className="flex items-center justify-between p-4 bg-uiverse-sky/10 border border-uiverse-sky/30 rounded-xl">
+                  <div>
+                    <p className="font-medium text-white">AI&DS Department</p>
+                    <p className="text-sm text-gray-400">
+                      {settings.dept_registration_open ? "Open" : "Closed"}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={settings.dept_registration_open}
+                    onCheckedChange={(checked) => updateSetting("dept_registration_open", checked)}
+                    className="data-[state=checked]:bg-uiverse-sky"
+                  />
+                </div>
               </div>
             </div>
 
@@ -1582,7 +1631,7 @@ const Admin = () => {
                           )}
                         </div>
                       </td>
-                    {/* Show payment screenshot for outer and inter college */}
+                      {/* Show payment screenshot for outer and inter college */}
                       {(collegeType === "outer" || collegeType === "inter") && (
                         <td className="px-4 py-3">
                           {reg.payment_screenshot_url ? (

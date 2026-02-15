@@ -72,6 +72,7 @@ const RegisterInterCollege = () => {
   }, []);
 
   const isInterFull = interCount >= settings.inter_college_limit;
+  const isIntraClosed = !settings.intra_registration_open;
   const isRegistrationClosed = !settings.registration_open || new Date() > siteConfig.registrationCloseDateFull;
   const [countdown, setCountdown] = useState(3);
 
@@ -186,7 +187,7 @@ const RegisterInterCollege = () => {
       toast.error("Intra college registration is full!");
       return;
     }
-    if (isRegistrationClosed) {
+    if (isRegistrationClosed || isIntraClosed) {
       toast.error("Registration is closed!");
       return;
     }
@@ -222,7 +223,7 @@ const RegisterInterCollege = () => {
   // Determine why registration is closed
   const getClosedReason = (): "closed" | "full" | "deadline" => {
     if (isInterFull) return "full";
-    if (!settings.registration_open) return "closed";
+    if (!settings.registration_open || isIntraClosed) return "closed";
     if (new Date() > siteConfig.registrationCloseDateFull) return "deadline";
     return "closed";
   };
@@ -237,7 +238,7 @@ const RegisterInterCollege = () => {
   }
 
   // Show closed screen if registration is closed
-  if (isRegistrationClosed || isInterFull) {
+  if (isRegistrationClosed || isInterFull || isIntraClosed) {
     return (
       <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">

@@ -69,6 +69,7 @@ const RegisterDepartment = () => {
   }, []);
 
   const isDeptFull = deptCount >= settings.department_limit;
+  const isDeptClosed = !settings.dept_registration_open;
   const isRegistrationClosed = !settings.registration_open || new Date() > siteConfig.registrationCloseDateFull;
 
   useEffect(() => {
@@ -137,6 +138,11 @@ const RegisterDepartment = () => {
       return;
     }
 
+    if (isRegistrationClosed || isDeptClosed) {
+      toast.error("Registration is closed!");
+      return;
+    }
+
     if (selectedEvents.length === 0) {
       setEventError("Please select at least 1 event");
       toast.error("Please select at least 1 event");
@@ -175,7 +181,7 @@ const RegisterDepartment = () => {
   }
 
   // Show closed screen
-  if (isRegistrationClosed || isDeptFull) {
+  if (isRegistrationClosed || isDeptFull || isDeptClosed) {
     return (
       <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
