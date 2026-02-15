@@ -31,8 +31,19 @@ const UpdateEvents = () => {
     const [registrationData, setRegistrationData] = useState<any>(null);
     const [registrationType, setRegistrationType] = useState<"department" | "intercollege" | "outer" | null>(null);
 
+    // Update deadline: February 15, 2026 at 11:59 PM
+    const UPDATE_DEADLINE = new Date('2026-02-15T23:59:59');
+    const isUpdateAllowed = new Date() <= UPDATE_DEADLINE;
+
     const handleEmailSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Check if updates are still allowed
+        if (!isUpdateAllowed) {
+            toast.error("Event update deadline has passed. Updates are no longer allowed.");
+            return;
+        }
+
         setIsLoading(true);
 
         try {
@@ -119,6 +130,13 @@ const UpdateEvents = () => {
         if (!registrationData || !registrationType) {
             console.error('Missing registration data or type:', { registrationData, registrationType });
             toast.error('Missing registration information');
+            return;
+        }
+
+        // Check if updates are still allowed
+        if (!isUpdateAllowed) {
+            toast.error("Event update deadline has passed. Updates are no longer allowed.");
+            setShowConfirmDialog(false);
             return;
         }
 
@@ -243,6 +261,17 @@ const UpdateEvents = () => {
                             <p className="text-gray-400">
                                 Enter your registered email to update your event selections
                             </p>
+
+                            {/* Deadline Notice */}
+                            {isUpdateAllowed ? (
+                                <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs">
+                                    ⏰ Updates allowed until February 15, 2026 at 11:59 PM
+                                </div>
+                            ) : (
+                                <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm max-w-md mx-auto">
+                                    ❌ Update deadline has passed. Event updates are no longer allowed.
+                                </div>
+                            )}
                         </motion.div>
 
                         <motion.div
@@ -264,17 +293,18 @@ const UpdateEvents = () => {
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="Enter your registered email"
                                             required
-                                            className="w-full pl-12 pr-4 py-3 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-uiverse-purple/50 focus:ring-2 focus:ring-uiverse-purple/20 transition-all"
+                                            disabled={!isUpdateAllowed}
+                                            className="w-full pl-12 pr-4 py-3 bg-black/30 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-uiverse-purple/50 focus:ring-2 focus:ring-uiverse-purple/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                         />
                                     </div>
                                 </div>
 
                                 <button
                                     type="submit"
-                                    disabled={isLoading}
+                                    disabled={isLoading || !isUpdateAllowed}
                                     className="w-full py-3 bg-gradient-to-r from-uiverse-purple to-uiverse-sky text-white font-bold rounded-xl shadow-lg shadow-uiverse-purple/20 hover:shadow-uiverse-purple/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {isLoading ? "Searching..." : "Find My Registration"}
+                                    {isLoading ? "Searching..." : !isUpdateAllowed ? "Updates Closed" : "Find My Registration"}
                                 </button>
                             </form>
                         </motion.div>
