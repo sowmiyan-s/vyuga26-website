@@ -1,73 +1,126 @@
-# Welcome to your Lovable project
+# Vyuga'26 - Symposium Management System 🚀
 
-## Project info
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![React](https://img.shields.io/badge/React-18.x-61DAFB?logo=react)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?logo=vite)](https://vitejs.dev/)
+[![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase)](https://supabase.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+A comprehensive, production-ready management system for technical symposiums. Built with **React**, **TypeScript**, and **Supabase**, this platform handles everything from registrations to real-time attendance tracking and advanced data reporting.
 
-## How can I edit this code?
+## ✨ Key Features
 
-There are several ways of editing your application.
+### 📅 Event Management
+- **Intra/Inter-College Registration**: Separate workflows for different participant types.
+- **Departmental Logic**: Custom rules for department-specific registrations.
+- **Real-time Statistics**: Live dashboard showing registration counts and payment verifications.
 
-**Use Lovable**
+### 📊 Admin Dashboard
+- **Advanced Filtering**: Filter participants by Year (1st-4th), Department, and Section.
+- **Excel Export**: Generate detailed reports with customizable filters for easy data handling.
+- **Attendance Tracking**: Real-time entry confirmation and event-specific attendance monitoring.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### 🎨 Premium UI/UX
+- **Modern Design**: Built with Lucide icons and Shadcn UI components.
+- **Responsive Layout**: Works seamlessly across mobile, tablet, and desktop.
+- **Dynamic Themes**: Professional gradients and glass-morphism effects.
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 🛠️ Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Frontend**: [React 18](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/), [Shadcn UI](https://ui.shadcn.com/)
+- **Backend/Database**: [Supabase](https://supabase.com/) (PostgreSQL + Auth)
+- **State Management**: [TanStack Query (React Query)](https://tanstack.com/query/latest)
+- **Forms**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🚀 Getting Started
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Prerequisites
+- Node.js (v18.0.0 or higher)
+- npm or yarn
+- A Supabase account
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Installation
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/vyuga26-symposium.git
+   cd vyuga26-symposium
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**
+   - Copy `.env.example` to `.env`
+   - Fill in your Supabase credentials:
+   ```bash
+   cp .env.example .env
+   ```
+   - Open `.env` and replace values:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+4. **Database Setup**
+   - Import the `supabase_schema.sql` file into your Supabase SQL Editor to set up the required tables and functions.
+
+5. **Start Development Server**
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 📁 Project Structure
+
+```text
+src/
+├── components/     # Reusable UI components
+├── hooks/          # Custom React hooks
+├── lib/            # Utility functions and Supabase client
+├── pages/          # Main application pages (Admin, Register, etc.)
+├── types/          # TypeScript definitions
+└── utils/          # Helper functions logic
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🤝 Contributing
 
-**Use GitHub Codespaces**
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 🛡️ Safety & Security
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Environment Variables**: Never commit your `.env` file to version control. It is already included in `.gitignore`.
+- **Supabase Policies**: Ensure you have Row Level Security (RLS) enabled on your Supabase tables.
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## 📄 License
 
-## Can I connect a custom domain to my Lovable project?
+Distributed under the MIT License. See `LICENSE` for more information.
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 📞 Support
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+For any inquiries or support, please open an issue or contact the project maintainer.
+
+Made with ❤️ for the Developer Community.
