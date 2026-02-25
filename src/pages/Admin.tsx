@@ -10,6 +10,7 @@ import {
   AlertTriangle, FileDown, GraduationCap, TrendingUp, Calendar,
   PieChart, ChevronDown, Edit
 } from "lucide-react";
+import ManualEntryDialog from "@/components/ManualEntryDialog";
 import { Switch } from "@/components/ui/switch";
 import { siteConfig } from "@/config/config";
 import { events } from "@/config/events";
@@ -1068,6 +1069,9 @@ const Admin = () => {
                 </DialogContent>
               </Dialog>
             </div>
+            {!isCoordinator && !isEntryAdmin && (
+              <ManualEntryDialog onSuccess={fetchRegistrations} />
+            )}
             {!isCoordinator && !isEntryAdmin && (
               <Button variant="outline" onClick={() => setShowSettings(!showSettings)}>
                 <Settings className="w-4 h-4 mr-2" />
