@@ -77,11 +77,11 @@ Configure these variables to customize your instance:
 | :--- | :--- | :--- |
 | `VITE_SUPABASE_URL` | Your Supabase Project URL | - |
 | `VITE_SUPABASE_ANON_KEY` | Your Supabase Anon/Publishable Key | - |
-| `VITE_ADMIN_PASSWORD` | Main Admin password | `vyuga@26` |
-| `VITE_COORD_PASSWORD` | Coordinator entry password | `coord@26` |
-| `VITE_ENTRY_PASSWORD` | Entry Admin password | `entry@26` |
-| `VITE_DELETE_PASSWORD` | Password required to delete data | `del@it` |
-| `VITE_UPDATE_PASSWORD` | Password required to update events | `ud@me` |
+| `VITE_ADMIN_PASSWORD` | Main Admin password | `Your Password` |
+| `VITE_COORD_PASSWORD` | Coordinator entry password | `Your Password` |
+| `VITE_ENTRY_PASSWORD` | Entry Admin password | `Your Password` |
+| `VITE_DELETE_PASSWORD` | Password required to delete data | `Your Password` |
+| `VITE_UPDATE_PASSWORD` | Password required to update events | `Your Password` |
 
 4. **Database Setup**
    - Import the `supabase_schema.sql` file into your Supabase SQL Editor.
