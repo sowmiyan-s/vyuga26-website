@@ -19,8 +19,11 @@ export const siteConfig = {
   registrationOpen: true,
 
   // Admin Credentials
-  adminPassword: "vyuga@26",
-  deletePassword: "del@it",
+  adminPassword: import.meta.env.VITE_ADMIN_PASSWORD || "vyuga@26",
+  deletePassword: import.meta.env.VITE_DELETE_PASSWORD || "del@it",
+  coordPassword: import.meta.env.VITE_COORD_PASSWORD || "coord@26",
+  entryPassword: import.meta.env.VITE_ENTRY_PASSWORD || "entry@26",
+  updatePassword: import.meta.env.VITE_UPDATE_PASSWORD || "ud@me",
 
   // Prize Pool
   prizePool: 100000, // in INR

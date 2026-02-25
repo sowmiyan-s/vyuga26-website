@@ -1,5 +1,7 @@
 # Vyuga'26 - Symposium Management System 🚀
 
+![Vyuga 26 Preview](./public/preview.png)
+
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![React](https://img.shields.io/badge/React-18.x-61DAFB?logo=react)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?logo=vite)](https://vitejs.dev/)
@@ -8,22 +10,24 @@
 
 A comprehensive, production-ready management system for technical symposiums. Built with **React**, **TypeScript**, and **Supabase**, this platform handles everything from registrations to real-time attendance tracking and advanced data reporting.
 
+---
+
 ## ✨ Key Features
 
 ### 📅 Event Management
-- **Intra/Inter-College Registration**: Separate workflows for different participant types.
-- **Departmental Logic**: Custom rules for department-specific registrations.
-- **Real-time Statistics**: Live dashboard showing registration counts and payment verifications.
+- **Intra/Inter-College Registration**: Separate workflows for different participant types (Outer College, Intra College, and Department).
+- **Rule Enforcement**: Implementation of "1 Technical + 1 Non-Technical" event selection rules.
+- **Real-time Statistics**: Live dashboard showing registration counts, verified payments, and entry confirmations.
 
 ### 📊 Admin Dashboard
 - **Advanced Filtering**: Filter participants by Year (1st-4th), Department, and Section.
-- **Excel Export**: Generate detailed reports with customizable filters for easy data handling.
-- **Attendance Tracking**: Real-time entry confirmation and event-specific attendance monitoring.
+- **Excel Export**: Generate detailed reports with customizable filters (by event, status, or date) for easy data handling.
+- **Attendance Tracking**: Real-time entry confirmation and event-specific attendance monitoring using QR or manual search.
 
-### 🎨 Premium UI/UX
-- **Modern Design**: Built with Lucide icons and Shadcn UI components.
-- **Responsive Layout**: Works seamlessly across mobile, tablet, and desktop.
-- **Dynamic Themes**: Professional gradients and glass-morphism effects.
+### 🛡️ Security & Customization
+- **Environment Driven**: All sensitive credentials (Supabase, Admin passwords) are managed via `.env`.
+- **Custom Admin Access**: Separate roles for Admin, Coordinator, and Entry Admin with different access levels.
+- **Action Passwords**: Independent passwords for sensitive actions like Deleting registrations or Updating event selections.
 
 ---
 
@@ -33,8 +37,8 @@ A comprehensive, production-ready management system for technical symposiums. Bu
 - **Build Tool**: [Vite](https://vitejs.dev/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/), [Shadcn UI](https://ui.shadcn.com/)
 - **Backend/Database**: [Supabase](https://supabase.com/) (PostgreSQL + Auth)
-- **State Management**: [TanStack Query (React Query)](https://tanstack.com/query/latest)
-- **Forms**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+- **Data Export**: [XLSX](https://www.npmjs.com/package/xlsx)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
 ---
 
@@ -60,37 +64,32 @@ A comprehensive, production-ready management system for technical symposiums. Bu
 
 3. **Environment Setup**
    - Copy `.env.example` to `.env`
-   - Fill in your Supabase credentials:
+   - Configure your Supabase and Admin credentials:
    ```bash
    cp .env.example .env
    ```
-   - Open `.env` and replace values:
-   ```env
-   VITE_SUPABASE_URL=your_supabase_project_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
+
+### 🔑 Environment Variables (.env)
+
+Configure these variables to customize your instance:
+
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `VITE_SUPABASE_URL` | Your Supabase Project URL | - |
+| `VITE_SUPABASE_ANON_KEY` | Your Supabase Anon/Publishable Key | - |
+| `VITE_ADMIN_PASSWORD` | Main Admin password | `vyuga@26` |
+| `VITE_COORD_PASSWORD` | Coordinator entry password | `coord@26` |
+| `VITE_ENTRY_PASSWORD` | Entry Admin password | `entry@26` |
+| `VITE_DELETE_PASSWORD` | Password required to delete data | `del@it` |
+| `VITE_UPDATE_PASSWORD` | Password required to update events | `ud@me` |
 
 4. **Database Setup**
-   - Import the `supabase_schema.sql` file into your Supabase SQL Editor to set up the required tables and functions.
+   - Import the `supabase_schema.sql` file into your Supabase SQL Editor.
 
-5. **Start Development Server**
+5. **Start Development**
    ```bash
    npm run dev
    ```
-
----
-
-## 📁 Project Structure
-
-```text
-src/
-├── components/     # Reusable UI components
-├── hooks/          # Custom React hooks
-├── lib/            # Utility functions and Supabase client
-├── pages/          # Main application pages (Admin, Register, etc.)
-├── types/          # TypeScript definitions
-└── utils/          # Helper functions logic
-```
 
 ---
 
@@ -108,19 +107,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 🛡️ Safety & Security
 
-- **Environment Variables**: Never commit your `.env` file to version control. It is already included in `.gitignore`.
-- **Supabase Policies**: Ensure you have Row Level Security (RLS) enabled on your Supabase tables.
+- **Safe Deletion**: Data can only be deleted by authorized admins providing the `DELETE_PASSWORD`.
+- **Environment Integrity**: Ensure `.env` is never committed to GitHub.
 
 ---
 
 ## 📄 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-## 📞 Support
-
-For any inquiries or support, please open an issue or contact the project maintainer.
 
 Made with ❤️ for the Developer Community.

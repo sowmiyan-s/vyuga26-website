@@ -151,12 +151,12 @@ const Admin = () => {
       setIsCoordinator(false);
       setIsEntryAdmin(false);
       toast.success("Welcome, Admin!");
-    } else if (adminPassword === "coord@26") {
+    } else if (adminPassword === siteConfig.coordPassword) {
       setIsAuthenticated(true);
       setIsCoordinator(true);
       setIsEntryAdmin(false);
       toast.success("Welcome, Coordinator!");
-    } else if (adminPassword === "entry@26") {
+    } else if (adminPassword === siteConfig.entryPassword) {
       setIsAuthenticated(true);
       setIsCoordinator(false);
       setIsEntryAdmin(true);
@@ -272,7 +272,7 @@ const Admin = () => {
   const handleUpdateUserEvents = async () => {
     if (!editingUser) return;
 
-    if (updatePassword !== "ud@me") {
+    if (updatePassword !== siteConfig.updatePassword) {
       toast.error("Invalid update password");
       return;
     }
